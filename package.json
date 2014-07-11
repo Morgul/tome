@@ -1,0 +1,31 @@
+{
+  "name": "tome",
+  "version": "0.1.0",
+  "description": "A modern git-backed wiki with zero external dependencies.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "wiki",
+    "git",
+    "angularjs"
+  ],
+  "author": "Christopher S. Case <chris.case@g33xnexus.com>",
+  "license": "MIT",
+  "dependencies": {
+    "connect": "^2.17.3",
+    "header-parse": "^0.1.0",
+    "lodash": "^2.4.1",
+    "omega-logger": "^0.5.5",
+    "router": "^0.6.2",
+    "slug": "^0.5.0",
+    "walk": "^2.3.3"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-less": "^0.11.3",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}

@@ -1,0 +1,12 @@
+<!-- If we find a wiki page at this url, we render it -->
+<markdown ng-if="page.body" src="page.body"></markdown>
+
+<!-- Otherwise, we display a friendly does not exist page -->
+<div ng-if="page.body == undefined">
+    <h3 class="text-center">
+        The page <code>/{{ wikiPath }}</code> does not exist.
+    </h3>
+    <p class="text-center">
+        Would you like to <a href="#">create it</a>?
+    </p>
+</div>

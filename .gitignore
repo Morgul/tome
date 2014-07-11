@@ -1,0 +1,20 @@
+.DS_Store
+
+# Pycharm artifacts
+.idea
+
+# Less artifacts
+client/css/*.css
+
+# js artifacts
+client/js/systems.controllers.js
+client/js/systems.filters.js
+client/js/systems.widgets.js
+client/js/systems.templates.js
+client/js/client.templates.js
+
+# db artifacts
+server/db/
+
+# Node artifacts
+node_modules

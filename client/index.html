@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="tome">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Tome Wiki</title>
+
+        <!-- Bootstrap -->
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="http://bootswatch.com/flatly/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Font Awesome -->
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+        <!-- Vendor Files -->
+        <link href="/vendor/openwebicons/css/openwebicons-bootstrap.min.css" rel="stylesheet">
+
+        <link href="/vendor/highlightjs/styles/github.min.css" rel="stylesheet">
+        <script src="/vendor/highlightjs/highlight.min.js"></script>
+
+        <script src="/vendor/marked/marked.js"></script>
+
+        <!-- Angular JS -->
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-route.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-resource.min.js"></script>
+
+        <!-- JQuery -->
+        <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+
+        <!-- Tome -->
+        <script src="/js/app.js"></script>
+        <script src="/js/controllers/page.js"></script>
+        <script src="/js/directives/header.js"></script>
+        <script src="/js/directives/breadcrumbs.js"></script>
+        <script src="/js/utils/utils.directives.js"></script>
+        <script src="/js/utils/utils.filters.js"></script>
+
+        <link href="/css/tome.min.css" rel="stylesheet">
+
+        <!------------------------------------------------------------------------------------------------------------->
+        <!-- Compatibility & Shims                                                                                   -->
+        <!------------------------------------------------------------------------------------------------------------->
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <!------------------------------------------------------------------------------------------------------------->
+    </head>
+    <body>
+        <tome-header></tome-header>
+
+        <!-- Main View -->
+        <div id="main-view" class="container" data-ng-view></div>
+
+        <!-- Angular UI Bootstrap -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap-tpls.min.js"></script>
+    </body>
+</html>
