@@ -9,6 +9,7 @@ var fs = require('fs');
 var router = require('router');
 
 var cache = require('./cache');
+var logger = require('omega-logger').getLogger('router');
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -28,11 +29,66 @@ function wiki404(response)
 
 var route = router();
 
-route.get('/api/page', function(req, res)
+route.get('/api/tag', function(req, res)
 {
-    cache.search(req.query.text, function(results)
+    console.log('got here...');
+    cache.getTags(function(results)
     {
         respond(results, res);
+    });
+});
+
+route.get('/api/page', function(req, res)
+{
+    if(req.query.body)
+    {
+        cache.search(req.query.body, function(results)
+        {
+            respond(results, res);
+        });
+    }
+    else if(req.query.tags)
+    {
+        // Build tags list
+        var tags = req.query.tags.replace(' ', '').split(';');
+        tags = tags.map(function(tag){ return tag.trim(); });
+
+        cache.getByTags(tags, function(results)
+        {
+            respond(results, res);
+        });
+
+        //TODO: implement tag search
+    }
+    else if(req.query.id)
+    {
+        //TODO: implement id search
+    }
+    else if(req.query.title)
+    {
+        //TODO: implement title search
+    }
+    else
+    {
+        cache.all(function(results)
+        {
+            respond(results, res);
+        });
+    } // end if
+});
+
+route.head('/api/page/*', function(req, res)
+{
+    cache.exists('/' + req.params.wildcard, function(exists)
+    {
+        if(exists)
+        {
+            respond(true, res);
+        }
+        else
+        {
+            wiki404(res);
+        } // end if
     });
 });
 

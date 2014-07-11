@@ -66,6 +66,10 @@ WikiParser.prototype.parse = function()
         if(path.extname(fileStats.name) == '.md')
         {
             self._parseWikiFile(root, fileStats, next);
+        }
+        else
+        {
+            next();
         } // end if
     });
 }; // end parse

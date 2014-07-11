@@ -30,7 +30,7 @@ PageService.prototype.exists = function(wikiPath)
 
 PageService.prototype.search = function(searchText)
 {
-    return this.Page.search({ text: searchText });
+    return this.Page.search({ body: searchText });
 }; // end search
 
 // ---------------------------------------------------------------------------------------------------------------------
