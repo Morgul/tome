@@ -20,6 +20,7 @@
     "lodash": "^2.4.1",
     "omega-logger": "^0.5.5",
     "router": "^0.6.2",
+    "search-index": "^0.3.1",
     "slug": "^0.5.0",
     "walk": "^2.3.3"
   },

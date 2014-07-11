@@ -17,6 +17,7 @@ parser.parse();
 
 var server = connect()
     .use(connect.logger('dev'))
+    .use(connect.query())
     .use(connect.static('client'))
     .use(router)
     .listen(4000);

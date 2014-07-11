@@ -13,8 +13,8 @@ client/js/systems.widgets.js
 client/js/systems.templates.js
 client/js/client.templates.js
 
-# db artifacts
-server/db/
+# Testing artifacts
+wiki
 
 # Node artifacts
 node_modules

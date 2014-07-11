@@ -6,13 +6,13 @@
 
 var fs = require('fs');
 var path = require('path');
-var util = require('util');
 
 var _ = require('lodash');
 var walk = require('walk');
 var headerParse = require('header-parse');
 
 var cache = require('./cache');
+var logger = require('omega-logger').getLogger('parser');
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -42,13 +42,15 @@ WikiParser.prototype._parseWikiFile = function(root, fileStats, next)
     if(wikiPage.tags)
     {
         wikiPage.tags = wikiPage.tags.replace(' ', '').split(';');
+        wikiPage.tags = wikiPage.tags.map(function(tag){ return tag.trim(); });
     } // end if
 
     // Add the page to the cache
-    cache.set(wikiPageUrl, wikiPage);
-
-    // Parse the next file
-    next();
+    cache.set(wikiPageUrl, wikiPage, function()
+    {
+        // Parse the next file
+        next();
+    });
 }; // end _parseWikiFile
 
 WikiParser.prototype.parse = function()

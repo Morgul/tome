@@ -1,0 +1,7 @@
+<h2>Search Results for "<code>{{ query }}</code>":</h2>
+<ul class="search-results">
+    <li ng-repeat="result in results">
+        <a href="/wiki{{ result.doc.id }}"><span class="result-title">{{ result.doc.title || result.doc.id }}</span></a> (<small><code>{{ result.doc.id }}</code></small>)<br/>
+        <span class="label label-default" ng-repeat="tag in result.doc.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
+    </li>
+</ul>

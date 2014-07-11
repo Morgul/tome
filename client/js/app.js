@@ -9,6 +9,7 @@ angular.module('tome', [
         'ngResource',
         'ui.bootstrap',
 
+        'tome.services',
         'tome.controllers',
         'tome.directives',
         'tome.utils'
@@ -18,6 +19,9 @@ angular.module('tome', [
         $locationProvider.html5Mode(true);
         $routeProvider
             .when('/', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
+            .when('/search', {templateUrl: '/partials/search.html',   controller: 'SearchPageController'})
+            .when('/recent', {templateUrl: '/partials/recent.html',   controller: 'RecentPageController'})
+            .when('/tags', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
             .when('/wiki/:wikiPath*', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
             .otherwise({redirectTo: '/'});
     }])
@@ -41,6 +45,11 @@ angular.module('tome', [
          text + '</h' + level + '>';
          };
          */
+
+        renderer.table = function(header, body)
+        {
+            return '<table class="table table-striped table-hover table-bordered"><thead>' + header + '</thead><tbody>' + body + '</tbody></table>';
+        };
 
         renderer.link = function(href, title, text)
         {
@@ -82,6 +91,7 @@ angular.module('tome', [
 // ---------------------------------------------------------------------------------------------------------------------
 
 angular.module('tome.controllers', []);
+angular.module('tome.services', []);
 angular.module('tome.directives', []);
 angular.module('tome.utils', []);
 

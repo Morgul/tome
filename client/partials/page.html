@@ -1,5 +1,18 @@
 <!-- If we find a wiki page at this url, we render it -->
-<markdown ng-if="page.body" src="page.body"></markdown>
+<div ng-if="page.body" class="wiki-content">
+    <header>
+        <span class="pull-right hidden-xs tags">
+            <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
+        </span>
+        <h1 class="page-title"><i class="fa fa-file-text-o"></i> {{ page.title || wikiPath }}</h1>
+        <div class="visible-xs">
+            <hr>
+            <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
+        </div>
+        <hr>
+    </header>
+    <markdown src="page.body"></markdown>
+</div>
 
 <!-- Otherwise, we display a friendly does not exist page -->
 <div ng-if="page.body == undefined">

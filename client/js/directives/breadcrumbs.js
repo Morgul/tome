@@ -4,22 +4,22 @@
 // @module breadcrumbs.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function BreadcrumbsController($scope, $route)
+function BreadcrumbsController($scope, $location, wikiPage)
 {
     $scope.breadcrumbs = function()
     {
-        var wikiPath = $route.current.params.wikiPath || "";
+        var wikiPath = wikiPage.wikiPath || "";
         var pathElems = wikiPath.split('/');
-        if(pathElems.length < 2)
+        if(pathElems.length < 2 && pathElems[0] == "")
         {
-            pathElems = ["welcome"];
+            pathElems = $location.path() == '/' ? ["welcome"] : [];
         } // end if
         return [""].concat(pathElems);
     }; // end breadcrumbs
 
     $scope.buildCrumbUrl = function($index)
     {
-        var wikiPath = $route.current.params.wikiPath || "";
+        var wikiPath = wikiPage.wikiPath || "";
         return wikiPath.split('/').slice(0, $index).join('/');
     }; // end buildCrumbUrl
 } // end BreadcrumbsController
@@ -46,7 +46,7 @@ function StickyBreadcrumbsDirective($document)
                 });
             });
         },
-        controller: ['$scope', '$route', BreadcrumbsController],
+        controller: ['$scope', '$location', 'wikiPage', BreadcrumbsController],
         replace: true
     }
 }

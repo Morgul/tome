@@ -28,29 +28,33 @@ function wiki404(response)
 
 var route = router();
 
-route.get('/api', function(req, res)
+route.get('/api/page', function(req, res)
 {
-    respond(cache.get('/welcome'), res);
+    cache.search(req.query.text, function(results)
+    {
+        respond(results, res);
+    });
 });
 
-route.get('/api/*', function(req, res)
+route.get('/api/page/*', function(req, res)
 {
-    var wikiPage = cache.get('/' + req.params.wildcard);
+    cache.get('/' + req.params.wildcard, function(wikiPage)
+    {
+        // Handle welcome page
+        if(req.params.wildcard == '/')
+        {
+            wikiPage = cache.get('/welcome');
+        } // end if
 
-    // Handle welcome page
-    if(req.params.wildcard == '/')
-    {
-        wikiPage = cache.get('/welcome');
-    } // end if
-
-    if(wikiPage)
-    {
-        respond(wikiPage, res);
-    }
-    else
-    {
-        wiki404(res);
-    } // end if
+        if(wikiPage)
+        {
+            respond(wikiPage, res);
+        }
+        else
+        {
+            wiki404(res);
+        } // end if
+    });
 });
 
 route.get(function(req, resp)
