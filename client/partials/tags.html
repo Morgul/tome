@@ -1,1 +1,6 @@
-<h1>Not Implemented Yet</h1>
+<div  ng-repeat="(tag, docs) in tags">
+    <h2>#{{ tag }}</h2>
+    <ul>
+        <li ng-repeat="doc in docs"><a href="/wiki{{doc.id}}">{{ doc.title }}</a></li>
+    </ul>
+</div>

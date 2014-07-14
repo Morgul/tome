@@ -31,7 +31,6 @@ var route = router();
 
 route.get('/api/tag', function(req, res)
 {
-    console.log('got here...');
     cache.getTags(function(results)
     {
         respond(results, res);
@@ -57,8 +56,6 @@ route.get('/api/page', function(req, res)
         {
             respond(results, res);
         });
-
-        //TODO: implement tag search
     }
     else if(req.query.id)
     {

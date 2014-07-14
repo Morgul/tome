@@ -6,6 +6,10 @@
 
 function PageService($resource, $route)
 {
+    this.Tags = $resource('/api/tag', {}, {
+        get: { method: 'GET', isArray: true }
+    });
+
     this.Page = $resource('/api/page/:wikiPath', {}, {
         exists: { method: 'HEAD' },
         search: { method: 'GET', isArray: true }
@@ -20,6 +24,16 @@ PageService.prototype.get = function(wikiPath)
 {
     wikiPath = wikiPath || this.wikiPath;
     return this.Page.get({ wikiPath: wikiPath });
+}; // end get
+
+PageService.prototype.getAllTags = function()
+{
+    return this.Tags.get();
+}; // end get
+
+PageService.prototype.getByTag = function(tag)
+{
+    return this.Page.search({ tags: tag });
 }; // end get
 
 PageService.prototype.exists = function(wikiPath)

@@ -55,7 +55,6 @@ WikiParser.prototype._parseWikiFile = function(root, fileStats, next)
 
 WikiParser.prototype.parse = function()
 {
-    console.log('starting');
     var self = this;
 
     var walker = walk.walk('./wiki', {
