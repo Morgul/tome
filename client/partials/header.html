@@ -26,8 +26,10 @@
                     </div>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#"><i class="icon-persona"></i> Sign in</a></li>
+                    <li ng-if="!user()"><a ng-click="login()"><i class="icon-persona"></i> Sign in</a></li>
+                    <li ng-if="user()"><a ng-click="logout()"><i class="icon-persona"></i> Sign out</a></li>
                 </ul>
+                <img ng-if="user()" class="profile-image img-rounded navbar-right" gravatar-src="user().email" gravatar-size="80" title="{{ user().email }}">
             </div>
         </div>
     </nav>

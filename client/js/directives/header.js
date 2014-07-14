@@ -4,9 +4,24 @@
 // @module header.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function HeaderController($scope, $location)
+function HeaderController($scope, $location, Persona)
 {
     $scope.isCollapsed = true;
+
+    $scope.login = function()
+    {
+        Persona.login();
+    };
+
+    $scope.logout = function()
+    {
+        Persona.logout();
+    };
+
+    $scope.user = function()
+    {
+        return Persona.getUser();
+    };
 
     $scope.search = function()
     {
@@ -22,7 +37,7 @@ function TomeHeaderDirective()
         restrict: 'E',
         scope: true,
         templateUrl: "/partials/header.html",
-        controller: ['$scope', '$location', HeaderController],
+        controller: ['$scope', '$location', 'Persona', HeaderController],
         replace: true
     }
 } // end TomeHeaderDirective

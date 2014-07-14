@@ -15,12 +15,16 @@
   "author": "Christopher S. Case <chris.case@g33xnexus.com>",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^2.2.1",
     "connect": "^2.17.3",
+    "connect-redirection": "0.0.1",
     "header-parse": "^0.1.0",
+    "jbase": "^0.1.0",
     "lodash": "^2.4.1",
     "omega-logger": "^0.5.5",
+    "passport": "^0.2.0",
+    "passport-persona": "^0.1.7",
     "router": "^0.6.2",
-    "search-index": "^0.3.1",
     "slug": "^0.5.0",
     "walk": "^2.3.3"
   },

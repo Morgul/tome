@@ -8,6 +8,7 @@ angular.module('tome', [
         'ngRoute',
         'ngResource',
         'ui.bootstrap',
+        'ui.gravatar',
 
         'tome.services',
         'tome.controllers',
