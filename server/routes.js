@@ -8,6 +8,7 @@ var fs = require('fs');
 
 var router = require('router');
 
+var users = require('./users');
 var cache = require('./cache');
 var logger = require('omega-logger').getLogger('router');
 
@@ -15,12 +16,32 @@ var logger = require('omega-logger').getLogger('router');
 
 function respond(object, response)
 {
+    logger.debug('Response:', logger.dump(object));
+
     response.writeHead(200, {"Content-Type": "application/json"});
     response.end(JSON.stringify(object));
 } // end respond
 
+function error(message, response)
+{
+    logger.error('Error: "%s"', message);
+
+    response.writeHead(400, {"Content-Type": "application/json"});
+    response.end(JSON.stringify({ error: message }));
+} // end error
+
+function notAuthorized(message, response)
+{
+    logger.error('Not Authorized: "%s"', message);
+
+    response.writeHead(403, {"Content-Type": "application/json"});
+    response.end(JSON.stringify({ error: 'Not Authorized:' + message }));
+} // end error
+
 function wiki404(response)
 {
+    logger.debug('Wiki page not found.');
+
     response.writeHead(404, {"Content-Type": "application/json"});
     response.end("Wiki page not found.");
 } // end wiki404
@@ -29,39 +50,48 @@ function wiki404(response)
 
 var route = router();
 
-route.get('/api/tag', function(req, res)
+//----------------------------------------------------------------------------------------------------------------------
+// Tags
+//----------------------------------------------------------------------------------------------------------------------
+
+route.get('/api/tag', function(request, response)
 {
+    logger.info('user:', request.user, request.isAuthenticated());
     cache.getTags(function(results)
     {
-        respond(results, res);
+        respond(results, response);
     });
 });
 
-route.get('/api/page', function(req, res)
+//----------------------------------------------------------------------------------------------------------------------
+// Pages
+//----------------------------------------------------------------------------------------------------------------------
+
+route.get('/api/page', function(request, response)
 {
-    if(req.query.body)
+    if(request.query.body)
     {
-        cache.search(req.query.body, function(results)
+        cache.search(request.query.body, function(results)
         {
-            respond(results, res);
+            respond(results, response);
         });
     }
-    else if(req.query.tags)
+    else if(request.query.tags)
     {
         // Build tags list
-        var tags = req.query.tags.replace(' ', '').split(';');
+        var tags = request.query.tags.replace(' ', '').split(';');
         tags = tags.map(function(tag){ return tag.trim(); });
 
         cache.getByTags(tags, function(results)
         {
-            respond(results, res);
+            respond(results, response);
         });
     }
-    else if(req.query.id)
+    else if(request.query.id)
     {
         //TODO: implement id search
     }
-    else if(req.query.title)
+    else if(request.query.title)
     {
         //TODO: implement title search
     }
@@ -69,50 +99,77 @@ route.get('/api/page', function(req, res)
     {
         cache.all(function(results)
         {
-            respond(results, res);
+            respond(results, response);
         });
     } // end if
 });
 
-route.head('/api/page/*', function(req, res)
+route.head('/api/page/*', function(request, response)
 {
-    cache.exists('/' + req.params.wildcard, function(exists)
+    cache.exists('/' + request.params.wildcard, function(exists)
     {
         if(exists)
         {
-            respond(true, res);
+            respond(true, response);
         }
         else
         {
-            wiki404(res);
+            wiki404(response);
         } // end if
     });
 });
 
-route.get('/api/page/*', function(req, res)
+route.get('/api/page/*', function(request, response)
 {
-    cache.get('/' + req.params.wildcard, function(wikiPage)
+    cache.get('/' + request.params.wildcard, function(wikiPage)
     {
         // Handle welcome page
-        if(req.params.wildcard == '/')
+        if(request.params.wildcard == '/')
         {
             wikiPage = cache.get('/welcome');
         } // end if
 
         if(wikiPage)
         {
-            respond(wikiPage, res);
+            respond(wikiPage, response);
         }
         else
         {
-            wiki404(res);
+            wiki404(response);
         } // end if
     });
 });
 
-route.get(function(req, resp)
+//----------------------------------------------------------------------------------------------------------------------
+// User
+//----------------------------------------------------------------------------------------------------------------------
+
+route.put(function(request, response)
 {
-    resp.end(fs.readFileSync('./client/index.html', { encoding: 'utf8' }));
+    if(request.body.email)
+    {
+        if(request.isAuthenticated() || request.user == request.body.email)
+        {
+            users.merge(request.body).then(function(){ response.end(); });
+        }
+        else
+        {
+            notAuthorized("You must be logged in as the user you are attempting to modify.", response);
+        } // end if
+    }
+    else
+    {
+        error("Missing or invalid body.", response);
+    } // end if
+});
+
+//----------------------------------------------------------------------------------------------------------------------
+// Misc
+//----------------------------------------------------------------------------------------------------------------------
+
+route.get(function(request, response)
+{
+    response.end(fs.readFileSync('./client/index.html', { encoding: 'utf8' }));
 });
 
 //----------------------------------------------------------------------------------------------------------------------

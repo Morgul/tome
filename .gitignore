@@ -16,5 +16,8 @@ client/js/client.templates.js
 # Testing artifacts
 wiki
 
+# DB artifacts
+server/db/*.json
+
 # Node artifacts
 node_modules

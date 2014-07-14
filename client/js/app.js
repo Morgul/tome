@@ -20,11 +20,22 @@ angular.module('tome', [
         $locationProvider.html5Mode(true);
         $routeProvider
             .when('/', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
+            .when('/profile', {templateUrl: '/partials/profile.html',   controller: 'ProfilePageController'})
             .when('/search', {templateUrl: '/partials/search.html',   controller: 'SearchPageController'})
             .when('/recent', {templateUrl: '/partials/recent.html',   controller: 'RecentPageController'})
             .when('/tags', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
             .when('/wiki/:wikiPath*', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
             .otherwise({redirectTo: '/'});
+    }])
+    .config(['gravatarServiceProvider', function(gravatarServiceProvider)
+    {
+        gravatarServiceProvider.defaults = {
+            size     : 80,
+            "default": 'identicon'  // Mystery man as default for missing avatars
+        };
+
+        // Use https endpoint
+        gravatarServiceProvider.secure = true;
     }])
     .run(['$route', function($route)
     {

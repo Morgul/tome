@@ -22,15 +22,15 @@ parser.parse();
 
 var server = connect()
     .use(connect.logger('dev'))
+    .use(connect.bodyParser())
     .use(connect.query())
     .use(connect.static('client'))
     .use(connect.cookieParser(config.secret))
     .use(connect.session({
-        secret: config.secret,
-        store: config.store,
-        key: config.sid
+        secret: config.secret || 'nosecret',
+        key: config.sid || 'sid',
+        store: new connect.session.MemoryStore()
     }))
-    .use(connect.bodyParser())
     .use(redirect())
     .use(passport.initialize())
     .use(passport.session())

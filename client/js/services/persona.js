@@ -59,10 +59,6 @@ PersonaService.prototype.logout = function()
     navigator.id.logout();
 };
 
-PersonaService.prototype.getUser = function(){
-    return this.currentUser;
-};
-
 // ---------------------------------------------------------------------------------------------------------------------
 
 angular.module('tome.services').service('Persona', ['$route', '$window', '$http', PersonaService]);

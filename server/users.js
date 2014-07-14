@@ -13,7 +13,7 @@ var jbase = require('jbase');
 
 function UserDB()
 {
-    this.db = jbase.db('users', { rootPath: './server/db/' });
+    this.db = jbase.db('users', { rootPath: './server/db' });
 } // end UserDB
 
 UserDB.prototype.get = function(email, callback)

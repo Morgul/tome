@@ -27,11 +27,12 @@ router.post('/auth/login-persona', function(request, response)
             }
             else
             {
-                //TODO: if this is a new user, we should redirect them to the profile page.
-                console.log('success?', arguments);
-
-                response.writeHead(200, {"Content-Type": "application/json"});
-                response.end(JSON.stringify(user));
+                request.login(user, function(err)
+                {
+                    //TODO: if this is a new user, we should redirect them to the profile page.
+                    response.writeHead(200, {"Content-Type": "application/json"});
+                    response.end(JSON.stringify(user));
+                });
             } // end if
         })(request, response);
     }
@@ -63,8 +64,6 @@ passport.use(new PersonaStrategy({
     },
     function(email, done)
     {
-        console.log('logging in:', email);
-
         users.get(email).then(function(user)
         {
             if(user)
@@ -74,9 +73,10 @@ passport.use(new PersonaStrategy({
             else
             {
                 user = { email: email };
-                users.store(email, user);
-
-                done(null, user);
+                users.store(user).then(function()
+                {
+                    done(null, user);
+                });
             } // end if
         });
     })

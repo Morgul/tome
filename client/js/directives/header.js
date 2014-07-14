@@ -8,6 +8,10 @@ function HeaderController($scope, $location, Persona)
 {
     $scope.isCollapsed = true;
 
+    Object.defineProperty($scope, 'user', {
+        get: function(){ return Persona.currentUser; }
+    });
+
     $scope.login = function()
     {
         Persona.login();
@@ -16,11 +20,6 @@ function HeaderController($scope, $location, Persona)
     $scope.logout = function()
     {
         Persona.logout();
-    };
-
-    $scope.user = function()
-    {
-        return Persona.getUser();
     };
 
     $scope.search = function()
