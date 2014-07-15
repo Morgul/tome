@@ -12,6 +12,7 @@ function PersonaService($location, $route, $window, $http)
     this.loginUrl = "/auth/login-persona";
     this.logoutUrl = "/auth/logout-persona";
     this.registrationUrl = "/registration";
+    this.registrationAllowed = false;
 
     navigator.id.watch({
         loggedInUser: this.currentUser,
@@ -30,8 +31,13 @@ function PersonaService($location, $route, $window, $http)
 
                     if(status == 403)
                     {
-                        console.log('redirecting email:', data, data.email);
-                        $location.path(self.registrationUrl).search('email=' + data.email);
+                        self.registrationAllowed = !data.disallowed;
+                        $location.path(self.registrationUrl);
+
+                        if(data.email)
+                        {
+                            $location.search('email=' + data.email);
+                        } // end if
                     }
                     else
                     {

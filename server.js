@@ -4,6 +4,17 @@
 // @module server.js
 //----------------------------------------------------------------------------------------------------------------------
 
+var logging = require('omega-logger');
+
+if(process.env.LOG_LEVEL)
+{
+    logging.defaultConsoleHandler.level = logging.getLevel(process.env.LOG_LEVEL);
+} // end if
+
+var logger = logging.getLogger('server');
+
+//----------------------------------------------------------------------------------------------------------------------
+
 var connect = require('connect');
 var redirect = require('connect-redirection');
 var passport = require('passport');
@@ -21,7 +32,7 @@ var config = require('./config');
 parser.parse();
 
 var server = connect()
-    .use(connect.logger('dev'))
+    //.use(connect.logger('dev'))
     .use(connect.bodyParser())
     .use(connect.query())
     .use(connect.static('client'))
@@ -37,6 +48,6 @@ var server = connect()
     .use(router)
     .listen(4000);
 
-console.log('Tomb v%s started on %s, port %s.', package.version, server.address().address, server.address().port);
+logger.info('Tomb v%s started on %s, port %s.', package.version, server.address().address, server.address().port);
 
 //----------------------------------------------------------------------------------------------------------------------

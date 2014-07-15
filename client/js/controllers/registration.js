@@ -4,35 +4,46 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function RegistrationPageController($scope, $route, $http, Persona)
+function RegistrationPageController($scope, $route, $location, $http, Persona)
 {
-    $scope.user = { email: $route.current.params.email };
-
-    $http.get('/api/human')
-        .success(function(data)
-        {
-            $scope.human = data;
-            $scope.user.humanIndex = data.index;
-        });
-
-    $scope.register = function()
+    // We're already logged in, go to the profile page.
+    if(Persona.currentUser)
     {
-        console.log('user:', $scope.user);
+        $location.path('/profile');
+    }
+    else
+    {
+        $scope.user = { email: $route.current.params.email };
+        $scope.allowed = Persona.registrationAllowed;
 
-        $http.put('/api/user/' + $scope.user.email, $scope.user)
-            .success(function(data)
+        // Only try to do this if we're allowed to register
+        if($scope.allowed)
+        {
+            $http.get('/api/human')
+                .success(function(data)
+                {
+                    $scope.human = data;
+                    $scope.user.humanIndex = data.index;
+                });
+
+            $scope.register = function()
             {
-                Persona.login();
-            })
-            .error(function(data, status)
-            {
-                console.error('failed:', data, status);
-            });
-    }; // end register
+                $http.put('/api/user/' + $scope.user.email, $scope.user)
+                    .success(function(data)
+                    {
+                        Persona.login();
+                    })
+                    .error(function(data, status)
+                    {
+                        console.error('failed:', data, status);
+                    });
+            }; // end register
+        } // end if
+    } // end if
 } // end RegistrationPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('RegistrationPageController', ['$scope', '$route', '$http', 'Persona', RegistrationPageController]);
+angular.module('tome.controllers').controller('RegistrationPageController', ['$scope', '$route', '$location', '$http', 'Persona', RegistrationPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

@@ -47,7 +47,7 @@ module.exports = {
 
     // Supports `"auto"` for automatically creating users, `true` to enable registration, or `false` to disable new user
     // creation.
-    registration: true
+    registration: true//"auto"
 
     // -----------------------------------------------------------------------------------------------------------------
 

@@ -26,13 +26,13 @@ router.post('/auth/login-persona', function(request, response)
                 {
                     logger.debug('Registration required.');
                     response.writeHead(403, {"Content-Type": "application/json"});
-                    response.end(JSON.stringify({ email: error.email, error: error.message }));
+                    response.end(JSON.stringify({ disallowed: false, email: error.email, error: error.message }));
                 }
                 else if(error instanceof error.NotAuthorizedError)
                 {
                     logger.debug('Registration not allowed.');
                     response.writeHead(403, {"Content-Type": "application/json"});
-                    response.end(JSON.stringify({ error: error.message }));
+                    response.end(JSON.stringify({ disallowed: true, error: error.message }));
                 }
                 else
                 {
@@ -88,7 +88,7 @@ passport.use(new PersonaStrategy({
             }
             else
             {
-                if(config.registration == 'auto')
+                if(config.registration === 'auto')
                 {
                     // Auto-create users
                      user = { email: email };
@@ -97,7 +97,7 @@ passport.use(new PersonaStrategy({
                          done(null, user);
                      });
                 }
-                else if(config.registration)
+                else if(config.registration === true)
                 {
                     // Force registration
                     var error = new errors.RegistrationRequiredError();
