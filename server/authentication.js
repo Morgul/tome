@@ -26,13 +26,13 @@ router.post('/auth/login-persona', function(request, response)
                 {
                     logger.debug('Registration required.');
                     response.writeHead(403, {"Content-Type": "application/json"});
-                    response.end(JSON.stringify({ disallowed: false, email: error.email, error: error.message }));
+                    response.end(JSON.stringify({ email: error.email, error: error.message }));
                 }
                 else if(error instanceof error.NotAuthorizedError)
                 {
                     logger.debug('Registration not allowed.');
                     response.writeHead(403, {"Content-Type": "application/json"});
-                    response.end(JSON.stringify({ disallowed: true, error: error.message }));
+                    response.end(JSON.stringify({ error: error.message }));
                 }
                 else
                 {

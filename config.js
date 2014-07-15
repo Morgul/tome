@@ -20,9 +20,6 @@ module.exports = {
     // Replace this with any random string. This is used for your secure cookies.
     secret: '72156a61342a86841047426761d94687b74434cf',
 
-    // Allow new users to register
-    allowRegistration: true,
-
     // Try to choose questions that don't have easily google-able answers. If you have more than one question, we will
     // randomly rotate them.
     //

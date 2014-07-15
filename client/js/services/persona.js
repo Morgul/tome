@@ -12,7 +12,6 @@ function PersonaService($location, $route, $window, $http)
     this.loginUrl = "/auth/login-persona";
     this.logoutUrl = "/auth/logout-persona";
     this.registrationUrl = "/registration";
-    this.registrationAllowed = false;
 
     navigator.id.watch({
         loggedInUser: this.currentUser,
@@ -31,7 +30,6 @@ function PersonaService($location, $route, $window, $http)
 
                     if(status == 403)
                     {
-                        self.registrationAllowed = !data.disallowed;
                         $location.path(self.registrationUrl);
 
                         if(data.email)

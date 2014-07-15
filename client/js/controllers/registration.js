@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function RegistrationPageController($scope, $route, $location, $http, Persona)
+function RegistrationPageController($scope, $route, $location, $http, Persona, WikiConfig)
 {
     // We're already logged in, go to the profile page.
     if(Persona.currentUser)
@@ -14,7 +14,7 @@ function RegistrationPageController($scope, $route, $location, $http, Persona)
     else
     {
         $scope.user = { email: $route.current.params.email };
-        $scope.allowed = Persona.registrationAllowed;
+        $scope.allowed = WikiConfig.config.registration === true;
 
         // Only try to do this if we're allowed to register
         if($scope.allowed)
@@ -44,6 +44,7 @@ function RegistrationPageController($scope, $route, $location, $http, Persona)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('RegistrationPageController', ['$scope', '$route', '$location', '$http', 'Persona', RegistrationPageController]);
+angular.module('tome.controllers').controller('RegistrationPageController',
+    ['$scope', '$route', '$location', '$http', 'Persona', 'WikiConfig', RegistrationPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

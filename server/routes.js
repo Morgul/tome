@@ -7,10 +7,13 @@
 var fs = require('fs');
 
 var router = require('router');
+var _ = require('lodash');
 
 var users = require('./users');
 var cache = require('./cache');
 var config = require('../config');
+var package = require('../package');
+
 var logger = require('omega-logger').getLogger('router');
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -232,6 +235,13 @@ route.get('/api/human', function(request, response)
 //----------------------------------------------------------------------------------------------------------------------
 // Misc
 //----------------------------------------------------------------------------------------------------------------------
+
+route.get('/api/config', function(request, response)
+{
+    var exposedConfig = _.omit(config, ['sid', 'secret', 'humanVerificationQuestions']);
+    exposedConfig.version = package.version;
+    respond(exposedConfig, response);
+});
 
 route.get(function(request, response)
 {
