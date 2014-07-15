@@ -20,6 +20,7 @@ angular.module('tome', [
         $locationProvider.html5Mode(true);
         $routeProvider
             .when('/', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
+            .when('/registration', {templateUrl: '/partials/registration.html',   controller: 'RegistrationPageController'})
             .when('/profile', {templateUrl: '/partials/profile.html',   controller: 'ProfilePageController'})
             .when('/search', {templateUrl: '/partials/search.html',   controller: 'SearchPageController'})
             .when('/recent', {templateUrl: '/partials/recent.html',   controller: 'RecentPageController'})

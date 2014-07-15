@@ -10,6 +10,7 @@ var router = require('router');
 
 var users = require('./users');
 var cache = require('./cache');
+var config = require('../config');
 var logger = require('omega-logger').getLogger('router');
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -144,23 +145,88 @@ route.get('/api/page/*', function(request, response)
 // User
 //----------------------------------------------------------------------------------------------------------------------
 
-route.put(function(request, response)
+route.put('/api/user/:email', function(request, response)
 {
-    if(request.body.email)
+    var regBody = request.body;
+
+    if(regBody.email)
     {
-        if(request.isAuthenticated() || request.user == request.body.email)
+        users.get(request.params.email).then(function(user)
         {
-            users.merge(request.body).then(function(){ response.end(); });
-        }
-        else
-        {
-            notAuthorized("You must be logged in as the user you are attempting to modify.", response);
-        } // end if
+            if(!user)
+            {
+                if(!request.isAuthenticated() && config.registration === true)
+                {
+                    logger.info("Expected: %s, Actual: %s",
+                        logger.dump(config.humanVerificationQuestions[regBody.humanIndex].answer),
+                        logger.dump(regBody.answer));
+
+                    // Check the human verification question
+                    if(config.humanVerificationQuestions[regBody.humanIndex].answer == regBody.answer)
+                    {
+                        users.store({ email: regBody.email, display: regBody.display }).then(function()
+                        {
+                            response.end();
+                        });
+                    }
+                    else
+                    {
+                        error('Failed human verification.', response);
+                    } // end if
+                }
+                else
+                {
+                    error("Registration not allowed.", response);
+                } // end if
+            }
+            else
+            {
+                error("User already exists.", response);
+            } // end if
+        });
     }
     else
     {
         error("Missing or invalid body.", response);
     } // end if
+});
+
+route.post('/api/user/:email', function(request, response)
+{
+    if(request.body.email)
+    {
+        users.get(request.params.email).then(function(user)
+        {
+            if(!user)
+            {
+                error("User does not exist.", response);
+            }
+            else
+            {
+                // Update the user
+                if(request.isAuthenticated() || request.user == request.params.email)
+                {
+                    users.merge(request.body).then(function(){ response.end(); });
+                }
+                else
+                {
+                    notAuthorized("You must be logged in as the user you are attempting to modify.", response);
+                } // end if
+            } // end if
+        });
+    }
+    else
+    {
+        error("Missing or invalid body.", response);
+    } // end if
+});
+
+route.get('/api/human', function(request, response)
+{
+    var questions = config.humanVerificationQuestions;
+    var randIdx = Math.floor(Math.random() * questions.length);
+    var question = questions[randIdx];
+    respond({ question: question.question, hint: question.hint, index: randIdx }, response);
 });
 
 //----------------------------------------------------------------------------------------------------------------------

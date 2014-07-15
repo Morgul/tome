@@ -1,34 +1,38 @@
 // ---------------------------------------------------------------------------------------------------------------------
-// A controller for profile pages
+// A controller for registration pages
 //
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function ProfilePageController($scope, $http, Persona)
+function RegistrationPageController($scope, $route, $http, Persona)
 {
-    Object.defineProperty($scope, 'user', {
-        get: function(){ return Persona.currentUser; },
-        set: function(val){ Persona.currentUser = val; }
-    });
+    $scope.user = { email: $route.current.params.email };
 
-    $scope.save = function()
+    $http.get('/api/human')
+        .success(function(data)
+        {
+            $scope.human = data;
+            $scope.user.humanIndex = data.index;
+        });
+
+    $scope.register = function()
     {
         console.log('user:', $scope.user);
 
-        $http.post('/api/user/' + Persona.currentUser.email, $scope.user)
+        $http.put('/api/user/' + $scope.user.email, $scope.user)
             .success(function(data)
             {
-                //TODO: Do something here?
+                Persona.login();
             })
             .error(function(data, status)
             {
                 console.error('failed:', data, status);
             });
-    }; // end save
-} // end ProfilePageController
+    }; // end register
+} // end RegistrationPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('ProfilePageController', ['$scope', '$http', 'Persona', ProfilePageController]);
+angular.module('tome.controllers').controller('RegistrationPageController', ['$scope', '$route', '$http', 'Persona', RegistrationPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

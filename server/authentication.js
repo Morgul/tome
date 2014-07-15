@@ -10,6 +10,7 @@ var PersonaStrategy = require('passport-persona').Strategy;
 var config = require('../config');
 var users = require('./users');
 var router = require('./routes');
+var errors = require('./errors');
 
 var logger = require('omega-logger').getLogger('auth');
 
@@ -19,11 +20,26 @@ router.post('/auth/login-persona', function(request, response)
     {
         passport.authenticate('persona', { failureRedirect: '/' }, function(error, user)
         {
-            if(arguments.length < 2)
+            if(error)
             {
-                logger.error('Error authenticating:', logger.dump(error));
-                response.writeHead(500, {"Content-Type": "application/json"});
-                response.end(error.toString());
+                if(error instanceof errors.RegistrationRequiredError)
+                {
+                    logger.debug('Registration required.');
+                    response.writeHead(403, {"Content-Type": "application/json"});
+                    response.end(JSON.stringify({ email: error.email, error: error.message }));
+                }
+                else if(error instanceof error.NotAuthorizedError)
+                {
+                    logger.debug('Registration not allowed.');
+                    response.writeHead(403, {"Content-Type": "application/json"});
+                    response.end(JSON.stringify({ error: error.message }));
+                }
+                else
+                {
+                    logger.error('Error authenticating:', logger.dump(error));
+                    response.writeHead(500, {"Content-Type": "application/json"});
+                    response.end(error.message || error.toString());
+                } // end if
             }
             else
             {
@@ -72,11 +88,26 @@ passport.use(new PersonaStrategy({
             }
             else
             {
-                user = { email: email };
-                users.store(user).then(function()
+                if(config.registration == 'auto')
                 {
-                    done(null, user);
-                });
+                    // Auto-create users
+                     user = { email: email };
+                     users.store(user).then(function()
+                     {
+                         done(null, user);
+                     });
+                }
+                else if(config.registration)
+                {
+                    // Force registration
+                    var error = new errors.RegistrationRequiredError();
+                    error.email = email;
+                    done(error);
+                }
+                else
+                {
+                    done(new errors.NotAuthorizedError("Registration disabled."));
+                } // end if
             } // end if
         });
     })

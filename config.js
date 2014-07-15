@@ -11,7 +11,8 @@ module.exports = {
     // -----------------------------------------------------------------------------------------------------------------
 
     // The url to use for persona authentication
-    audience: "http://localhost:4000",
+    audience: "http://cypher:4000",
+    //audience: "http://localhost:4000",
 
     // The prefix used for secure cookies.
     sid: 'tome',
@@ -22,17 +23,31 @@ module.exports = {
     // Allow new users to register
     allowRegistration: true,
 
-    // Try to choose questions that don't have easily google-able answers
+    // Try to choose questions that don't have easily google-able answers. If you have more than one question, we will
+    // randomly rotate them.
+    //
+    // Takes an array of objects in the format of:
+    // {
+    //     question: String,
+    //     answer: String,
+    //     hint: String,    // Optional
+    // }
     humanVerificationQuestions: [
         {
             question: "What is the common name for the large grey orb in the night's sky?",
-            answer: "moon"
+            answer: "moon",
+            hint: "Lowercase."
         },
         {
             question: "What type of animals say 'CAN HAZ CHEESBURGER'?",
-            answer: "lolcats"
+            answer: "lolcats",
+            hint: "Plural, starts with 'lol'."
         }
-    ]
+    ],
+
+    // Supports `"auto"` for automatically creating users, `true` to enable registration, or `false` to disable new user
+    // creation.
+    registration: true
 
     // -----------------------------------------------------------------------------------------------------------------
 

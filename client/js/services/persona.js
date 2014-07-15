@@ -4,13 +4,14 @@
 // @module wikipage.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PersonaService($route, $window, $http)
+function PersonaService($location, $route, $window, $http)
 {
     var self = this;
 
     this.currentUser = $window.currentUser;
     this.loginUrl = "/auth/login-persona";
     this.logoutUrl = "/auth/logout-persona";
+    this.registrationUrl = "/registration";
 
     navigator.id.watch({
         loggedInUser: this.currentUser,
@@ -24,8 +25,18 @@ function PersonaService($route, $window, $http)
                 })
                 .error(function(data, status)
                 {
-                    console.error('login fail', data, status);
+                    // We always call logout, that way, nothing thinks we're logged in again.
                     navigator.id.logout();
+
+                    if(status == 403)
+                    {
+                        console.log('redirecting email:', data, data.email);
+                        $location.path(self.registrationUrl).search('email=' + data.email);
+                    }
+                    else
+                    {
+                        console.error('login failed:', data, status);
+                    } // end if
                 });
         },
         onlogout: function()
@@ -35,14 +46,13 @@ function PersonaService($route, $window, $http)
                 {
                     navigator.id.logout();
                     self.currentUser = null;
-                    // This is commented out to avoid an infinite loop of
-                    // reloads that could occur.
-                    // TODO redict user to home screen on logout.
+
                     $route.reload();
+                    //$location.path('/').search("");
                 })
                 .error(function(data, status)
                 {
-                    console.error('logout fail', data, status);
+                    console.error('logout failed:', data, status);
                 });
         }
     });
@@ -61,7 +71,7 @@ PersonaService.prototype.logout = function()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.services').service('Persona', ['$route', '$window', '$http', PersonaService]);
+angular.module('tome.services').service('Persona', ['$location', '$route', '$window', '$http', PersonaService]);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
