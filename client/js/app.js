@@ -21,7 +21,6 @@ angular.module('tome', [
     {
         $locationProvider.html5Mode(true);
         $routeProvider
-            .when('/', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
             .when('/registration', {templateUrl: '/partials/registration.html',   controller: 'RegistrationPageController'})
             .when('/profile', {templateUrl: '/partials/profile.html',   controller: 'ProfilePageController'})
             .when('/search', {templateUrl: '/partials/search.html',   controller: 'SearchPageController'})
@@ -29,7 +28,7 @@ angular.module('tome', [
             .when('/tags', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
             .when('/edit/:wikiPath*', {templateUrl: '/partials/edit.html',   controller: 'EditPageController'})
             .when('/wiki/:wikiPath*', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
-            .otherwise({redirectTo: '/'});
+            .otherwise({redirectTo: '/wiki/welcome'});
     }])
     .config(['gravatarServiceProvider', function(gravatarServiceProvider)
     {
@@ -41,12 +40,17 @@ angular.module('tome', [
         // Use https endpoint
         gravatarServiceProvider.secure = true;
     }])
-    .run(['$rootScope', '$route', 'WikiConfig', function($rootScope, $route, WikiConfig)
+    .run(['$rootScope', '$route', 'WikiConfig', 'Persona', function($rootScope, $route, WikiConfig, Persona)
     {
         Object.defineProperty($rootScope, 'version',
             {
                 get: function(){ return WikiConfig.config.version; }
             });
+
+        $rootScope.isAuthenticated = function()
+        {
+            return !!Persona.currentUser;
+        }; // end isAuthenticated
 
         //--------------------------------------------------------------------------------------------------------------
         // Mobile Detection
@@ -81,7 +85,7 @@ angular.module('tome', [
 
         renderer.table = function(header, body)
         {
-            return '<table class="table table-striped table-hover table-bordered"><thead>' + header + '</thead><tbody>' + body + '</tbody></table>';
+            return '<div class="table-responsive"><table class="table table-striped table-hover table-bordered"><thead>' + header + '</thead><tbody>' + body + '</tbody></table></div>';
         };
 
         renderer.link = function(href, title, text)
@@ -90,7 +94,7 @@ angular.module('tome', [
             {
                  if(href.indexOf('/') != 0)
                  {
-                     href = '/wiki/' + ($route.current.params.wikiPath ? $route.current.params.wikiPath + '/' : "") + href;
+                     href = '/wiki/' + href;
                  } // end if
 
                 return '<a href="' + href + '"' + (title ? ' title="' + title + '"' : "") + '>' + text + '</a>';

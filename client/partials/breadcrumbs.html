@@ -1,9 +1,19 @@
 <div id="breadcrumbs">
-    <ol class="breadcrumb" ng-class="{ fixed: fixed }">
-        <li ng-repeat="crumb in breadcrumbs() track by $index" ng-class="{ active: $last }">
-            <a ng-if="$first" href="/"><i class="fa fa-home"></i></a>
-            <a ng-if="!$last" href="/wiki/{{ buildCrumbUrl($index) }}">{{ crumb }}</a>
-            <span ng-if="$last">{{ crumb }}</span>
-        </li>
-    </ol>
+    <div ng-class="{ fixed: fixed }">
+        <div ng-show="prefix() == 'edit' && isAuthenticated()" class="page-buttons btn-group pull-right">
+            <button class="btn btn-link" ng-click="save()"><i class="fa fa-save"></i> Save</button>
+            <button class="btn btn-link" ng-click="revert()"><i class="fa fa-undo"></i> Cancel</button>
+        </div>
+        <div ng-hide="prefix() != 'wiki' || !isAuthenticated()" class="page-buttons btn-group pull-right">
+            <button class="btn btn-link" ng-click="edit()"><i class="fa fa-edit"></i> Edit</button>
+            <button class="btn btn-link" ng-click="history()"><i class="fa fa-history"></i> History</button>
+        </div>
+        <ol class="breadcrumb">
+            <li ng-repeat="crumb in breadcrumbs() track by $index" ng-class="{ active: $last }">
+                <a ng-if="$first" href="/wiki/welcome"><i class="fa fa-home"></i></a>
+                <a ng-if="!$last" href="/wiki/{{ buildCrumbUrl($index) }}">{{ crumb }}</a>
+                <span ng-if="$last">{{ crumb }}</span>
+            </li>
+        </ol>
+    </div>
 </div>

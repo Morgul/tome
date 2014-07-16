@@ -1,5 +1,5 @@
 <!-- If we find a wiki page at this url, we render it -->
-<div ng-if="page.body" class="wiki-content">
+<div ng-if="page.body" class="wiki-content container">
     <header>
         <span class="pull-right hidden-xs tags">
             <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
@@ -20,6 +20,6 @@
         The page <code>/{{ wikiPath }}</code> does not exist.
     </h3>
     <p class="text-center">
-        Would you like to <a href="#">create it</a>?
+        Would you like to <a href="/edit/{{ wikiPath }}">create it</a>?
     </p>
 </div>

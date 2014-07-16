@@ -6,12 +6,18 @@
 
 function EditPageController($scope, $location, wikiPage)
 {
+    $scope.wikiPath = wikiPage.wikiPath;
+
+    if(!$scope.wikiPath)
+    {
+        $location.path('/edit/welcome');
+        return;
+    } // end if
+
     $scope.editorOptions = {
         lineWrapping : true,
         mode: 'gfm'
     };
-
-    $scope.wikiPath = wikiPage.wikiPath || "welcome";
 
     wikiPage.get($scope.wikiPath).$promise.then(function(page)
     {
@@ -31,6 +37,9 @@ function EditPageController($scope, $location, wikiPage)
     {
         $location.path('/wiki/' + $scope.wikiPath);
     }; // end revert
+
+    $scope.$on('save', $scope.save);
+    $scope.$on('revert', $scope.revert);
 } // end EditPageController
 
 // ---------------------------------------------------------------------------------------------------------------------

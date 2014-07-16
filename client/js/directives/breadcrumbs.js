@@ -6,6 +6,51 @@
 
 function BreadcrumbsController($scope, $location, wikiPage)
 {
+    $scope.isEdit = function()
+    {
+        re = new RegExp("^\/edit.*$");
+        return re.test($location.path());
+    };
+
+    $scope.prefix = function()
+    {
+        var prefix = $location.path().split('/')[1];
+
+        return prefix;
+    }; // end prefix
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Edit page functions
+    //------------------------------------------------------------------------------------------------------------------
+
+    $scope.save = function()
+    {
+        $scope.$root.$broadcast('save');
+    }; // end save
+
+    $scope.revert = function()
+    {
+        $scope.$root.$broadcast('revert');
+    }; // end revert
+
+    //------------------------------------------------------------------------------------------------------------------
+    // View page functions
+    //------------------------------------------------------------------------------------------------------------------
+
+    $scope.edit = function()
+    {
+        $location.path('/edit/' + wikiPage.wikiPath);
+    }; // end edit
+
+    $scope.history = function()
+    {
+        $location.path('/history/' + wikiPage.wikiPath);
+    }; // end history
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Breadcrumbs functions
+    //------------------------------------------------------------------------------------------------------------------
+
     $scope.breadcrumbs = function()
     {
         var wikiPath = wikiPage.wikiPath || "";
