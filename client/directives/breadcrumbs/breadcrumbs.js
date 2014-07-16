@@ -74,7 +74,7 @@ function StickyBreadcrumbsDirective($document)
     return {
         restrict: 'E',
         scope: true,
-        templateUrl: '/partials/breadcrumbs.html',
+        templateUrl: '/directives/breadcrumbs/partials/breadcrumbs.html',
         link: function(scope, elem, attrs)
         {
             scope.fixed = false;

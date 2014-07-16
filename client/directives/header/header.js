@@ -35,7 +35,7 @@ function TomeHeaderDirective()
     return {
         restrict: 'E',
         scope: true,
-        templateUrl: "/partials/header.html",
+        templateUrl: "/directives/header/partials/header.html",
         controller: ['$scope', '$location', 'Persona', HeaderController],
         replace: true
     }
