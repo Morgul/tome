@@ -48,10 +48,9 @@ PageService.prototype.getByTag = function(tag)
     return this.Page.search({ tags: tag });
 }; // end get
 
-PageService.prototype.exists = function(wikiPath)
+PageService.prototype.exists = function(wikiPath, callback)
 {
-    wikiPath = wikiPath || this.wikiPath;
-    return this.Page.exists({ wikiPath: wikiPath });
+    return this.Page.exists({ wikiPath: wikiPath }, function(){ callback(true); }, function(){ callback(false); });
 }; // end exists
 
 PageService.prototype.search = function(searchText)

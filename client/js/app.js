@@ -90,19 +90,7 @@ angular.module('tome', [
 
         renderer.link = function(href, title, text)
         {
-            if(href.indexOf('http') != 0)
-            {
-                 if(href.indexOf('/') != 0)
-                 {
-                     href = '/wiki/' + href;
-                 } // end if
-
-                return '<a href="' + href + '"' + (title ? ' title="' + title + '"' : "") + '>' + text + '</a>';
-            }
-            else
-            {
-                return '<a class="external" href="' + href + '"' + (title ? ' title="' + title + '"' : "") + '>' + text + '</a>';
-            } // end if
+            return '<wiki-link url="\'' + href + '\'" hover="\'' + title + '\'" text="\'' + text + '\'"></wiki-link>';
         }; // end link parsing
 
         // Configure marked parser
