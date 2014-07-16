@@ -32,8 +32,24 @@
         <script src="/vendor/angular-gravatar/md5.min.js"></script>
         <script src="/vendor/angular-gravatar/angular-gravatar.min.js"></script>
 
+        <link href="/vendor/ng-tags/ng-tags-0.1.1.min.css" rel="stylesheet">
+        <script src="/vendor/ng-tags/ng-tags-0.1.1.min.js"></script>
+
+        <link href="/vendor/codemirror/lib/codemirror.css" rel="stylesheet">
+        <script src="/vendor/codemirror/lib/codemirror.js"></script>
+        <script src="/vendor/codemirror/mode/gfm/gfm.js"></script>
+        <script src="/vendor/codemirror/mode/markdown/markdown.js"></script>
+        <script src="/vendor/codemirror/mode/css/css.js"></script>
+        <script src="/vendor/codemirror/mode/diff/diff.js"></script>
+        <script src="/vendor/codemirror/mode/htmlembedded/htmlembedded.js"></script>
+        <script src="/vendor/codemirror/mode/javascript/javascript.js"></script>
+        <script src="/vendor/codemirror/mode/less/less.js"></script>
+        <script src="/vendor/codemirror/addon/mode/overlay.js"></script>
+        <script src="/vendor/ui-codemirror/ui-codemirror.min.js"></script>
+
         <!-- Tome -->
         <script src="/js/app.js"></script>
+        <script src="/js/controllers/edit.js"></script>
         <script src="/js/controllers/page.js"></script>
         <script src="/js/controllers/registration.js"></script>
         <script src="/js/controllers/profile.js"></script>
@@ -67,7 +83,7 @@
         <tome-header></tome-header>
 
         <!-- Main View -->
-        <div id="main-view" class="container" data-ng-view></div>
+        <div id="main-view" class="container-fluid" data-ng-view></div>
 
         <div class="container" ng-include="'/partials/footer.html'"></div>
 

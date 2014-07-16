@@ -147,25 +147,39 @@ route.get('/api/page/*', function(request, response)
 // Create new wiki pages
 route.put('/api/page/*', function(request, response)
 {
-    var wikiPath = '/' + request.params.wildcard;
-    var reqBody = request.body;
-
-    cache.set(wikiPath, reqBody, function()
+    if(request.isAuthenticated())
     {
-        response.end();
-    });
+        var wikiPath = '/' + request.params.wildcard;
+        var reqBody = request.body;
+
+        cache.set(wikiPath, reqBody, function()
+        {
+            response.end();
+        });
+    }
+    else
+    {
+        notAuthorized("Authentication Required.", response);
+    } // end if
 });
 
 // Update wiki pages
 route.post('/api/page/*', function(request, response)
 {
-    var wikiPath = '/' + request.params.wildcard;
-    var reqBody = request.body;
-
-    cache.set(wikiPath, reqBody, function()
+    if(request.isAuthenticated())
     {
-        response.end();
-    });
+        var wikiPath = '/' + request.params.wildcard;
+        var reqBody = request.body;
+
+        cache.set(wikiPath, reqBody, function()
+        {
+            response.end();
+        });
+    }
+    else
+    {
+        notAuthorized("Authentication Required.", response);
+    } // end if
 });
 
 //----------------------------------------------------------------------------------------------------------------------

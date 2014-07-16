@@ -11,6 +11,7 @@ function PageService($resource, $route)
     });
 
     this.Page = $resource('/api/page/:wikiPath', {}, {
+        save: { method: 'PUT' },
         exists: { method: 'HEAD' },
         search: { method: 'GET', isArray: true }
     });
@@ -25,6 +26,17 @@ PageService.prototype.get = function(wikiPath)
     wikiPath = wikiPath || this.wikiPath;
     return this.Page.get({ wikiPath: wikiPath });
 }; // end get
+
+PageService.prototype.set = function(wikiPath, page)
+{
+    if(arguments.length == 1)
+    {
+        page = wikiPath;
+        wikiPath = this.wikiPath;
+    } // end if
+
+    return this.Page.save({ wikiPath: wikiPath }, page);
+}; // end set
 
 PageService.prototype.getAllTags = function()
 {

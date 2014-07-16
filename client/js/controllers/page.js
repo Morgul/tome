@@ -8,10 +8,11 @@ function WikiPageController($scope, wikiPage)
 {
     $scope.wikiPath = wikiPage.wikiPath || "welcome";
 
-    $scope.page = wikiPage.get($scope.wikiPath);
-    $scope.$root.title = $scope.page.title;
-
-    $scope.markdown = "# Welcome\nThis is my nice, wonderful welcome page! Don't you just love it?";
+    wikiPage.get($scope.wikiPath).$promise.then(function(page)
+    {
+        $scope.page = page;
+        $scope.$root.title = $scope.page.title;
+    });
 } // end WikiPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
