@@ -38,6 +38,12 @@ PageService.prototype.set = function(wikiPath, page)
     return this.Page.save({ wikiPath: wikiPath }, page);
 }; // end set
 
+PageService.prototype.remove = function(wikiPath)
+{
+    wikiPath = wikiPath || this.wikiPath;
+    return this.Page.delete({ wikiPath: wikiPath });
+};
+
 PageService.prototype.getAllTags = function()
 {
     return this.Tags.get();

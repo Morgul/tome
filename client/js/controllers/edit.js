@@ -25,6 +25,17 @@ function EditPageController($scope, $location, wikiPage)
         $scope.$root.title = "Editing " +  $scope.page.title;
     });
 
+    $scope.delete = function()
+    {
+        //TODO: Pop a modal form confirming the deletion!
+
+        wikiPage.remove($scope.wikiPath).$promise.then(function()
+        {
+            $scope.page = undefined;
+            $location.path('/wiki/' + $scope.wikiPath);
+        });
+    }; // end delete
+
     $scope.save = function()
     {
         wikiPage.set($scope.wikiPath, $scope.page).$promise.then(function()
@@ -40,6 +51,7 @@ function EditPageController($scope, $location, wikiPage)
 
     $scope.$on('save', $scope.save);
     $scope.$on('revert', $scope.revert);
+    $scope.$on('delete', $scope.delete);
 } // end EditPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
