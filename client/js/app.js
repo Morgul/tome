@@ -90,7 +90,11 @@ angular.module('tome', [
 
         renderer.link = function(href, title, text)
         {
-            return '<wiki-link url="\'' + href + '\'" hover="\'' + title + '\'" text="\'' + text + '\'"></wiki-link>';
+            var link = '<wiki-link url="\'' + href + '\'"';
+            link += title ? ' hover="\'' + title + '\'"' : '';
+            link += ' text="\'' + text + '\'"></wiki-link>';
+
+            return link;
         }; // end link parsing
 
         // Configure marked parser
