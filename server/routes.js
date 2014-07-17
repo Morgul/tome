@@ -182,6 +182,24 @@ route.post('/api/page/*', function(request, response)
     } // end if
 });
 
+// Delete wiki pages
+route.delete('/api/page/*', function(request, response)
+{
+    if(request.isAuthenticated())
+    {
+        var wikiPath = '/' + request.params.wildcard;
+
+        cache.remove(wikiPath, function()
+        {
+            response.end();
+        });
+    }
+    else
+    {
+        notAuthorized("Authentication Required.", response);
+    } // end if
+});
+
 //----------------------------------------------------------------------------------------------------------------------
 // User
 //----------------------------------------------------------------------------------------------------------------------

@@ -6,6 +6,7 @@
 
 var _ = require('lodash');
 var lunr = require('lunr');
+
 var logger = require('omega-logger').getLogger('cache');
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -73,6 +74,14 @@ MetaCache.prototype.set = function(key, value, callback)
 
     callback();
 }; // end set
+
+MetaCache.prototype.remove = function(key, callback)
+{
+    this._idx.remove(this._cache[key]);
+    delete this._cache[key];
+
+    callback();
+}; // end remove
 
 MetaCache.prototype.search = function(queryString, callback)
 {
