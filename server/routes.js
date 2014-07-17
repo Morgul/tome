@@ -9,7 +9,7 @@ var fs = require('fs');
 var router = require('router');
 var _ = require('lodash');
 
-var users = require('./users');
+var db = require('./database');
 var cache = require('./cache');
 var config = require('../config');
 var package = require('../package');
@@ -210,37 +210,33 @@ route.put('/api/user/:email', function(request, response)
 
     if(regBody.email)
     {
-        users.get(request.params.email).then(function(user)
+        db.users.get(request.params.email).then(function()
         {
-            if(!user)
+            error("User already exists.", response);
+        }).catch(db.Errors.DocumentNotFound, function()
+        {
+            if(!request.isAuthenticated() && config.registration === true)
             {
-                if(!request.isAuthenticated() && config.registration === true)
-                {
-                    logger.info("Expected: %s, Actual: %s",
-                        logger.dump(config.humanVerificationQuestions[regBody.humanIndex].answer),
-                        logger.dump(regBody.answer));
+                logger.info("Expected: %s, Actual: %s",
+                    logger.dump(config.humanVerificationQuestions[regBody.humanIndex].answer),
+                    logger.dump(regBody.answer));
 
-                    // Check the human verification question
-                    if(config.humanVerificationQuestions[regBody.humanIndex].answer == regBody.answer)
+                // Check the human verification question
+                if(config.humanVerificationQuestions[regBody.humanIndex].answer == regBody.answer)
+                {
+                    db.users.store({ email: regBody.email, display: regBody.display }).then(function()
                     {
-                        users.store({ email: regBody.email, display: regBody.display }).then(function()
-                        {
-                            response.end();
-                        });
-                    }
-                    else
-                    {
-                        error('Failed human verification.', response);
-                    } // end if
+                        response.end();
+                    });
                 }
                 else
                 {
-                    error("Registration not allowed.", response);
+                    error('Failed human verification.', response);
                 } // end if
             }
             else
             {
-                error("User already exists.", response);
+                error("Registration not allowed.", response);
             } // end if
         });
     }
@@ -254,24 +250,20 @@ route.post('/api/user/:email', function(request, response)
 {
     if(request.body.email)
     {
-        users.get(request.params.email).then(function(user)
+        db.users.get(request.params.email).then(function(user)
         {
-            if(!user)
+            // Update the user
+            if(request.isAuthenticated() || request.user == request.params.email)
             {
-                error("User does not exist.", response);
+                db.users.merge(request.body).then(function(){ response.end(); });
             }
             else
             {
-                // Update the user
-                if(request.isAuthenticated() || request.user == request.params.email)
-                {
-                    users.merge(request.body).then(function(){ response.end(); });
-                }
-                else
-                {
-                    notAuthorized("You must be logged in as the user you are attempting to modify.", response);
-                } // end if
+                notAuthorized("You must be logged in as the user you are attempting to modify.", response);
             } // end if
+        }).catch(db.Errors.DocumentNotFound, function()
+        {
+            error("User does not exist.", response);
         });
     }
     else

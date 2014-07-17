@@ -7,10 +7,10 @@
 var passport = require('passport');
 var PersonaStrategy = require('passport-persona').Strategy;
 
-var config = require('../config');
-var users = require('./users');
+var db = require('./database');
 var router = require('./routes');
 var errors = require('./errors');
+var config = require('../config');
 
 var logger = require('omega-logger').getLogger('auth');
 
@@ -69,9 +69,12 @@ passport.serializeUser(function(user, done)
 
 passport.deserializeUser(function(email, done)
 {
-    users.get(email).then(function(user)
+    db.users.get(email).then(function(user)
     {
         done(null, user);
+    }).catch(function(error)
+    {
+        done(error);
     });
 });
 
@@ -80,34 +83,33 @@ passport.use(new PersonaStrategy({
     },
     function(email, done)
     {
-        users.get(email).then(function(user)
+        db.users.get(email).then(function(user)
         {
             if(user)
             {
                 done(null, user);
+            } // end if
+        }).catch(db.Errors.DocumentNotFound, function()
+        {
+            if(config.registration === 'auto')
+            {
+                // Auto-create users
+                 user = { email: email };
+                 db.users.store(user).then(function()
+                 {
+                     done(null, user);
+                 });
+            }
+            else if(config.registration === true)
+            {
+                // Force registration
+                var error = new errors.RegistrationRequiredError();
+                error.email = email;
+                done(error);
             }
             else
             {
-                if(config.registration === 'auto')
-                {
-                    // Auto-create users
-                     user = { email: email };
-                     users.store(user).then(function()
-                     {
-                         done(null, user);
-                     });
-                }
-                else if(config.registration === true)
-                {
-                    // Force registration
-                    var error = new errors.RegistrationRequiredError();
-                    error.email = email;
-                    done(error);
-                }
-                else
-                {
-                    done(new errors.NotAuthorizedError("Registration disabled."));
-                } // end if
+                done(new errors.NotAuthorizedError("Registration disabled."));
             } // end if
         });
     })

@@ -7,12 +7,33 @@
 module.exports = {
 
     // -----------------------------------------------------------------------------------------------------------------
+    // General
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // The wiki page you want your base URL to redirect to
+    frontPage: '/welcome',
+
+    // Name of your wiki
+    name: 'Initial Tome Wiki',
+
+    // URL to the logo for your wiki
+    logo: '/images/tome.png',
+
+    // Description for your wiki
+    description: 'This is the initial (for testing) Tome Wiki',
+
+    // The database will be `tome_` plus this string.
+    databaseSuffix: 'testing',
+
+    // The default message inserted when making a change
+    defaultCommit: "minor edit",
+
+    // -----------------------------------------------------------------------------------------------------------------
     // Authentication
     // -----------------------------------------------------------------------------------------------------------------
 
     // The url to use for persona authentication
     audience: "http://cypher:4000",
-    //audience: "http://localhost:4000",
 
     // The prefix used for secure cookies.
     sid: 'tome',
