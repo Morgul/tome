@@ -20,7 +20,6 @@ var redirect = require('connect-redirection');
 var passport = require('passport');
 
 var router = require('./server/routes');
-var parser = require('./server/parser');
 var auth = require('./server/authentication');
 
 var package = require('./package');

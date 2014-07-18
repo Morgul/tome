@@ -230,12 +230,12 @@ var pages = {
 
     getTags: function()
     {
-        var tags = [];
-        return db.Revision.run().then(function(revisions)
+        return db.Slug.getJoin().run().then(function(slugs)
         {
-            _.forIn(revisions, function(value)
+            var tags = [];
+            slugs.forEach(function(slugInst)
             {
-                tags = tags.concat(value.tags || []);
+                tags = tags.concat((slugInst.currentRevision || {}).tags || [])
             });
 
             return _.uniq(tags).sort();
@@ -244,10 +244,10 @@ var pages = {
 
     getByTags: function(tags)
     {
-        return db.Revision.run().then(function(revisions)
+        return db.Slug.getJoin().run().then(function(slugs)
         {
-            var self = this;
             var results = [];
+            var revisions = slugs.map(function(slug){ return slug.currentRevision; });
 
             function filterByTag(tag, docs)
             {
