@@ -4,8 +4,10 @@
 // @module database.js
 //----------------------------------------------------------------------------------------------------------------------
 
+var _ = require('lodash');
 var Promise = require('bluebird');
 
+var index = require('./index');
 var db = require('./models');
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -41,6 +43,8 @@ var users = {
 // Pages
 //----------------------------------------------------------------------------------------------------------------------
 
+var bodyIndex = new index.BodyIndex(module.exports.pages);
+
 function _getPageID(slug)
 {
     return db.Slug.get(slug).getJoin().run().then(function(slugInst)
@@ -52,7 +56,10 @@ function _getPageID(slug)
 var pages = {
     get: function(slug)
     {
-        return db.Slug.get(slug).getJoin().run();
+        return db.Slug.get(slug).getJoin().run().then(function(fullPage)
+        {
+            return fullPage.currentRevision;
+        });
     },
 
     getHistory: function(slug)
@@ -93,7 +100,10 @@ var pages = {
                         currentRevision_id: revInst.id
                     });
 
-                    return slugInst.save();
+                    return slugInst.save().then(function()
+                    {
+                        bodyIndex.add(revInst);
+                    });
                 });
             });
         });
@@ -112,6 +122,8 @@ var pages = {
             {
                 return db.Slug.get(slug).getJoin().run().then(function(slugInst)
                 {
+                    var oldRevision = slugInst.currentRevision;
+
                     var revInst = new db.Revision({
                         page_id: pageID,
                         slug_id: slug,
@@ -121,18 +133,40 @@ var pages = {
                         commit_id: commitInst.id
                     });
 
-                    revInst.title = revInst.title || slugInst.currentRevision.title;
-                    revInst.tags = revInst.tags || slugInst.currentRevision.tags;
-                    revInst.body = revInst.body || slugInst.currentRevision.body;
+                    revInst.title = revInst.title || oldRevision.title;
+                    revInst.tags = revInst.tags || oldRevision.tags;
+                    revInst.body = revInst.body || oldRevision.body;
 
                     return revInst.save().then(function(revInst)
                     {
                         slugInst.currentRevision_id = revInst.id;
 
-                        return slugInst.save();
+                        return slugInst.save().then(function(slugInst)
+                        {
+                            // Update our index if we successfully save.
+                            bodyIndex.remove(oldRevision);
+                            bodyIndex.add(revInst);
+
+                            return slugInst;
+                        });
                     });
                 });
             });
+        });
+    },
+
+    createOrUpdate: function(slug, page, user)
+    {
+        return module.exports.pages.exists(slug).then(function(exists)
+        {
+            if(exists)
+            {
+                return module.exports.pages.update(slug, page, user);
+            }
+            else
+            {
+                return module.exports.pages.create(slug, page, user);
+            } // end if
         });
     },
 
@@ -149,6 +183,8 @@ var pages = {
             {
                 return db.Slug.get(slug).run().then(function(slugInst)
                 {
+                    var oldRevision = slugInst.currentRevision;
+
                     var revInst = new db.Revision({
                         page_id: pageID,
                         slug_id: slug,
@@ -160,7 +196,12 @@ var pages = {
                     {
                         slugInst.currentRevision_id = revInst.id;
 
-                        return slugInst.save();
+                        return slugInst.save().then(function(slugInst)
+                        {
+                            bodyIndex.remove(oldRevision);
+
+                            return slugInst;
+                        });
                     });
                 });
             });
@@ -180,6 +221,64 @@ var pages = {
     recentActivity: function(limit)
     {
         return db.Revision.orderBy('commit.committed').limit(limit).getJoin().run();
+    },
+
+    search: function(query)
+    {
+        return bodyIndex.search(query);
+    },
+
+    getTags: function()
+    {
+        var tags = [];
+        return db.Revision.run().then(function(revisions)
+        {
+            _.forIn(revisions, function(value)
+            {
+                tags = tags.concat(value.tags || []);
+            });
+
+            return _.uniq(tags).sort();
+        });
+    },
+
+    getByTags: function(tags)
+    {
+        return db.Revision.run().then(function(revisions)
+        {
+            var self = this;
+            var results = [];
+
+            function filterByTag(tag, docs)
+            {
+                return _.filter(docs, { tags: [tag] });
+            } // end filter ByTag
+
+            _.forEach(tags, function(tag, index)
+            {
+                results = filterByTag(tag, index == 0 ? revisions : results);
+            });
+
+            return results;
+        });
+    },
+
+    exists: function(slug)
+    {
+        return new Promise(function(resolve)
+        {
+            _getPageID(slug).then(function()
+            {
+                resolve(true);
+            }).catch(db.Errors.DocumentNotFound, function()
+            {
+                resolve(false);
+            }).error(function()
+            {
+                // If something blows up, we count this as nonexistence.
+                resolve(false);
+            });
+        });
     }
 }; // end pages
 
@@ -188,7 +287,8 @@ var pages = {
 module.exports = {
     users: users,
     pages: pages,
-    Errors: db.Errors
+    Errors: db.Errors,
+    index: bodyIndex
 }; // end exports
 
 //----------------------------------------------------------------------------------------------------------------------

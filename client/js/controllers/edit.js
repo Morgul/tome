@@ -22,6 +22,11 @@ function EditPageController($scope, $location, wikiPage)
     wikiPage.get($scope.wikiPath).$promise.then(function(page)
     {
         $scope.page = page;
+
+        // Clear out existing commit, if any
+        delete $scope.page.commit;
+
+        // Set the page title
         $scope.$root.title = "Editing " +  $scope.page.title;
     });
 

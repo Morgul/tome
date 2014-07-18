@@ -1,6 +1,6 @@
 <div  ng-repeat="(tag, docs) in tags" class="container">
     <h2>#{{ tag }}</h2>
     <ul>
-        <li ng-repeat="doc in docs"><a href="/wiki{{doc.id}}">{{ doc.title }}</a></li>
+        <li ng-repeat="doc in docs"><a href="/wiki{{doc.slug_id}}">{{ doc.title }}</a></li>
     </ul>
 </div>

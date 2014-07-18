@@ -29,7 +29,7 @@ var config = require('./config');
 //----------------------------------------------------------------------------------------------------------------------
 
 // Parse wiki pages
-parser.parse();
+//parser.parse();
 
 var server = connect()
     //.use(connect.logger('dev'))

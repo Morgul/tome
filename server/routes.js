@@ -10,7 +10,7 @@ var router = require('router');
 var _ = require('lodash');
 
 var db = require('./database');
-var cache = require('./cache');
+//var cache = require('./cache');
 var config = require('../config');
 var package = require('../package');
 
@@ -61,7 +61,7 @@ var route = router();
 route.get('/api/tag', function(request, response)
 {
     logger.info('user:', request.user, request.isAuthenticated());
-    cache.getTags(function(results)
+    db.pages.getTags().then(function(results)
     {
         respond(results, response);
     });
@@ -75,7 +75,7 @@ route.get('/api/page', function(request, response)
 {
     if(request.query.body)
     {
-        cache.search(request.query.body, function(results)
+        db.pages.search(request.query.body).then(function(results)
         {
             respond(results, response);
         });
@@ -86,14 +86,14 @@ route.get('/api/page', function(request, response)
         var tags = request.query.tags.replace(' ', '').split(';');
         tags = tags.map(function(tag){ return tag.trim(); });
 
-        cache.getByTags(tags, function(results)
+        db.pages.getByTags(tags).then(function(results)
         {
             respond(results, response);
         });
     }
-    else if(request.query.id)
+    else if(request.query.slug)
     {
-        //TODO: implement id search
+        //TODO: implement slug search
     }
     else if(request.query.title)
     {
@@ -110,7 +110,15 @@ route.get('/api/page', function(request, response)
 
 route.head('/api/page/*', function(request, response)
 {
-    cache.exists('/' + request.params.wildcard, function(exists)
+    var slug = '/' + request.params.wildcard;
+
+    // Handle welcome page
+    if(slug == '/' || slug == '//')
+    {
+        slug = config.frontPage || '/welcome';
+    } // end if
+
+    db.pages.exists(slug).then(function(exists)
     {
         if(exists)
         {
@@ -125,22 +133,27 @@ route.head('/api/page/*', function(request, response)
 
 route.get('/api/page/*', function(request, response)
 {
-    cache.get('/' + request.params.wildcard, function(wikiPage)
-    {
-        // Handle welcome page
-        if(request.params.wildcard == '/')
-        {
-            wikiPage = cache.get('/welcome');
-        } // end if
+    var slug = '/' + request.params.wildcard;
 
-        if(wikiPage)
-        {
-            respond(wikiPage, response);
-        }
-        else
-        {
-            wiki404(response);
-        } // end if
+    // Handle welcome page
+    if(slug == '/' || slug == '//')
+    {
+        slug = config.frontPage || '/welcome';
+    } // end if
+
+    db.pages.get(slug).then(function(wikiPage)
+    {
+        respond(wikiPage, response);
+    }).catch(db.Errors.DocumentNotFound, function()
+    {
+        wiki404(response);
+    }).error(function(err)
+    {
+        // FIXME: Thinky doesn't throw a DocumentNotFound error when you use `getJoin()`, instead it throws an
+        // uncatchable error. This means we can't tell the difference between a page not found, or some other error.
+        //error(err.message || err.toString(), response);
+
+        wiki404(response);
     });
 });
 
@@ -149,29 +162,10 @@ route.put('/api/page/*', function(request, response)
 {
     if(request.isAuthenticated())
     {
-        var wikiPath = '/' + request.params.wildcard;
+        var slug = '/' + request.params.wildcard;
         var reqBody = request.body;
 
-        cache.set(wikiPath, reqBody, function()
-        {
-            response.end();
-        });
-    }
-    else
-    {
-        notAuthorized("Authentication Required.", response);
-    } // end if
-});
-
-// Update wiki pages
-route.post('/api/page/*', function(request, response)
-{
-    if(request.isAuthenticated())
-    {
-        var wikiPath = '/' + request.params.wildcard;
-        var reqBody = request.body;
-
-        cache.set(wikiPath, reqBody, function()
+        db.pages.createOrUpdate(slug, reqBody, request.user).then(function()
         {
             response.end();
         });
@@ -187,9 +181,9 @@ route.delete('/api/page/*', function(request, response)
 {
     if(request.isAuthenticated())
     {
-        var wikiPath = '/' + request.params.wildcard;
+        var slug = '/' + request.params.wildcard;
 
-        cache.remove(wikiPath, function()
+        db.pages.delete(slug).then(function()
         {
             response.end();
         });
