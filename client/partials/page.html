@@ -5,6 +5,9 @@
             <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
         </span>
         <h1 class="page-title"><i class="fa fa-file-text-o"></i> {{ page.title || wikiPath }}</h1>
+        <div ng-if="revision">
+            <span class="text-muted">@Revision {{ revision }}</span> (<a href="/wiki/{{ wikiPath }}">current</a>)
+        </div>
         <div class="visible-xs">
             <hr>
             <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>

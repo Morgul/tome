@@ -62,12 +62,20 @@ var pages = {
         });
     },
 
+    getRevision: function(revID)
+    {
+        return db.Revision.get(revID).getJoin().run();
+    },
+
     getHistory: function(slug)
     {
         return _getPageID(slug).then(function(pageID)
         {
-            return db.Revision.filter({ page_id: pageID })
-                .orderBy('commit.committed').getJoin().run();
+            return db.Revision.filter({ page_id: pageID }).getJoin().run().map(function(revision)
+            {
+                revision.body = undefined;
+                return revision;
+            });
         });
     },
 

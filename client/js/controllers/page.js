@@ -4,19 +4,31 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function WikiPageController($scope, wikiPage)
+function WikiPageController($scope, $route, wikiPage)
 {
     $scope.wikiPath = wikiPage.wikiPath || "welcome";
+    $scope.revision = $route.current.params.revision;
 
-    wikiPage.get($scope.wikiPath).$promise.then(function(page)
+    if($scope.revision)
     {
-        $scope.page = page;
-        $scope.$root.title = $scope.page.title;
-    });
+        wikiPage.getRevision($scope.revision).$promise.then(function(page)
+        {
+            $scope.page = page;
+            $scope.$root.title = $scope.page.title;
+        });
+    }
+    else
+    {
+        wikiPage.get($scope.wikiPath).$promise.then(function(page)
+        {
+            $scope.page = page;
+            $scope.$root.title = $scope.page.title;
+        });
+    } // end if
 } // end WikiPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('WikiPageController', ['$scope', 'wikiPage', WikiPageController]);
+angular.module('tome.controllers').controller('WikiPageController', ['$scope', '$route', 'wikiPage', WikiPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------
