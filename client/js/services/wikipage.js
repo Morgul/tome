@@ -13,6 +13,7 @@ function PageService($resource, $route)
     this.Page = $resource('/api/page/:wikiPath', {}, {
         save: { method: 'PUT' },
         exists: { method: 'HEAD' },
+        history: { url: '/api/history/:wikiPath', method: 'GET', isArray: true },
         search: { method: 'GET', isArray: true }
     });
 
@@ -52,6 +53,12 @@ PageService.prototype.getAllTags = function()
 PageService.prototype.getByTag = function(tag)
 {
     return this.Page.search({ tags: tag });
+}; // end get
+
+PageService.prototype.getHistory = function(wikiPath)
+{
+    wikiPath = wikiPath || this.wikiPath;
+    return this.Page.history({ wikiPath: wikiPath });
 }; // end get
 
 PageService.prototype.exists = function(wikiPath, callback)

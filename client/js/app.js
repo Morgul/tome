@@ -27,6 +27,7 @@ angular.module('tome', [
             .when('/recent', {templateUrl: '/partials/recent.html',   controller: 'RecentPageController'})
             .when('/tags', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
             .when('/edit/:wikiPath*', {templateUrl: '/partials/edit.html',   controller: 'EditPageController'})
+            .when('/history/:wikiPath*', {templateUrl: '/partials/history.html',   controller: 'PageHistoryController'})
             .when('/wiki/:wikiPath*', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
             .otherwise({redirectTo: '/wiki/welcome'});
     }])

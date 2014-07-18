@@ -1,0 +1,9 @@
+<div class="container">
+    <h1>History for <code>/{{ wikiPath }}</code></h1>
+    <ul>
+        <li ng-repeat="revision in revisions | orderBy: '-commit.committed'">
+            <span class="text-muted">{{  revision.commit.committed | date:'short' }}</span>
+            (<a href="/profile/{{ revision.commit.user.email }}">{{ revision.commit.user.display || revision.commit.user.email }}</a>):
+            <b><a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">{{ revision.commit.message }}</a></b></li>
+    </ul>
+</div>
