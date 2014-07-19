@@ -4,7 +4,7 @@
 // @module header.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function WikiLinkController($scope, $http, wikiPage)
+function WikiLinkController($scope, $route, wikiPage)
 {
     $scope.title = $scope.title == 'null' ? "" : $scope.title;
 
@@ -12,19 +12,26 @@ function WikiLinkController($scope, $http, wikiPage)
     $scope.nonexistant = false;
     $scope.url = ($scope.href.indexOf('/') != 0 && !$scope.external) ? '/wiki/' + $scope.href : $scope.href;
 
+    var routeKeys = Object.keys($route.routes);
+
+    // Handle internal pages
+    for(var idx = 0; idx < routeKeys.length; idx++)
+    {
+        var routeKey = routeKeys[idx];
+        var route = $route.routes[routeKey];
+
+        if(route.regexp && route.regexp.test($scope.href) && routeKey.indexOf('/wiki') == -1)
+        {
+            // We know we exist, because we're linking to one of our internal pages.
+            return;
+        } // end if
+    } // end for
+
     if(!$scope.external)
     {
         wikiPage.exists($scope.href, function(exists)
         {
-            // Handle internal wiki pages
-            if(!exists)
-            {
-                $http.get($scope.href)
-                    .error(function()
-                    {
-                        $scope.nonexistant = true;
-                    });
-            } // end if
+            $scope.nonexistant = !exists;
         });
     } // end if
 } // end WikiLinkController
@@ -46,7 +53,7 @@ function WikiLinkDirective()
                 elem.attr('title', scope.title);
             } // end if
         },
-        controller: ['$scope', '$http', 'wikiPage', WikiLinkController],
+        controller: ['$scope', '$route', 'wikiPage', WikiLinkController],
         replace: true
     }
 } // end WikiLinkDirective
