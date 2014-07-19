@@ -15,6 +15,20 @@
             </div>
         </div>
     </div>
+    <hr>
+    <div class="form-group item-limit">
+        <select class="pull-right form-control" id="limitList" ng-model="bleh.limit" ng-options="limit.value as limit.text for limit in limits"></select>
+        <label class="pull-right" for="limitList">Show</label>
+    </div>
+    <h3>Commit History</h3>
+    <ul>
+        <li ng-repeat="commit in commits | orderBy: '-committed'">
+            <span class="text-muted">{{  commit.committed | date:'short' }}</span>:
+            <code>{{ commit.revisions[0].slug_id }}</code> -
+            <b>{{ commit.message }}</b>
+            (<a href="/wiki{{ commit.revisions[0].slug_id }}?revision={{ commit.revisions[0].id }}">view</a>) (<a href="/diff/{{ commit.revisions[0].id }}">diff</a>)
+        </li>
+    </ul>
 </div>
 
 <!-- If we're just viewing -->
@@ -38,7 +52,19 @@
             </div>
         </div>
         <hr>
-        <h3 class="text-align">Commit history goes here...</h3>
+        <div class="form-group item-limit">
+            <select class="pull-right form-control" id="limitList" ng-model="bleh.limit" ng-options="limit.value as limit.text for limit in limits"></select>
+            <label class="pull-right" for="limitList">Show</label>
+        </div>
+        <h3>Commit History</h3>
+        <ul>
+            <li ng-repeat="commit in commits | orderBy: '-committed'">
+                <span class="text-muted">{{  commit.committed | date:'short' }}</span>:
+                <code>{{ commit.revisions[0].slug_id }}</code> -
+                <b>{{ commit.message }}</b>
+                (<a href="/wiki{{ commit.revisions[0].slug_id }}?revision={{ commit.revisions[0].id }}">view</a>) (<a href="/diff/{{ commit.revisions[0].id }}">diff</a>)
+            </li>
+        </ul>
     </div>
 </div>
 

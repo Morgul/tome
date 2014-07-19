@@ -20,6 +20,41 @@ var users = {
         return db.User.get(email).run();
     },
 
+    getCommits: function(email, limit)
+    {
+        limit = parseInt(limit);
+        if(limit)
+        {
+            return db.Commit.filter({ user_id: email }).getJoin().orderBy(db.r.desc('committed')).limit(limit).run().map(function(commit)
+                {
+                    commit.revisions.forEach(function(revision)
+                    {
+                        revision.body = undefined;
+                        revision.slug = undefined;
+                        revision.page = undefined;
+                        revision.title = undefined;
+                        revision.tags = undefined;
+                    });
+                    return commit;
+                });
+        }
+        else
+        {
+            return db.Commit.filter({ user_id: email }).getJoin().orderBy(db.r.desc('committed')).run().map(function(commit)
+                {
+                    commit.revisions.forEach(function(revision)
+                    {
+                        revision.body = undefined;
+                        revision.slug = undefined;
+                        revision.page = undefined;
+                        revision.title = undefined;
+                        revision.tags = undefined;
+                    });
+                    return commit;
+                });
+        } // end if
+    },
+
     store: function(user)
     {
         var userInst = new db.User(user);
@@ -69,14 +104,25 @@ var pages = {
 
     getHistory: function(slug, limit)
     {
-        limit = parseInt(limit) || undefined;
+        limit = parseInt(limit);
         return _getPageID(slug).then(function(pageID)
         {
-            return db.Revision.filter({ page_id: pageID }).getJoin().limit(limit).run().map(function(revision)
+            if(limit)
             {
-                revision.body = undefined;
-                return revision;
-            });
+                return db.Revision.filter({ page_id: pageID }).getJoin().limit(limit).run().map(function(revision)
+                {
+                    revision.body = undefined;
+                    return revision;
+                });
+            }
+            else
+            {
+                return db.Revision.filter({ page_id: pageID }).getJoin().run().map(function(revision)
+                {
+                    revision.body = undefined;
+                    return revision;
+                });
+            } // end if
         });
     },
 
@@ -229,12 +275,23 @@ var pages = {
 
     recentActivity: function(limit)
     {
-        limit = parseInt(limit) || undefined;
-        return db.Revision.getJoin().orderBy(db.r.row("commit")("committed")).limit(limit).run().map(function(revision)
+        limit = parseInt(limit);
+        if(limit)
         {
-            revision.body = undefined;
-            return revision;
-        });
+            return db.Revision.getJoin().orderBy(db.r.row("commit")("committed")).limit(limit).run().map(function(revision)
+            {
+                revision.body = undefined;
+                return revision;
+            });
+        }
+        else
+        {
+            return db.Revision.getJoin().orderBy(db.r.row("commit")("committed")).run().map(function(revision)
+            {
+                revision.body = undefined;
+                return revision;
+            });
+        } // end if
     },
 
     search: function(query)

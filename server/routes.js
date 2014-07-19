@@ -73,7 +73,7 @@ route.get('/api/tag', function(request, response)
 
 route.get('/api/history', function(request, response)
 {
-    var limit = request.query.limit || 25;
+    var limit = request.query.limit;
     db.pages.recentActivity(limit).then(function(activity)
     {
         respond(activity, response);
@@ -82,7 +82,7 @@ route.get('/api/history', function(request, response)
 
 route.get('/api/history/*', function(request, response)
 {
-    var limit = request.query.limit || 25;
+    var limit = request.query.limit;
     var slug = '/' + request.params.wildcard;
 
     // Handle welcome page
@@ -246,6 +246,29 @@ route.delete('/api/page/*', function(request, response)
     else
     {
         notAuthorized("Authentication Required.", response);
+    } // end if
+});
+
+//----------------------------------------------------------------------------------------------------------------------
+// Commits
+//----------------------------------------------------------------------------------------------------------------------
+
+route.get('/api/commit', function(request, response)
+{
+    var user = request.query.user;
+    var limit = request.query.limit;
+
+    if(user)
+    {
+        db.users.getCommits(user, limit).then(function(commits)
+        {
+            respond(commits, response);
+        });
+    }
+    else
+    {
+        //TODO: Implement looking up commits without a user
+        error("Not Implemented.", response);
     } // end if
 });
 
