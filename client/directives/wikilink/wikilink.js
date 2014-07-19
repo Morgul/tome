@@ -10,7 +10,7 @@ function WikiLinkController($scope, wikiPage)
 
     $scope.external = $scope.href.indexOf('http') == 0;
     $scope.nonexistant = false;
-    $scope.url = $scope.href.indexOf('/') != 0 ? '/wiki/' + $scope.href : $scope.href;
+    $scope.url = ($scope.href.indexOf('/') != 0 && !$scope.external) ? '/wiki/' + $scope.href : $scope.href;
 
     if(!$scope.external)
     {
