@@ -91,11 +91,15 @@ img.profile-image {
 // Search page
 //----------------------------------------------------------------------------------------------------------------------
 
-.search-results {
+.search-results,
+.doc-list {
     li {
-        margin-bottom: 10px;
+        & + li {
+            margin-top: 10px;
+        }
 
-        .result-title {
+        .result-title,
+        .doc-title {
             font-size: 1.25em;
         }
     }

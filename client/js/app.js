@@ -24,7 +24,7 @@ angular.module('tome', [
             .when('/registration', {templateUrl: '/partials/registration.html',   controller: 'RegistrationPageController'})
             .when('/search', {templateUrl: '/partials/search.html',   controller: 'SearchPageController'})
             .when('/recent', {templateUrl: '/partials/recent.html',   controller: 'RecentPageController'})
-            .when('/tags', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
+            .when('/tags/:tag?', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
             .when('/profile/:email?', {templateUrl: '/partials/profile.html',   controller: 'ProfilePageController'})
             .when('/edit/:wikiPath*', {templateUrl: '/partials/edit.html',   controller: 'EditPageController'})
             .when('/history/:wikiPath*', {templateUrl: '/partials/history.html',   controller: 'PageHistoryController'})

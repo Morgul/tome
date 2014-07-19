@@ -60,7 +60,6 @@ var route = router();
 
 route.get('/api/tag', function(request, response)
 {
-    logger.info('user:', request.user, request.isAuthenticated());
     db.pages.getTags().then(function(results)
     {
         respond(results, response);
