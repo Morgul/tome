@@ -71,6 +71,61 @@ route.get('/api/tag', function(request, response)
 // Pages
 //----------------------------------------------------------------------------------------------------------------------
 
+route.get('/api/history', function(request, response)
+{
+    var limit = request.query.limit || 25;
+    db.pages.recentActivity(limit).then(function(activity)
+    {
+        respond(activity, response);
+    });
+});
+
+route.get('/api/history/*', function(request, response)
+{
+    var limit = request.query.limit || 25;
+    var slug = '/' + request.params.wildcard;
+
+    // Handle welcome page
+    if(slug == '/' || slug == '//')
+    {
+        slug = config.frontPage || '/welcome';
+    } // end if
+
+    db.pages.getHistory(slug, limit).then(function(wikiPage)
+    {
+        respond(wikiPage, response);
+    }).catch(db.Errors.DocumentNotFound, function()
+    {
+        wiki404(response);
+    }).error(function(err)
+    {
+        // FIXME: Thinky doesn't throw a DocumentNotFound error when you use `getJoin()`, instead it throws an
+        // uncatchable error. This means we can't tell the difference between a page not found, or some other error.
+        //error(err.message || err.toString(), response);
+
+        wiki404(response);
+    });
+});
+
+route.get('/api/revision/:revision', function(request, response)
+{
+    db.pages.getRevision(request.params.revision).then(function(revision)
+    {
+        respond(revision, response);
+    }).catch(db.Errors.DocumentNotFound, function()
+    {
+        wiki404(response);
+    }).error(function(err)
+    {
+        // FIXME: Thinky doesn't throw a DocumentNotFound error when you use `getJoin()`, instead it throws an
+        // uncatchable error. This means we can't tell the difference between a page not found, or some other error.
+        //error(err.message || err.toString(), response);
+
+        wiki404(response);
+    });
+});
+
+
 route.get('/api/page', function(request, response)
 {
     if(request.query.body)
@@ -128,50 +183,6 @@ route.head('/api/page/*', function(request, response)
         {
             wiki404(response);
         } // end if
-    });
-});
-
-route.get('/api/revision/:revision', function(request, response)
-{
-    db.pages.getRevision(request.params.revision).then(function(revision)
-    {
-        respond(revision, response);
-    }).catch(db.Errors.DocumentNotFound, function()
-    {
-        wiki404(response);
-    }).error(function(err)
-    {
-        // FIXME: Thinky doesn't throw a DocumentNotFound error when you use `getJoin()`, instead it throws an
-        // uncatchable error. This means we can't tell the difference between a page not found, or some other error.
-        //error(err.message || err.toString(), response);
-
-        wiki404(response);
-    });
-});
-
-route.get('/api/history/*', function(request, response)
-{
-    var slug = '/' + request.params.wildcard;
-
-    // Handle welcome page
-    if(slug == '/' || slug == '//')
-    {
-        slug = config.frontPage || '/welcome';
-    } // end if
-
-    db.pages.getHistory(slug).then(function(wikiPage)
-    {
-        respond(wikiPage, response);
-    }).catch(db.Errors.DocumentNotFound, function()
-    {
-        wiki404(response);
-    }).error(function(err)
-    {
-        // FIXME: Thinky doesn't throw a DocumentNotFound error when you use `getJoin()`, instead it throws an
-        // uncatchable error. This means we can't tell the difference between a page not found, or some other error.
-        //error(err.message || err.toString(), response);
-
-        wiki404(response);
     });
 });
 

@@ -67,11 +67,12 @@ var pages = {
         return db.Revision.get(revID).getJoin().run();
     },
 
-    getHistory: function(slug)
+    getHistory: function(slug, limit)
     {
+        limit = parseInt(limit) || undefined;
         return _getPageID(slug).then(function(pageID)
         {
-            return db.Revision.filter({ page_id: pageID }).getJoin().run().map(function(revision)
+            return db.Revision.filter({ page_id: pageID }).getJoin().limit(limit).run().map(function(revision)
             {
                 revision.body = undefined;
                 return revision;
@@ -228,7 +229,12 @@ var pages = {
 
     recentActivity: function(limit)
     {
-        return db.Revision.orderBy('commit.committed').limit(limit).getJoin().run();
+        limit = parseInt(limit) || undefined;
+        return db.Revision.getJoin().orderBy(db.r.row("commit")("committed")).limit(limit).run().map(function(revision)
+        {
+            revision.body = undefined;
+            return revision;
+        });
     },
 
     search: function(query)

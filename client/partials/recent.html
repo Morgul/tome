@@ -1,1 +1,18 @@
-<h1>Not Implemented Yet</h1>
+<div class="container">
+    <div class="form-group item-limit">
+        <select class="pull-right form-control" id="limitList" ng-model="limit" ng-options="limit.value as limit.text for limit in limits"></select>
+        <label class="pull-right" for="limitList">Show</label>
+    </div>
+    <h1>
+        Recent Activity
+    </h1>
+    <ul>
+        <li ng-repeat="revision in revisions | orderBy: '-commit.committed'">
+            <span class="text-muted">{{  revision.commit.committed | date:'short' }}</span>
+            (<a href="/profile/{{ revision.commit.user.email }}">{{ revision.commit.user.display || revision.commit.user.email }}</a>):
+            <code>{{ revision.slug_id }}</code> -
+            <b>{{ revision.commit.message }}</b>
+            (<a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">view</a>) (<a href="/commit/{{ revision.commit.id }}">diff</a>)
+        </li>
+    </ul>
+</div>
