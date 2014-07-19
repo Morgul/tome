@@ -22,10 +22,10 @@ angular.module('tome', [
         $locationProvider.html5Mode(true);
         $routeProvider
             .when('/registration', {templateUrl: '/partials/registration.html',   controller: 'RegistrationPageController'})
-            .when('/profile', {templateUrl: '/partials/profile.html',   controller: 'ProfilePageController'})
             .when('/search', {templateUrl: '/partials/search.html',   controller: 'SearchPageController'})
             .when('/recent', {templateUrl: '/partials/recent.html',   controller: 'RecentPageController'})
             .when('/tags', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
+            .when('/profile/:email?', {templateUrl: '/partials/profile.html',   controller: 'ProfilePageController'})
             .when('/edit/:wikiPath*', {templateUrl: '/partials/edit.html',   controller: 'EditPageController'})
             .when('/history/:wikiPath*', {templateUrl: '/partials/history.html',   controller: 'PageHistoryController'})
             .when('/wiki/:wikiPath*', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})

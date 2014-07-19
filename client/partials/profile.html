@@ -1,9 +1,5 @@
-<div ng-if="!user" class="container">
-    <h3 class="text-center">Please sign in to edit your profile.</h3>
-</div>
-
-<!-- If we're logged in -->
-<div ng-if="user" class="container">
+<!-- If we're editing our profile in -->
+<div ng-if="editing" class="container">
     <h2>Edit Your Profile</h2>
     <div class="media">
         <a class="pull-left" href="#">
@@ -20,3 +16,30 @@
         </div>
     </div>
 </div>
+
+<!-- If we're just viewing -->
+<div ng-if="!editing">
+    <!-- If we can't find the profile -->
+    <div ng-if="!user" class="container">
+        <h3 class="text-center">User not found.</h3>
+    </div>
+
+    <!-- If we have the user -->
+    <div ng-if="user" class="container">
+        <h2>{{user.display || user.email}}'s Profile</h2>
+        <div class="media">
+            <a class="pull-left" href="#">
+                <img class="media-object img-thumbnail navbar-right profile-image" gravatar-src="user.email" gravatar-size="200" title="{{ user.display || user.email }}">
+            </a>
+            <div class="media-body">
+                <h4 class="media-heading">Email: <code>{{ user.email }}</code></h4>
+                <h4 class="media-heading">Display Name: <span class="">{{ user.display }}</span></h4>
+                <h4 class="media-heading">Joined: <span class="">{{ user.created | date:'shortDate' }}</span></h4>
+            </div>
+        </div>
+        <hr>
+        <h3 class="text-align">Commit history goes here...</h3>
+    </div>
+</div>
+
+

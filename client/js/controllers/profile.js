@@ -4,12 +4,29 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function ProfilePageController($scope, $http, Persona)
+function ProfilePageController($scope, $http, $route, $location, Persona)
 {
-    Object.defineProperty($scope, 'user', {
-        get: function(){ return Persona.currentUser; },
-        set: function(val){ Persona.currentUser = val; }
-    });
+    $scope.email = $route.current.params.email;
+
+    // Support `/profile` as a redirect to your profile, when signed in.
+    if(!$scope.email && Persona.currentUser)
+    {
+        $location.path('/profile/' + Persona.currentUser.email)
+    } // end if
+
+    if($scope.email == (Persona.currentUser || {}).email)
+    {
+        $scope.editing = true;
+        $scope.user = Persona.currentUser;
+    }
+    else
+    {
+        $http.get('/api/user/' + $scope.email)
+            .success(function(user)
+            {
+                $scope.user = user;
+            });
+    } // end if
 
     $scope.save = function()
     {
@@ -29,6 +46,6 @@ function ProfilePageController($scope, $http, Persona)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('ProfilePageController', ['$scope', '$http', 'Persona', ProfilePageController]);
+angular.module('tome.controllers').controller('ProfilePageController', ['$scope', '$http', '$route', '$location', 'Persona', ProfilePageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

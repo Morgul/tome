@@ -253,6 +253,20 @@ route.delete('/api/page/*', function(request, response)
 // User
 //----------------------------------------------------------------------------------------------------------------------
 
+route.get('/api/user/:email', function(request, response)
+{
+    db.users.get(request.params.email).then(function(user)
+    {
+        respond(user, response);
+    }).catch(db.Errors.DocumentNotFound, function()
+    {
+        wiki404(response);
+    }).error(function(err)
+    {
+        error(err.message || err.toString(), response);
+    });
+});
+
 route.put('/api/user/:email', function(request, response)
 {
     var regBody = request.body;
