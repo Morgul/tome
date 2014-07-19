@@ -4,7 +4,7 @@
 // @module header.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function WikiLinkController($scope, wikiPage)
+function WikiLinkController($scope, $http, wikiPage)
 {
     $scope.title = $scope.title == 'null' ? "" : $scope.title;
 
@@ -16,7 +16,15 @@ function WikiLinkController($scope, wikiPage)
     {
         wikiPage.exists($scope.href, function(exists)
         {
-            $scope.nonexistant = !exists;
+            // Handle internal wiki pages
+            if(!exists)
+            {
+                $http.get($scope.href)
+                    .error(function()
+                    {
+                        $scope.nonexistant = true;
+                    });
+            } // end if
         });
     } // end if
 } // end WikiLinkController
@@ -38,7 +46,7 @@ function WikiLinkDirective()
                 elem.attr('title', scope.title);
             } // end if
         },
-        controller: ['$scope', 'wikiPage', WikiLinkController],
+        controller: ['$scope', '$http', 'wikiPage', WikiLinkController],
         replace: true
     }
 } // end WikiLinkDirective
