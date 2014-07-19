@@ -20,7 +20,6 @@ var redirect = require('connect-redirection');
 var passport = require('passport');
 
 var router = require('./server/routes');
-var parser = require('./server/parser');
 var auth = require('./server/authentication');
 
 var package = require('./package');
@@ -29,7 +28,7 @@ var config = require('./config');
 //----------------------------------------------------------------------------------------------------------------------
 
 // Parse wiki pages
-parser.parse();
+//parser.parse();
 
 var server = connect()
     //.use(connect.logger('dev'))

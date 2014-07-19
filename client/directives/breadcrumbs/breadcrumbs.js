@@ -42,6 +42,11 @@ function BreadcrumbsController($scope, $location, wikiPage)
         $location.path('/edit/' + wikiPage.wikiPath);
     }; // end edit
 
+    $scope.delete = function()
+    {
+        $scope.$root.$broadcast('delete');
+    }; // end delete
+
     $scope.history = function()
     {
         $location.path('/history/' + wikiPage.wikiPath);

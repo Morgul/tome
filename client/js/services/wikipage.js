@@ -13,7 +13,10 @@ function PageService($resource, $route)
     this.Page = $resource('/api/page/:wikiPath', {}, {
         save: { method: 'PUT' },
         exists: { method: 'HEAD' },
-        search: { method: 'GET', isArray: true }
+        revision: { method: 'GET', url:'/api/revision/:revision' },
+        history: { method: 'GET', url: '/api/history/:wikiPath', isArray: true },
+        search: { method: 'GET', isArray: true },
+        recent: { method: 'GET', url: '/api/history', isArray: true }
     });
 
     Object.defineProperty(this, 'wikiPath', {
@@ -38,6 +41,12 @@ PageService.prototype.set = function(wikiPath, page)
     return this.Page.save({ wikiPath: wikiPath }, page);
 }; // end set
 
+PageService.prototype.remove = function(wikiPath)
+{
+    wikiPath = wikiPath || this.wikiPath;
+    return this.Page.delete({ wikiPath: wikiPath });
+};
+
 PageService.prototype.getAllTags = function()
 {
     return this.Tags.get();
@@ -47,6 +56,23 @@ PageService.prototype.getByTag = function(tag)
 {
     return this.Page.search({ tags: tag });
 }; // end get
+
+PageService.prototype.getHistory = function(wikiPath, limit)
+{
+    wikiPath = wikiPath || this.wikiPath;
+    limit = limit || 25;
+    return this.Page.history({ wikiPath: wikiPath, limit: limit });
+}; // end getHistory
+
+PageService.prototype.getRevision = function(revID)
+{
+    return this.Page.revision({ revision: revID });
+}; // end getRevision
+
+PageService.prototype.recent = function(limit)
+{
+    return this.Page.recent({ limit: limit });
+}; // end recent
 
 PageService.prototype.exists = function(wikiPath, callback)
 {

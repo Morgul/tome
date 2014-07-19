@@ -16,7 +16,6 @@ function WikiLinkController($scope, wikiPage)
     {
         wikiPage.exists($scope.href, function(exists)
         {
-            console.log('exists:', exists);
             $scope.nonexistant = !exists;
         });
     } // end if
