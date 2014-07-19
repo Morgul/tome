@@ -5,12 +5,9 @@
             <button class="btn btn-link" ng-click="revert()"><i class="fa fa-undo"></i> Cancel</button>
             <button class="btn btn-link" ng-click="delete()"><i class="fa fa-trash-o"></i> Delete</button>
         </div>
-        <div ng-hide="prefix() != 'wiki' || !isAuthenticated()" class="page-buttons btn-group pull-right">
-            <button class="btn btn-link" ng-click="edit()"><i class="fa fa-edit"></i> Edit</button>
+        <div ng-hide="prefix() != 'wiki'" class="page-buttons btn-group pull-right">
+            <button ng-hide="!isAuthenticated()" class="btn btn-link" ng-click="edit()"><i class="fa fa-edit"></i> Edit</button>
             <button class="btn btn-link" ng-click="history()"><i class="fa fa-history"></i> History</button>
-
-            <!-- TODO: Decide if this really belongs on the main page, and if so, rework. -->
-            <!--button class="btn btn-link" ng-click="delete()"><i class="fa fa-trash-o"></i> Delete</button-->
         </div>
         <ol class="breadcrumb">
             <li ng-repeat="crumb in breadcrumbs() track by $index" ng-class="{ active: $last }">
