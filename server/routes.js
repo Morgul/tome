@@ -176,7 +176,7 @@ route.head('/api/page/*', function(request, response)
     {
         if(exists)
         {
-            respond(true, response);
+            response.end();
         }
         else
         {

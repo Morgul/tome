@@ -109,7 +109,7 @@ var pages = {
         {
             if(limit)
             {
-                return db.Revision.filter({ page_id: pageID }).getJoin().limit(limit).run().map(function(revision)
+                return db.Revision.filter({ page_id: pageID }).getJoin().orderBy(db.r.row("commit")("committed")).limit(limit).run().map(function(revision)
                 {
                     revision.body = undefined;
                     return revision;
@@ -117,7 +117,7 @@ var pages = {
             }
             else
             {
-                return db.Revision.filter({ page_id: pageID }).getJoin().run().map(function(revision)
+                return db.Revision.filter({ page_id: pageID }).orderBy(db.r.row("commit")("committed")).getJoin().run().map(function(revision)
                 {
                     revision.body = undefined;
                     return revision;

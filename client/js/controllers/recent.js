@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function RecentPageController($scope, wikiPage)
+function RecentPageController($scope, $filter, wikiPage)
 {
     $scope.limit = 25;
     $scope.limits = [
@@ -38,13 +38,13 @@ function RecentPageController($scope, wikiPage)
     {
         wikiPage.recent($scope.limit || 25).$promise.then(function(revisions)
         {
-            $scope.revisions = revisions;
+            $scope.revisions = $filter('orderBy')(revisions, '-commit.committed');
         });
     });
 } // end RecentPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('RecentPageController', ['$scope', 'wikiPage', RecentPageController]);
+angular.module('tome.controllers').controller('RecentPageController', ['$scope', '$filter', 'wikiPage', RecentPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

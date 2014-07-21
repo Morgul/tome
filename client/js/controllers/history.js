@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageHistoryController($scope, wikiPage)
+function PageHistoryController($scope, $filter, wikiPage)
 {
     $scope.wikiPath = wikiPage.wikiPath;
     $scope.limit = 25;
@@ -39,7 +39,7 @@ function PageHistoryController($scope, wikiPage)
     {
         wikiPage.getHistory($scope.wikiPath, $scope.limit).$promise.then(function(revisions)
         {
-            $scope.revisions = revisions;
+            $scope.revisions = $filter('orderBy')(revisions, '-commit.committed');
             $scope.$root.title = "History for '" + $scope.wikiPath + "'";
         });
     });
@@ -47,7 +47,7 @@ function PageHistoryController($scope, wikiPage)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('PageHistoryController', ['$scope', 'wikiPage', PageHistoryController]);
+angular.module('tome.controllers').controller('PageHistoryController', ['$scope', '$filter', 'wikiPage', PageHistoryController]);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
