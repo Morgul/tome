@@ -8,6 +8,10 @@
         <div ng-hide="prefix() != 'wiki'" class="page-buttons btn-group pull-right">
             <button ng-hide="!isAuthenticated()" class="btn btn-link" ng-click="edit()"><i class="fa fa-edit"></i> Edit</button>
             <button class="btn btn-link" ng-click="history()"><i class="fa fa-history"></i> History</button>
+            <button class="btn btn-link" ng-click="comments()"><i class="fa fa-comments-o"></i> Comments</button>
+        </div>
+        <div ng-hide="prefix() != 'comments'" class="page-buttons btn-group pull-right">
+            <button class="btn btn-link" ng-click="comment()"><i class="fa fa-plus"></i> New Comment</button>
         </div>
         <ol class="breadcrumb">
             <li ng-repeat="crumb in breadcrumbs() track by $index" ng-class="{ active: $last }">

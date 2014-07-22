@@ -3,6 +3,7 @@
         <select class="pull-right form-control" id="limitList" ng-model="limit" ng-options="limit.value as limit.text for limit in limits"></select>
         <label class="pull-right" for="limitList">Show</label>
     </div>
+    <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
     <h1>History for <code>/{{ wikiPath }}</code></h1>
     <ul>
         <li ng-repeat="revision in revisions">

@@ -354,10 +354,58 @@ var pages = {
 }; // end pages
 
 //----------------------------------------------------------------------------------------------------------------------
+// Comments
+//----------------------------------------------------------------------------------------------------------------------
+
+var comments = {
+    get: function(pageID)
+    {
+        var query = db.Comment;
+
+        if(pageID)
+        {
+            query = query.filter({ page_id: pageID });
+        } // end if
+
+        return query.getJoin().group('title').orderBy('-created').run();
+    },
+
+    create: function(pageID, title, body, user)
+    {
+        var comment = new db.Comment({
+            page_id: pageID,
+            title: title,
+            body: body,
+            user_id: user.email
+        });
+
+        return comment.save();
+    },
+
+    update: function(commentID, title, body, resolved)
+    {
+        return db.Comment.get(commentID).run().then(function(comment)
+        {
+            comment.title = title;
+            comment.body = body;
+            comment.resolved = resolved;
+
+            return comment.save();
+        });
+    },
+
+    delete: function(commentID)
+    {
+        return db.Comment.get(commentID).delete().run();
+    }
+}; // end comments
+
+//----------------------------------------------------------------------------------------------------------------------
 
 module.exports = {
     users: users,
     pages: pages,
+    comments: comments,
     Errors: db.Errors,
     index: bodyIndex
 }; // end exports

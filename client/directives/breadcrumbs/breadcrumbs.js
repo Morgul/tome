@@ -52,6 +52,16 @@ function BreadcrumbsController($scope, $location, wikiPage)
         $location.path('/history/' + wikiPage.wikiPath);
     }; // end history
 
+    $scope.comment = function()
+    {
+        $scope.$root.$broadcast('comment');
+    }; // end history
+
+    $scope.comments = function()
+    {
+        $location.path('/comments/' + wikiPage.wikiPath);
+    }; // end history
+
     //------------------------------------------------------------------------------------------------------------------
     // Breadcrumbs functions
     //------------------------------------------------------------------------------------------------------------------

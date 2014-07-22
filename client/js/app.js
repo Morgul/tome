@@ -11,6 +11,7 @@ angular.module('tome', [
         'ui.gravatar',
         'ui.ngTags',
         'ui.codemirror',
+        'duScroll',
 
         'tome.services',
         'tome.controllers',
@@ -28,6 +29,7 @@ angular.module('tome', [
             .when('/tags/:tag?', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
             .when('/profile/:email?', {templateUrl: '/partials/profile.html',   controller: 'ProfilePageController'})
             .when('/edit/:wikiPath*', {templateUrl: '/partials/edit.html',   controller: 'EditPageController'})
+            .when('/comments/:wikiPath*', {templateUrl: '/partials/comments.html',   controller: 'PageCommentsController'})
             .when('/history/:wikiPath*', {templateUrl: '/partials/history.html',   controller: 'PageHistoryController'})
             .when('/wiki/:wikiPath*', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
             .otherwise({redirectTo: '/wiki/welcome'});

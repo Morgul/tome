@@ -79,6 +79,24 @@ db.Slug.belongsTo(db.Revision, "currentRevision", "currentRevision_id", "id");
 db.Revision.belongsTo(db.Slug, "slug", "slug_id", "url");
 
 //----------------------------------------------------------------------------------------------------------------------
+// Comments
+//----------------------------------------------------------------------------------------------------------------------
+
+db.Comment = thinky.createModel('Comment', {
+    page_id: String,
+    user_id: String,
+    title: String,
+    body: String,
+    created: { _type: Date, default: r.now() },
+    updated: { _type: Date, default: r.now() },
+    resolved: { _type: Boolean, default: false }
+});
+
+// Relationships
+db.Comment.belongsTo(db.Page, "page", "page_id", "id");
+db.Comment.belongsTo(db.User, "user", "user_id", "email");
+
+//----------------------------------------------------------------------------------------------------------------------
 
 module.exports = db;
 

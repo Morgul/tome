@@ -272,6 +272,76 @@ route.get('/api/commit', function(request, response)
 });
 
 //----------------------------------------------------------------------------------------------------------------------
+// Comments
+//----------------------------------------------------------------------------------------------------------------------
+
+route.get('/api/comment', function(request, response)
+{
+    var page = request.query.page;
+
+    db.comments.get(page).then(function(comments)
+    {
+        respond(comments, response);
+    });
+});
+
+route.put('/api/comment', function(request, response)
+{
+    if(request.isAuthenticated())
+    {
+        var page = request.body.page;
+        var title = request.body.title;
+        var body = request.body.body;
+
+        db.comments.create(page, title, body, request.user).then(function()
+        {
+            response.end();
+        });
+    }
+    else
+    {
+        notAuthorized("Authentication Required.", response);
+    } // end if
+});
+
+route.put('/api/comment/:comment', function(request, response)
+{
+    if(request.isAuthenticated())
+    {
+        var comment = request.params.comment;
+        var title = request.body.title;
+        var body = request.body.body;
+        var resolved = request.body.resolved;
+
+        db.comments.update(comment, title, body, resolved).then(function()
+        {
+            response.end();
+        });
+    }
+    else
+    {
+        notAuthorized("Authentication Required.", response);
+    } // end if
+});
+
+route.delete('/api/comment/:comment', function(request, response)
+{
+    if(request.isAuthenticated())
+    {
+        var comment = request.params.comment;
+
+        db.comments.delete(comment).then(function()
+        {
+            response.end();
+        });
+    }
+    else
+    {
+        notAuthorized("Authentication Required.", response);
+    } // end if
+});
+
+//----------------------------------------------------------------------------------------------------------------------
 // User
 //----------------------------------------------------------------------------------------------------------------------
 
