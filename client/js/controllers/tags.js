@@ -8,10 +8,15 @@ function TagsPageController($scope, $route, wikiPage)
 {
     $scope.tags = {};
     $scope.singleTag = $route.current.params.tag;
+    $scope.loaded = false;
 
     if($scope.singleTag)
     {
-        $scope.tags[$scope.singleTag] = wikiPage.getByTag($scope.singleTag);
+        wikiPage.getByTag($scope.singleTag).$promise.then(function(docs)
+        {
+            $scope.loaded = true;
+            $scope.tags[$scope.singleTag] = docs
+        });
     }
     else
     {
@@ -21,6 +26,8 @@ function TagsPageController($scope, $route, wikiPage)
             {
                 $scope.tags[tag] = wikiPage.getByTag(tag);
             });
+
+            $scope.loaded = true;
         });
     } // end if
 } // end TagsPageController

@@ -11,13 +11,14 @@ function PageCommentsController($scope, $route, $http, $document, wikiPage, Pers
     $scope.newCommentCollapse = true;
     $scope.comment = {};
     $scope.refresh = false;
+    $scope.loaded = false;
 
     $scope.editorOptions = {
         lineWrapping : true,
         mode: 'gfm'
     };
 
-    $scope.order = "created";
+    $scope.order = "-created";
     $scope.orders = [
         {
             text: 'Ascending',
@@ -37,6 +38,7 @@ function PageCommentsController($scope, $route, $http, $document, wikiPage, Pers
     {
         $http.get('/api/comment?group=true&page=' + $scope.page.page_id).success(function(comments)
         {
+            $scope.loaded = true;
             $scope.comments = comments;
         });
     });

@@ -6,8 +6,14 @@
 
 function SearchPageController($scope, $route, wikiPage)
 {
+    $scope.loaded = false;
     $scope.query = $route.current.params.text;
-    $scope.results = wikiPage.search($route.current.params.text);
+
+    wikiPage.search($route.current.params.text).$promise.then(function(results)
+    {
+        $scope.results = results;
+        $scope.loaded = true;
+    });
 } // end SearchPageController
 
 // ---------------------------------------------------------------------------------------------------------------------

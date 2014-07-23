@@ -1,5 +1,5 @@
 <!-- If we find a wiki page at this url, we render it -->
-<div ng-if="page.body" class="wiki-content container">
+<div ng-if="loaded && page.body" class="wiki-content container">
     <header>
         <span class="pull-right hidden-xs tags">
             <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
@@ -18,11 +18,25 @@
 </div>
 
 <!-- Otherwise, we display a friendly does not exist page -->
-<div ng-if="page.body == undefined">
+<div ng-if="loaded && error.status == 404">
     <h3 class="text-center">
         The page <code>/{{ wikiPath }}</code> does not exist.
     </h3>
     <p class="text-center">
         Would you like to <a href="/edit/{{ wikiPath }}">create it</a>?
     </p>
+</div>
+
+<!-- While we're waiting for the page to load, we should display something nice -->
+<div ng-if="!loaded" class="container">
+    <h3 class="text-center">The page is currently loading.</h3>
+    <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    <span class="sr-only">Progress Unknown</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
