@@ -296,25 +296,16 @@ var pages = {
             query = query.limit(limit);
         } // end if
 
-        return query.run().map(function(revision)
+        return query.run().then(function(revisions)
         {
-            revision.body = undefined;
-            return revision;
-        }).then(function(revisions)
-        {
-            //FIXME: While this actually works, it's very slow, and will only get slower as time goes on. We need to
-            // improve the performance, either by modifying the model, doing direct ReQL queries, or something else.
             return Promise.map(revisions, function(revision)
             {
-                return db.Revision.filter({ page_id: revision.page_id }).getJoin().run().then(function(revisions)
-                {
-                    var sortedRevs = _.sortBy(revisions, function(rev){ return rev.commit.committed; }).reverse();
-                    var revIndex = _.findIndex(sortedRevs, { id: revision.id }) + 1;
+                var filtered = _.filter(revisions, { page_id: revision.page_id });
+                var revIndex = _.findIndex(filtered, { id: revision.id }) + 1;
+                revision.prevRev = (revIndex) < filtered.length ? filtered[revIndex].id : undefined;
+                revision.body = undefined;
 
-                    revision.prevRev = (revIndex) < sortedRevs.length ? sortedRevs[revIndex].id : undefined;
-
-                    return revision;
-                });
+                return revision;
             });
         });
     },
