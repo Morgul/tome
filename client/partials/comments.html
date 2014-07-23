@@ -1,0 +1,80 @@
+<div class="container comments">
+    <br/>
+    <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
+    <div class="form-group item-limit">
+        <select class="pull-right form-control" id="orderList" ng-model="order" ng-options="order.value as order.text for order in orders"></select>
+        <label class="pull-right" for="orderList">Sort</label>
+    </div>
+    <h2><i class="fa fa-file-text-o"></i> {{ page.title }} Comments</h2>
+    <hr>
+    <div class="group" ng-repeat="group in comments | orderBy: 'group'">
+        <div class="group-toolbar btn-group pull-right">
+            <button class="btn btn-xs btn-default" ng-click="startComment(group.group)"><i class="fa fa-reply"></i> Reply</button>
+        </div>
+        <h3 class="group-title text-center"><i class="fa fa-comments-o"></i> {{ group.group }}</h3>
+
+        <div class="media" ng-repeat="comment in group.reduction | orderBy: order">
+            <a class="pull-left" href="/profile/{{ comment.user.email }}">
+                <img class="media-object img-thumbnail navbar-right profile-image" gravatar-src="comment.user.email" gravatar-size="140" title="{{ comment.user.display || comment.user.email }}">
+                <span ng-if="comment.user.display" class="media-object text-center">{{ comment.user.display }}</span>
+            </a>
+            <div class="media-body">
+                <markdown src="comment.body"></markdown>
+
+                <div class="media-footer">
+                    <hr>
+                    <div class="hidden-xs btn-toolbar pull-right">
+                        <button ng-show="comment.user.email == user.email" class="btn btn-xs btn-default" ng-click="startComment(comment.title, comment.body, comment.id)"><i class="fa fa-edit"></i> Edit</button>
+                        <button ng-show="comment.user.email == user.email" class="btn btn-xs btn-default" ng-click="delete(comment.id)"><i class="fa fa-trash-o"></i> Delete</button>
+                    </div>
+                    <div class="visible-xs btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button ng-show="comment.user.email == user.email" class="btn btn-xs btn-default" ng-click="startComment(comment.title, comment.body, comment.id)"><i class="fa fa-edit"></i> Edit</button>
+                        </div>
+                        <div class="btn-group">
+                            <button ng-show="comment.user.email == user.email" class="btn btn-xs btn-default" ng-click="delete(comment.id)"><i class="fa fa-trash-o"></i> Delete</button>
+                        </div>
+                    </div>
+                    <small><span class="text-muted">{{ comment.created | date:'short' }}</span></small>
+                    <i ng-if="comment.edited && comment.edited != comment.created"><small> (Edited: <span class="text-muted">{{ comment.edited | date:'short' }}</span>)</small></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="new-comment" ng-class="{ border: !newCommentCollapse }">
+        <div class="media" collapse="newCommentCollapse">
+            <a class="pull-left" href="/profile/{{ user.email }}">
+                <img class="media-object img-thumbnail navbar-right profile-image" gravatar-src="user.email" gravatar-size="140" title="{{ user.display || user.email }}">
+                <span ng-if="user.display" class="media-object text-center">{{ user.display }}</span>
+            </a>
+            <div class="media-body">
+                <div class="form-group">
+                    <label class="sr-only" for="title">Title</label>
+                    <input type="text" class="form-control" ng-model="comment.title" id="title" placeholder="Title">
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="pageBody">Body</label>
+                    <div ng-hide="isMobile()" id="pageBody" ng-class="'form-control'" ng-model="comment.body" ui-codemirror="editorOptions" ui-refresh="refresh"></div>
+                    <textarea ng-show="isMobile()" id="pageBody" class="form-control" ng-model="comment.body" style="min-height: 300px" placeholder="Comment..."></textarea>
+                </div>
+                <div class="media-footer">
+                    <hr>
+                    <div class="hidden-xs btn-toolbar pull-right">
+                        <button class="btn btn-xs btn-default" ng-click="finishComment()"><i class="fa fa-save"></i> Save</button>
+                        <button class="btn btn-xs btn-default" ng-click="cancel()"><i class="fa fa-times"></i> Cancel</button>
+                    </div>
+                    <div class="visible-xs btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button class="btn btn-xs btn-default" ng-click="finishComment()"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-xs btn-default" ng-click="cancel()"><i class="fa fa-times"></i> Cancel</button>
+                        </div>
+                    </div>
+                    <small><span class="text-muted">{{ comment.created | date:'short' }}</span></small>
+                    <i ng-if="comment.edited && comment.edited != comment.created"><small> (Edited: <span class="text-muted">{{ comment.edited | date:'short' }}</span>)</small></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

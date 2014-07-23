@@ -4,6 +4,41 @@
 // @module utils.filters.js
 // ---------------------------------------------------------------------------------------------------------------------
 
+function TruncateFilter()
+{
+    return function (value, wordwise, max, tail)
+    {
+        if(!value)
+        {
+            return '';
+        } // end if
+
+        max = parseInt(max, 10);
+
+        if(!max)
+        {
+            return value;
+        } // end if
+
+        if(value.length <= max)
+        {
+            return value;
+        } // end if
+
+        value = value.substr(0, max);
+        if (wordwise)
+        {
+            var lastspace = value.lastIndexOf(' ');
+            if (lastspace != -1)
+            {
+                value = value.substr(0, lastspace);
+            } // end if
+        } // end if
+
+        return value + (tail || ' …');
+    };
+} // end TruncateFilter
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Capitalize filter
 // ---------------------------------------------------------------------------------------------------------------------
@@ -85,5 +120,6 @@ function ReverseFilter() {
 angular.module('tome.utils').filter('capitalize', CapitalizeFilter);
 angular.module('tome.utils').filter('markdown', ['$rootScope', '$sce', '$cacheFactory', MarkdownFilter]);
 angular.module('tome.utils').filter('reverse', ReverseFilter);
+angular.module('tome.utils').filter('truncate', TruncateFilter);
 
 // ---------------------------------------------------------------------------------------------------------------------

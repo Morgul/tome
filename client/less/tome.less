@@ -2,6 +2,39 @@
 // Overrides
 //----------------------------------------------------------------------------------------------------------------------
 
+html, body {
+    font-size: 14px;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+h2 {
+    font-size: 25px;
+
+}
+
+h3 {
+    font-size: 18px;
+
+}
+
+h4 {
+    font-size: 14px;
+
+}
+
+h5 {
+    font-size: 14px;
+
+}
+
+h6 {
+    font-size: 14px;
+
+}
+
 @media (max-width: 767px)
 {
     .visible-xs-inline {
@@ -120,6 +153,97 @@ img.profile-image {
 
     label {
         margin: 11px 10px;
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Diff
+//----------------------------------------------------------------------------------------------------------------------
+
+.diff {
+    .line {
+        padding: 5px;
+    }
+
+    .line + .line {
+        margin-top: 10px;
+    }
+
+    .line.bg-success {
+        color: white;
+    }
+
+    .line.bg-danger {
+        color: white;
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Comments
+//----------------------------------------------------------------------------------------------------------------------
+
+.comments {
+    img.profile-image {
+        width: 70px;
+        height: 70px;
+    }
+
+    .visible-xs img.profile-image {
+        width: 70px;
+        height: 70px;
+    }
+
+    .group {
+        margin-top: -20px;
+        padding-top: 20px;
+
+        h3.group-title {
+            margin-top: 0;
+        }
+
+        .group-toolbar {
+            position: relative;
+            z-index: 10;
+        }
+    }
+
+    .group + .group {
+        border-top: 1px dashed #aaa;
+        margin-top: 20px;
+    }
+
+    .media + .media {
+        border-top: 1px dashed #eee;
+        padding-top: 20px;
+    }
+
+    .media-body {
+        padding-top: 10px;
+    }
+
+    .media-heading {
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+
+    .media-footer {
+        padding-left: 10px;
+        padding-right: 10px;
+
+        hr {
+            margin: 10px -10px;
+        }
+    }
+
+    #new-comment
+    {
+        margin-top: 20px;
+        padding-top: 20px;
+
+        &.border {
+            border-top: 2px solid #aaa;
+        }
     }
 }
 

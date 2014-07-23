@@ -109,7 +109,7 @@ var pages = {
         {
             if(limit)
             {
-                return db.Revision.filter({ page_id: pageID }).getJoin().limit(limit).run().map(function(revision)
+                return db.Revision.filter({ page_id: pageID }).getJoin().orderBy(db.r.row("commit")("committed")).limit(limit).run().map(function(revision)
                 {
                     revision.body = undefined;
                     return revision;
@@ -117,7 +117,7 @@ var pages = {
             }
             else
             {
-                return db.Revision.filter({ page_id: pageID }).getJoin().run().map(function(revision)
+                return db.Revision.filter({ page_id: pageID }).orderBy(db.r.row("commit")("committed")).getJoin().run().map(function(revision)
                 {
                     revision.body = undefined;
                     return revision;
@@ -354,10 +354,73 @@ var pages = {
 }; // end pages
 
 //----------------------------------------------------------------------------------------------------------------------
+// Comments
+//----------------------------------------------------------------------------------------------------------------------
+
+var comments = {
+    get: function(pageID, group, limit)
+    {
+        var query = db.Comment;
+
+        if(pageID)
+        {
+            query = query.filter({ page_id: pageID });
+        } // end if
+
+        query = query.getJoin();
+
+        if(group)
+        {
+            query = query.group('title');
+        } // end if
+
+        query = query.orderBy('-created');
+
+        if(limit)
+        {
+            limit = parseInt(limit);
+            query = query.limit(limit);
+        } // end if
+
+        return query.run();
+    },
+
+    create: function(pageID, title, body, user)
+    {
+        var comment = new db.Comment({
+            page_id: pageID,
+            title: title,
+            body: body,
+            user_id: user.email
+        });
+
+        return comment.save();
+    },
+
+    update: function(commentID, title, body, resolved)
+    {
+        return db.Comment.get(commentID).run().then(function(comment)
+        {
+            comment.title = title;
+            comment.body = body;
+            comment.resolved = resolved;
+
+            return comment.save();
+        });
+    },
+
+    delete: function(commentID)
+    {
+        return db.Comment.get(commentID).delete().run();
+    }
+}; // end comments
+
+//----------------------------------------------------------------------------------------------------------------------
 
 module.exports = {
     users: users,
     pages: pages,
+    comments: comments,
     Errors: db.Errors,
     index: bodyIndex
 }; // end exports

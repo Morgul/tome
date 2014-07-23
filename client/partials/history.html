@@ -1,15 +1,19 @@
 <div class="container">
+    <br/>
+    <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
     <div class="form-group item-limit">
         <select class="pull-right form-control" id="limitList" ng-model="limit" ng-options="limit.value as limit.text for limit in limits"></select>
         <label class="pull-right" for="limitList">Show</label>
     </div>
-    <h1>History for <code>/{{ wikiPath }}</code></h1>
+    <h2><i class="fa fa-history"></i> {{ revisions[0].title }} History</h2>
+    <hr>
     <ul>
-        <li ng-repeat="revision in revisions | orderBy: '-commit.committed'">
+        <li ng-repeat="revision in revisions">
             <span class="text-muted">{{  revision.commit.committed | date:'short' }}</span>
             (<a href="/profile/{{ revision.commit.user.email }}">{{ revision.commit.user.display || revision.commit.user.email }}</a>):
             <b>{{ revision.commit.message }}</b>
-            (<a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">view</a>) (<a href="/commit/{{ revision.commit.id }}">diff</a>)
+            (<a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">view</a>)
+            <span ng-if="!$last">(<a href="/diff/{{ revisions[$index + 1].id }}/{{ revision.id }}">diff</a>)</span>
         </li>
     </ul>
 </div>
