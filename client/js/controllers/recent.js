@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function RecentPageController($scope, $filter, wikiPage)
+function RecentPageController($scope, $http, $filter, wikiPage)
 {
     $scope.limit = 25;
     $scope.limits = [
@@ -40,11 +40,17 @@ function RecentPageController($scope, $filter, wikiPage)
         {
             $scope.revisions = $filter('orderBy')(revisions, '-commit.committed');
         });
+
+        $http.get('/api/comment')
+            .success(function(comments)
+            {
+                $scope.comments = comments;
+            });
     });
 } // end RecentPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('RecentPageController', ['$scope', '$filter', 'wikiPage', RecentPageController]);
+angular.module('tome.controllers').controller('RecentPageController', ['$scope', '$http', '$filter', 'wikiPage', RecentPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

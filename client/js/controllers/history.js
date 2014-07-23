@@ -40,7 +40,7 @@ function PageHistoryController($scope, $filter, wikiPage)
         wikiPage.getHistory($scope.wikiPath, $scope.limit).$promise.then(function(revisions)
         {
             $scope.revisions = $filter('orderBy')(revisions, '-commit.committed');
-            $scope.$root.title = "History for '" + $scope.wikiPath + "'";
+            $scope.$root.title = $scope.revisions[0].title + " History";
         });
     });
 } // end PageHistoryController

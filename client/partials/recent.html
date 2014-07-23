@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="form-group item-limit">
         <select class="pull-right form-control" id="limitList" ng-model="limit" ng-options="limit.value as limit.text for limit in limits"></select>
         <label class="pull-right" for="limitList">Show</label>
@@ -6,14 +6,32 @@
     <h1>
         Recent Activity
     </h1>
-    <ul>
-        <li ng-repeat="revision in revisions | orderBy: '-commit.committed'">
-            <span class="text-muted">{{  revision.commit.committed | date:'short' }}</span>
-            (<a href="/profile/{{ revision.commit.user.email }}">{{ revision.commit.user.display || revision.commit.user.email }}</a>):
-            <code>{{ revision.slug_id }}</code> -
-            <b>{{ revision.commit.message }}</b>
-            (<a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">view</a>)
-            <span ng-if="!$last">(<a href="/diff/{{ revisions[$index + 1].id }}/{{ revision.id }}">diff</a>)</span>
-        </li>
-    </ul>
+    <hr>
+    <div class="row">
+        <div class="col-sm-6">
+            <h2>Pages</h2>
+            <ul>
+                <li ng-repeat="revision in revisions | orderBy: '-commit.committed'">
+                    <span class="text-muted">{{  revision.commit.committed | date:'short' }}</span>
+                    (<a href="/profile/{{ revision.commit.user.email }}">{{ revision.commit.user.display || revision.commit.user.email }}</a>):
+                    <code>{{ revision.slug_id }}</code> -
+                    <b>{{ revision.commit.message }}</b>
+                    (<a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">view</a>)
+                    <span ng-if="!$last">(<a href="/diff/{{ revisions[$index + 1].id }}/{{ revision.id }}">diff</a>)</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <h2>Comments</h2>
+            <ul>
+                <li ng-repeat="comment in comments track by $index | orderBy: '-commit.created'">
+                    <span class="text-muted">{{  comment.created | date:'short' }}</span>
+                    (<a href="/profile/{{ comment.user.email }}">{{ comment.user.display || comment.user.email }}</a>):
+                    <code>{{ comment.title }}</code> -
+                    <b>{{ comment.body | truncate:true:50 }}</b>
+                    (<a href="/wiki{{ comment.page_id }}">view</a>)
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>

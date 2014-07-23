@@ -278,8 +278,10 @@ route.get('/api/commit', function(request, response)
 route.get('/api/comment', function(request, response)
 {
     var page = request.query.page;
+    var group = request.query.group;
+    var limit = request.query.limit;
 
-    db.comments.get(page).then(function(comments)
+    db.comments.get(page, group, limit).then(function(comments)
     {
         respond(comments, response);
     });

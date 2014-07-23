@@ -358,7 +358,7 @@ var pages = {
 //----------------------------------------------------------------------------------------------------------------------
 
 var comments = {
-    get: function(pageID)
+    get: function(pageID, group, limit)
     {
         var query = db.Comment;
 
@@ -367,7 +367,22 @@ var comments = {
             query = query.filter({ page_id: pageID });
         } // end if
 
-        return query.getJoin().group('title').orderBy('-created').run();
+        query = query.getJoin();
+
+        if(group)
+        {
+            query = query.group('title');
+        } // end if
+
+        query = query.orderBy('-created');
+
+        if(limit)
+        {
+            limit = parseInt(limit);
+            query = query.limit(limit);
+        } // end if
+
+        return query.run();
     },
 
     create: function(pageID, title, body, user)

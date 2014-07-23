@@ -35,7 +35,7 @@ function PageCommentsController($scope, $route, $http, $document, wikiPage, Pers
         $scope.$root.title = $scope.page.title + ' Comments';
     }).then(function()
     {
-        $http.get('/api/comment?page=' + $scope.page.page_id).success(function(comments)
+        $http.get('/api/comment?group=true&page=' + $scope.page.page_id).success(function(comments)
         {
             $scope.comments = comments;
         });
