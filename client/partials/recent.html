@@ -17,7 +17,7 @@
                     <code>{{ revision.slug_id }}</code> -
                     <b>{{ revision.commit.message }}</b>
                     (<a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">view</a>)
-                    <span ng-if="!$last">(<a href="/diff/{{ revisions[$index + 1].id }}/{{ revision.id }}">diff</a>)</span>
+                    <span ng-if="!$last && revision.prevRev">(<a href="/diff/{{ revision.prevRev }}/{{ revision.id }}">diff</a>)</span>
                 </li>
             </ul>
         </div>

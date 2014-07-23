@@ -107,22 +107,17 @@ var pages = {
         limit = parseInt(limit);
         return _getPageID(slug).then(function(pageID)
         {
-            if(limit)
+            return db.Revision.filter({ page_id: pageID }).getJoin().run().map(function(revision)
             {
-                return db.Revision.filter({ page_id: pageID }).getJoin().orderBy(db.r.row("commit")("committed")).limit(limit).run().map(function(revision)
-                {
-                    revision.body = undefined;
-                    return revision;
-                });
-            }
-            else
+                revision.body = undefined;
+                return revision;
+            }).then(function(revisions)
             {
-                return db.Revision.filter({ page_id: pageID }).orderBy(db.r.row("commit")("committed")).getJoin().run().map(function(revision)
-                {
-                    revision.body = undefined;
-                    return revision;
-                });
-            } // end if
+                var lastIdx = limit || revisions.length;
+                //FIXME: This is slower than doing it in the DB, but it actually works, where as using `orderBy` does not.
+                // See https://github.com/Morgul/tome/issues/2
+                return _.sortBy(revisions, function(rev){ return rev.commit.committed; }).reverse().slice(0, lastIdx);
+            });
         });
     },
 
@@ -276,22 +271,33 @@ var pages = {
     recentActivity: function(limit)
     {
         limit = parseInt(limit);
-        if(limit)
+        return db.Revision.getJoin().run().map(function(revision)
         {
-            return db.Revision.getJoin().orderBy(db.r.row("commit")("committed")).limit(limit).run().map(function(revision)
-            {
-                revision.body = undefined;
-                return revision;
-            });
-        }
-        else
+            revision.body = undefined;
+            return revision;
+        }).then(function(revisions)
         {
-            return db.Revision.getJoin().orderBy(db.r.row("commit")("committed")).run().map(function(revision)
+            var lastIdx = limit || revisions.length;
+            //FIXME: This is slower than doing it in the DB, but it actually works, where as using `orderBy` does not.
+            // See https://github.com/Morgul/tome/issues/2
+            return _.sortBy(revisions, function(rev){ return rev.commit.committed; }).reverse().slice(0, lastIdx);
+        }).then(function(revisions)
+        {
+            //FIXME: While this actually works, it's very slow, and will only get slower as time goes on. We need to
+            // improve the performance, either by modifying the model, doing direct ReQL queries, or something else.
+            return Promise.map(revisions, function(revision)
             {
-                revision.body = undefined;
-                return revision;
+                return db.Revision.filter({ page_id: revision.page_id }).getJoin().run().then(function(revisions)
+                {
+                    var sortedRevs = _.sortBy(revisions, function(rev){ return rev.commit.committed; }).reverse();
+                    var revIndex = _.findIndex(sortedRevs, { id: revision.id }) + 1;
+
+                    revision.prevRev = (revIndex) < sortedRevs.length ? sortedRevs[revIndex].id : undefined;
+
+                    return revision;
+                });
             });
-        } // end if
+        });
     },
 
     search: function(query)
