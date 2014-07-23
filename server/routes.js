@@ -237,7 +237,7 @@ route.delete('/api/page/*', function(request, response)
     {
         var slug = '/' + request.params.wildcard;
 
-        db.pages.delete(slug).then(function()
+        db.pages.delete(slug, request.user).then(function()
         {
             response.end();
         });

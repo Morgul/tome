@@ -101,6 +101,11 @@ var pages = {
     {
         return db.Slug.get(slug).getJoin().run().then(function(fullPage)
         {
+            if(fullPage.currentRevision.type == "delete")
+            {
+                throw new db.Errors.DocumentNotFound();
+            } // end if
+
             return fullPage.currentRevision;
         });
     },
@@ -182,21 +187,36 @@ var pages = {
 
         return commitInst.save().then(function(commitInst)
         {
-            return _getPageID(slug).then(function(pageID)
+            return db.Slug.get(slug).getJoin().run().then(function(slugInst)
             {
-                return db.Slug.get(slug).getJoin().run().then(function(slugInst)
+                var oldRevision = slugInst.currentRevision;
+
+                var revInst = new db.Revision({
+                    slug_id: slug,
+                    title: page.title,
+                    tags: page.tags || [],
+                    body: page.body,
+                    commit_id: commitInst.id
+                });
+
+                var updatePromise;
+
+                if(oldRevision.type == 'delete')
                 {
-                    var oldRevision = slugInst.currentRevision;
+                    // We need to make a new page, and not copy any of the previous revision over.
+                    var pageInst = new db.Page({});
+                    updatePromise = pageInst.save();
+                }
+                else
+                {
+                    updatePromise = Promise.resolve({ id: slugInst.page_id });
+                } // end if
 
-                    var revInst = new db.Revision({
-                        page_id: pageID,
-                        slug_id: slug,
-                        title: page.title,
-                        tags: page.tags || [],
-                        body: page.body,
-                        commit_id: commitInst.id
-                    });
+                return updatePromise.then(function(page)
+                {
+                    console.log('page:', page.id);
 
+                    revInst.page_id = page.id;
                     revInst.title = revInst.title || oldRevision.title;
                     revInst.tags = revInst.tags || oldRevision.tags;
                     revInst.body = revInst.body || oldRevision.body;
@@ -234,10 +254,10 @@ var pages = {
         });
     },
 
-    delete: function(slug)
+    delete: function(slug, user)
     {
         var commitInst = new db.Commit({
-            message: page.commit,
+            message: 'deleted page',
             user_id: user.email
         });
 
@@ -245,7 +265,7 @@ var pages = {
         {
             return _getPageID(slug).then(function(pageID)
             {
-                return db.Slug.get(slug).run().then(function(slugInst)
+                return db.Slug.get(slug).getJoin().run().then(function(slugInst)
                 {
                     var oldRevision = slugInst.currentRevision;
 
@@ -253,11 +273,12 @@ var pages = {
                         page_id: pageID,
                         slug_id: slug,
                         commit_id: commitInst.id,
-                        deleted: true
+                        type: "delete"
                     });
 
                     return revInst.save().then(function(revInst)
                     {
+                        slugInst.page = undefined;
                         slugInst.currentRevision_id = revInst.id;
 
                         return slugInst.save().then(function(slugInst)
