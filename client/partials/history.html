@@ -7,13 +7,30 @@
     </div>
     <h2><i class="fa fa-history"></i> {{ revisions[0].title }} History</h2>
     <hr>
-    <ul>
-        <li ng-repeat="revision in revisions">
-            <span class="text-muted">{{  revision.commit.committed | date:'short' }}</span>
-            (<a href="/profile/{{ revision.commit.user.email }}">{{ revision.commit.user.display || revision.commit.user.email }}</a>):
-            <b>{{ revision.commit.message }}</b>
-            (<a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">view</a>)
-            <span ng-if="!$last">(<a href="/diff/{{ revisions[$index + 1].id }}/{{ revision.id }}">diff</a>)</span>
-        </li>
-    </ul>
+    <div class="row">
+        <div class="col-sm-6">
+            <h2>Revisions</h2>
+            <ul>
+                <li ng-repeat="revision in revisions">
+                    <span class="text-muted">{{  revision.commit.committed | date:'short' }}</span>
+                    (<a href="/profile/{{ revision.commit.user.email }}">{{ revision.commit.user.display || revision.commit.user.email }}</a>):
+                    <b>{{ revision.commit.message }}</b>
+                    (<a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}">view</a>)
+                    <span ng-if="!$last">(<a href="/diff/{{ revisions[$index + 1].id }}/{{ revision.id }}">diff</a>)</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <h2>Comments</h2>
+            <ul>
+                <li ng-repeat="comment in comments | orderBy: '-commit.created'">
+                    <span class="text-muted">{{  comment.created | date:'short' }}</span>
+                    (<a href="/profile/{{ comment.user.email }}">{{ comment.user.display || comment.user.email }}</a>):
+                    <code>{{ comment.title }}</code><br/>
+                    <b>{{ comment.body | truncate:true:50 }}</b>
+                    (<a href="/comments{{ comment.slug }}">view</a>)
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>

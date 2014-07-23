@@ -388,7 +388,22 @@ var comments = {
             query = query.limit(limit);
         } // end if
 
-        return query.run();
+        return query.run().map(function(comment)
+        {
+            //FIXME: This is a slow way of getting the slig for a comment; we need to come up with a fast way of
+            // mapping page to slug.
+            return db.Revision.filter({ page_id: comment.page_id }).getJoin().run().then(function(revisions)
+            {
+                //FIXME: This is slower than doing it in the DB, but it actually works, where as using `orderBy` does not.
+                // See https://github.com/Morgul/tome/issues/2
+                var latestRev = _.sortBy(revisions, function(rev){ return rev.commit.committed; }).reverse().slice(0, 1)[0];
+
+                // Set slug
+                comment.slug = latestRev.slug_id;
+
+                return comment;
+            });
+        });
     },
 
     create: function(pageID, title, body, user)

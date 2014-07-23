@@ -36,16 +36,18 @@ function RecentPageController($scope, $http, $filter, wikiPage)
 
     $scope.$watch('limit', function()
     {
-        wikiPage.recent($scope.limit || 25).$promise.then(function(revisions)
+        wikiPage.recent($scope.limit).$promise.then(function(revisions)
         {
-            $scope.revisions = $filter('orderBy')(revisions, '-commit.committed');
+            $scope.revisions = revisions;
         });
 
-        $http.get('/api/comment')
-            .success(function(comments)
-            {
-                $scope.comments = comments;
-            });
+        var url = '/api/comment';
+        url += $scope.limit ? '?limit=' + $scope.limit : '';
+
+        $http.get(url).success(function(comments)
+        {
+            $scope.comments = comments;
+        });
     });
 } // end RecentPageController
 
