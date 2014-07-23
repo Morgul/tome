@@ -82,11 +82,19 @@ var bodyIndex = new index.BodyIndex(module.exports.pages);
 
 function _getPageID(slug)
 {
-    return db.Slug.get(slug).getJoin().run().then(function(slugInst)
+    return db.Slug.get(slug).run().then(function(slugInst)
     {
-        return Promise.resolve(slugInst.currentRevision.page.id);
+        return slugInst.page;
     });
 } // end _getPageID
+
+function _getSlug(pageID)
+{
+    return db.Slug.filter({ page: pageID }).run().then(function(slugInst)
+    {
+        return slugInst.url;
+    });
+} // end _getSlug
 
 var pages = {
     get: function(slug)
@@ -152,6 +160,7 @@ var pages = {
                 {
                     var slugInst = new db.Slug({
                         url: slug,
+                        page: pageInst.id,
                         currentRevision_id: revInst.id
                     });
 
@@ -390,7 +399,7 @@ var comments = {
             query = query.group('title');
         } // end if
 
-        query = query.orderBy('-created');
+        query = query.orderBy(db.r.desc('created'));
 
         if(limit)
         {
@@ -400,20 +409,11 @@ var comments = {
 
         return query.run().map(function(comment)
         {
-            //FIXME: This is a slow way of getting the slig for a comment; we need to come up with a fast way of
-            // mapping page to slug.
-            return db.Revision.filter({ page_id: comment.page_id }).getJoin()
-                .orderBy(db.r.desc(function(row)
-                {
-                    return row('commit')('committed');
-                }))
-                .run().then(function(revisions)
-                {
-                    // Set slug
-                    comment.slug = revisions[0].slug_id;
-
-                    return comment;
-                });
+            return _getSlug(comment.page_id).then(function(slug)
+            {
+                comment.slug = slug;
+                return comment;
+            });
         });
     },
 

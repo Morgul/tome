@@ -71,6 +71,7 @@ db.Revision.belongsTo(db.Page, "page", "page_id", "id");
 
 db.Slug = thinky.createModel('Slug', {
     url: String,
+    page: String,
     currentRevision_id: String
 }, { pk: 'url' });
 
