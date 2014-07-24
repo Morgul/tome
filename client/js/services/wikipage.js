@@ -13,7 +13,7 @@ function PageService($resource, $route)
     this.Page = $resource('/api/page/:wikiPath', {}, {
         save: { method: 'PUT' },
         exists: { method: 'HEAD' },
-        revision: { method: 'GET', url:'/api/revision/:revision' },
+        revision: { method: 'GET', url:'/api/revision/:revision', cache: true },
         history: { method: 'GET', url: '/api/history/:wikiPath', isArray: true },
         search: { method: 'GET', isArray: true },
         recent: { method: 'GET', url: '/api/history', isArray: true }
