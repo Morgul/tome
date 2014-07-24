@@ -4,8 +4,11 @@
 // @module wikipage.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageService($resource, $route)
+function PageService($resource, $route, $cacheFactory)
 {
+    this.existsCache = $cacheFactory('existsCache', { capacity: 500 });
+    this.expirations = {};
+
     this.Tags = $resource('/api/tag', {}, {
         get: { method: 'GET', isArray: true }
     });
@@ -76,7 +79,28 @@ PageService.prototype.recent = function(limit)
 
 PageService.prototype.exists = function(wikiPath, callback)
 {
-    return this.Page.exists({ wikiPath: wikiPath }, function(){ callback(true); }, function(){ callback(false); });
+    var self = this;
+    var exprTime = this.expirations[wikiPath];
+    if(!exprTime || (Date.now() - exprTime) > 30000)
+    {
+        return this.Page.exists({ wikiPath: wikiPath }, function()
+        {
+            self.existsCache.put(wikiPath, true);
+            self.expirations[wikiPath] = Date.now();
+
+            callback(true);
+        }, function()
+        {
+            self.existsCache.put(wikiPath, false);
+            self.expirations[wikiPath] = Date.now();
+
+            callback(false);
+        });
+    }
+    else
+    {
+        callback(self.existsCache.get(wikiPath));
+    } // end if
 }; // end exists
 
 PageService.prototype.search = function(searchText)
@@ -86,6 +110,6 @@ PageService.prototype.search = function(searchText)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.services').service('wikiPage', ['$resource', '$route', PageService]);
+angular.module('tome.services').service('wikiPage', ['$resource', '$route', '$cacheFactory', PageService]);
 
 // ---------------------------------------------------------------------------------------------------------------------
