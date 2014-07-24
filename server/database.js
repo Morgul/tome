@@ -126,16 +126,22 @@ var pages = {
                     return row('commit')('committed');
                 }));
 
-            if(limit)
+            return query.run().then(function(revisions)
             {
-                query = query.limit(limit);
-            } // end if
-
-            return query.run().map(function(revision)
+                return Promise.map(revisions, function(revision)
                 {
+                    var revIndex = _.findIndex(revisions, { id: revision.id }) + 1;
+                    revision.prevRev = (revIndex) < revisions.length ? revisions[revIndex].id : undefined;
                     revision.body = undefined;
+
                     return revision;
                 });
+            });
+        }).then(function(revisions)
+        {
+            limit = parseInt(limit);
+            var lastIdx = limit || revisions.length;
+            return revisions.slice(0, lastIdx);
         });
     },
 
@@ -305,17 +311,11 @@ var pages = {
 
     recentActivity: function(limit)
     {
-        limit = parseInt(limit);
         var query = db.Revision.getJoin()
             .orderBy(db.r.desc(function(row)
             {
                 return row('commit')('committed');
             }));
-
-        if(limit)
-        {
-            query = query.limit(limit);
-        } // end if
 
         return query.run().then(function(revisions)
         {
@@ -328,6 +328,11 @@ var pages = {
 
                 return revision;
             });
+        }).then(function(revisions)
+        {
+            limit = parseInt(limit);
+            var lastIdx = limit || revisions.length;
+            return revisions.slice(0, lastIdx);
         });
     },
 
