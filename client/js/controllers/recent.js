@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function RecentPageController($scope, $http, $filter, wikiPage)
+function RecentPageController($scope, $http, $location, wikiPage)
 {
     $scope.limit = 25;
     $scope.limits = [
@@ -34,6 +34,8 @@ function RecentPageController($scope, $http, $filter, wikiPage)
         }
     ]; // end limits
 
+    $scope.$root.title = "Recent Activity";
+
     $scope.$watch('limit', function()
     {
         wikiPage.recent($scope.limit).$promise.then(function(revisions)
@@ -49,10 +51,24 @@ function RecentPageController($scope, $http, $filter, wikiPage)
             $scope.comments = comments;
         });
     });
+
+    $scope.profile = function(event, email)
+    {
+        event.stopPropagation();
+        event.preventDefault();
+        $location.path('/profile/' + email);
+    }; // end profile
+
+    $scope.diff = function(event, rev1, rev2)
+    {
+        event.stopPropagation();
+        event.preventDefault();
+        $location.path('/diff/' + rev1 + '/' + rev2);
+    }; // end diff
 } // end RecentPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('RecentPageController', ['$scope', '$http', '$filter', 'wikiPage', RecentPageController]);
+angular.module('tome.controllers').controller('RecentPageController', ['$scope', '$http', '$location', 'wikiPage', RecentPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------
