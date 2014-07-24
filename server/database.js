@@ -82,17 +82,30 @@ var bodyIndex = new index.BodyIndex(module.exports.pages);
 
 function _getPageID(slug)
 {
-    return db.Slug.get(slug).getJoin().run().then(function(slugInst)
+    return db.Slug.get(slug).run().then(function(slugInst)
     {
-        return Promise.resolve(slugInst.currentRevision.page.id);
+        return slugInst.page;
     });
 } // end _getPageID
+
+function _getSlug(pageID)
+{
+    return db.Slug.filter({ page: pageID }).run().then(function(slugInst)
+    {
+        return slugInst.url;
+    });
+} // end _getSlug
 
 var pages = {
     get: function(slug)
     {
         return db.Slug.get(slug).getJoin().run().then(function(fullPage)
         {
+            if(fullPage.currentRevision.type == "delete")
+            {
+                throw new db.Errors.DocumentNotFound();
+            } // end if
+
             return fullPage.currentRevision;
         });
     },
@@ -152,6 +165,7 @@ var pages = {
                 {
                     var slugInst = new db.Slug({
                         url: slug,
+                        page: pageInst.id,
                         currentRevision_id: revInst.id
                     });
 
@@ -173,21 +187,36 @@ var pages = {
 
         return commitInst.save().then(function(commitInst)
         {
-            return _getPageID(slug).then(function(pageID)
+            return db.Slug.get(slug).getJoin().run().then(function(slugInst)
             {
-                return db.Slug.get(slug).getJoin().run().then(function(slugInst)
+                var oldRevision = slugInst.currentRevision;
+
+                var revInst = new db.Revision({
+                    slug_id: slug,
+                    title: page.title,
+                    tags: page.tags || [],
+                    body: page.body,
+                    commit_id: commitInst.id
+                });
+
+                var updatePromise;
+
+                if(oldRevision.type == 'delete')
                 {
-                    var oldRevision = slugInst.currentRevision;
+                    // We need to make a new page, and not copy any of the previous revision over.
+                    var pageInst = new db.Page({});
+                    updatePromise = pageInst.save();
+                }
+                else
+                {
+                    updatePromise = Promise.resolve({ id: slugInst.page_id });
+                } // end if
 
-                    var revInst = new db.Revision({
-                        page_id: pageID,
-                        slug_id: slug,
-                        title: page.title,
-                        tags: page.tags || [],
-                        body: page.body,
-                        commit_id: commitInst.id
-                    });
+                return updatePromise.then(function(page)
+                {
+                    console.log('page:', page.id);
 
+                    revInst.page_id = page.id;
                     revInst.title = revInst.title || oldRevision.title;
                     revInst.tags = revInst.tags || oldRevision.tags;
                     revInst.body = revInst.body || oldRevision.body;
@@ -225,10 +254,10 @@ var pages = {
         });
     },
 
-    delete: function(slug)
+    delete: function(slug, user)
     {
         var commitInst = new db.Commit({
-            message: page.commit,
+            message: 'deleted page',
             user_id: user.email
         });
 
@@ -236,7 +265,7 @@ var pages = {
         {
             return _getPageID(slug).then(function(pageID)
             {
-                return db.Slug.get(slug).run().then(function(slugInst)
+                return db.Slug.get(slug).getJoin().run().then(function(slugInst)
                 {
                     var oldRevision = slugInst.currentRevision;
 
@@ -244,11 +273,12 @@ var pages = {
                         page_id: pageID,
                         slug_id: slug,
                         commit_id: commitInst.id,
-                        deleted: true
+                        type: "delete"
                     });
 
                     return revInst.save().then(function(revInst)
                     {
+                        slugInst.page = undefined;
                         slugInst.currentRevision_id = revInst.id;
 
                         return slugInst.save().then(function(slugInst)
@@ -287,25 +317,16 @@ var pages = {
             query = query.limit(limit);
         } // end if
 
-        return query.run().map(function(revision)
+        return query.run().then(function(revisions)
         {
-            revision.body = undefined;
-            return revision;
-        }).then(function(revisions)
-        {
-            //FIXME: While this actually works, it's very slow, and will only get slower as time goes on. We need to
-            // improve the performance, either by modifying the model, doing direct ReQL queries, or something else.
             return Promise.map(revisions, function(revision)
             {
-                return db.Revision.filter({ page_id: revision.page_id }).getJoin().run().then(function(revisions)
-                {
-                    var sortedRevs = _.sortBy(revisions, function(rev){ return rev.commit.committed; }).reverse();
-                    var revIndex = _.findIndex(sortedRevs, { id: revision.id }) + 1;
+                var filtered = _.filter(revisions, { page_id: revision.page_id });
+                var revIndex = _.findIndex(filtered, { id: revision.id }) + 1;
+                revision.prevRev = (revIndex) < filtered.length ? filtered[revIndex].id : undefined;
+                revision.body = undefined;
 
-                    revision.prevRev = (revIndex) < sortedRevs.length ? sortedRevs[revIndex].id : undefined;
-
-                    return revision;
-                });
+                return revision;
             });
         });
     },
@@ -390,7 +411,7 @@ var comments = {
             query = query.group('title');
         } // end if
 
-        query = query.orderBy('-created');
+        query = query.orderBy(db.r.desc('created'));
 
         if(limit)
         {
@@ -400,20 +421,11 @@ var comments = {
 
         return query.run().map(function(comment)
         {
-            //FIXME: This is a slow way of getting the slig for a comment; we need to come up with a fast way of
-            // mapping page to slug.
-            return db.Revision.filter({ page_id: comment.page_id }).getJoin()
-                .orderBy(db.r.desc(function(row)
-                {
-                    return row('commit')('committed');
-                }))
-                .run().then(function(revisions)
-                {
-                    // Set slug
-                    comment.slug = revisions[0].slug_id;
-
-                    return comment;
-                });
+            return _getSlug(comment.page_id).then(function(slug)
+            {
+                comment.slug = slug;
+                return comment;
+            });
         });
     },
 
