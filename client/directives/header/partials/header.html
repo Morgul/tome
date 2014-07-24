@@ -10,7 +10,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Tome Wiki</a>
+                <a class="navbar-brand" href="/" title="{{ config.description }}"><img ng-if="config.logo" src="{{ config.logo }}" class="logo"> {{ config.name || 'Tome Wiki' }}</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->

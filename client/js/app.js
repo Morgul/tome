@@ -46,10 +46,10 @@ angular.module('tome', [
     }])
     .run(['$rootScope', '$route', 'WikiConfig', 'Persona', function($rootScope, $route, WikiConfig, Persona)
     {
-        Object.defineProperty($rootScope, 'version',
-            {
-                get: function(){ return WikiConfig.config.version; }
-            });
+        Object.defineProperty($rootScope, 'config',
+        {
+            get: function(){ return WikiConfig.config; }
+        });
 
         $rootScope.isAuthenticated = function()
         {
@@ -73,19 +73,6 @@ angular.module('tome', [
         //--------------------------------------------------------------------------------------------------------------
 
         var renderer = new marked.Renderer();
-
-        /*
-         renderer.heading = function (text, level) {
-         var escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-
-         return '<h' + level + '><a name="' +
-         escapedText +
-         '" class="anchor" href="#' +
-         escapedText +
-         '"><i class="fa fa-paragraph header-link"></i></a>' +
-         text + '</h' + level + '>';
-         };
-         */
 
         renderer.table = function(header, body)
         {
