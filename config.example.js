@@ -16,6 +16,16 @@ module.exports = {
     // The wiki page you want your base URL to redirect to
     frontPage: '/welcome',
 
+    // The database will be `tome_` plus this string.
+    databaseSuffix: 'testing',
+
+    // The default message inserted when making a change
+    defaultCommit: "minor edit",
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Customization
+    // -----------------------------------------------------------------------------------------------------------------
+
     // Name of your wiki
     name: 'Initial Tome Wiki',
 
@@ -25,15 +35,12 @@ module.exports = {
     // Description for your wiki
     description: 'This is the initial (for testing) Tome Wiki',
 
-    // The database will be `tome_` plus this string.
-    databaseSuffix: 'testing',
-
-    // The default message inserted when making a change
-    defaultCommit: "minor edit",
-
     // Changes the theme to any theme available from http://bootswatch.com/. Example values are:
     // "Default", "Flatly", "Cyborg", "Readable", "Spacelab", "United", etc.
     bootSwatchTheme: "Flatly",
+
+    // Template to include at the bottom of the body block; useful for adding in your own css file, etc.
+    extraTemplate: "",
 
     // Any text you wish to display in the footer of every page, i.e. copyright, etc.
     footerText: "Copyright 2014 Christopher Case. All rights reserved.",

@@ -40,11 +40,6 @@
 
         <script src="/vendor/angular-scroll/angular-scroll.min.js"></script>
 
-        <!-- REMOVE! THIS IS FOR TESTING!!!! -->
-        <link href="/css/dice.css" rel="stylesheet">
-        <link href="/css/powers.css" rel="stylesheet">
-        <!-- REMOVE! THIS IS FOR TESTING!!!! -->
-
         <link href="/vendor/codemirror/lib/codemirror.css" rel="stylesheet">
         <script src="/vendor/codemirror/lib/codemirror.js"></script>
         <script src="/vendor/codemirror/mode/gfm/gfm.js"></script>
@@ -105,5 +100,8 @@
 
         <!-- Angular UI Bootstrap -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap-tpls.min.js"></script>
+
+        <!-- Extra Head template -->
+        <div ng-if="config.extraTemplate" ng-include="config.extraTemplate"></div>
     </body>
 </html>
