@@ -92,7 +92,7 @@ function _getSlug(pageID)
 {
     return db.Slug.filter({ page: pageID }).run().then(function(slugInst)
     {
-        return slugInst.url;
+        return slugInst[0].url;
     });
 } // end _getSlug
 
