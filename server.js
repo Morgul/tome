@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------------------------------------------------
-// Brief description for server.js module.
+// Main server module for Tome Wiki.
 //
 // @module server.js
 //----------------------------------------------------------------------------------------------------------------------
@@ -15,6 +15,8 @@ var logger = logging.getLogger('server');
 
 //----------------------------------------------------------------------------------------------------------------------
 
+var path = require('path');
+
 var connect = require('connect');
 var redirect = require('connect-redirection');
 var passport = require('passport');
@@ -23,18 +25,14 @@ var router = require('./server/routes');
 var auth = require('./server/authentication');
 
 var package = require('./package');
-var config = require('./config');
+var config = require('./server/config');
 
 //----------------------------------------------------------------------------------------------------------------------
 
-// Parse wiki pages
-//parser.parse();
-
-var server = connect()
-    //.use(connect.logger('dev'))
+var app = connect()
     .use(connect.bodyParser())
     .use(connect.query())
-    .use(connect.static('client'))
+    .use(connect.static(__dirname + '/client'))
     .use(connect.cookieParser(config.secret))
     .use(connect.session({
         secret: config.secret || 'nosecret',
@@ -42,11 +40,21 @@ var server = connect()
         store: new connect.session.MemoryStore()
     }))
     .use(redirect())
-    .use(passport.initialize())
-    .use(passport.session())
-    .use(router)
-    .listen(4000);
 
-logger.info('Tomb v%s started on %s, port %s.', package.version, server.address().address, server.address().port);
+//----------------------------------------------------------------------------------------------------------------------
+
+module.exports = {
+    app: app,
+    listen: function()
+    {
+        var server = app
+            .use(passport.initialize())
+            .use(passport.session())
+            .use(router)
+            .listen(config.port || 4000);
+
+        logger.info('Tomb v%s started on %s, port %s.', package.version, server.address().address, server.address().port);
+    }
+}; // end exports
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -5,13 +5,13 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 var fs = require('fs');
+var path = require('path');
 
 var router = require('router');
 var _ = require('lodash');
 
 var db = require('./database');
-//var cache = require('./cache');
-var config = require('../config');
+var config = require('./config');
 var package = require('../package');
 
 var logger = require('omega-logger').getLogger('router');
@@ -450,7 +450,7 @@ route.get('/api/config', function(request, response)
 
 route.get(function(request, response)
 {
-    response.end(fs.readFileSync('./client/index.html', { encoding: 'utf8' }));
+    response.end(fs.readFileSync(path.join(__dirname, '../client/index.html'), { encoding: 'utf8' }));
 });
 
 //----------------------------------------------------------------------------------------------------------------------

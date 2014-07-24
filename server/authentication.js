@@ -10,7 +10,7 @@ var PersonaStrategy = require('passport-persona').Strategy;
 var db = require('./database');
 var router = require('./routes');
 var errors = require('./errors');
-var config = require('../config');
+var config = require('./config');
 
 var logger = require('omega-logger').getLogger('auth');
 

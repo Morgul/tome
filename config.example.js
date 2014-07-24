@@ -10,6 +10,9 @@ module.exports = {
     // General
     // -----------------------------------------------------------------------------------------------------------------
 
+    // The port to run on
+    port: 4000,
+
     // The wiki page you want your base URL to redirect to
     frontPage: '/welcome',
 
