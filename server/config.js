@@ -18,7 +18,7 @@ try
 {
     projectConfig = require(path.resolve('./config'));
 }
-catch(ex){ console.log('error', ex) }
+catch(ex){}
 
 //----------------------------------------------------------------------------------------------------------------------
 
