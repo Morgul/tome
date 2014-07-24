@@ -8,9 +8,8 @@
 
         <link rel="shortcut icon" type="image/png" ng-attr-href="{{ config.logo }}">
 
-        <!-- Bootstrap -->
-        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-        <link href="http://bootswatch.com/flatly/bootstrap.min.css" rel="stylesheet">
+        <!-- BootSwatch -->
+        <link href="http://bootswatch.com/{{ config.bootSwatchTheme.toLowerCase() || 'flatly' }}/bootstrap.min.css" rel="stylesheet">
 
         <!-- Font Awesome -->
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">

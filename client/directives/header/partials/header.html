@@ -23,7 +23,7 @@
                     <li ng-if="!user"><a ng-click="login()"><i class="icon-persona"></i> Sign in</a></li>
                     <li ng-if="user"><a ng-click="logout()"><i class="fa fa-sign-out"></i> Sign out</a></li>
                 </ul>
-                <a href="/profile"><img ng-if="user" class="profile-image img-rounded navbar-right" gravatar-src="user.email" gravatar-size="80" title="{{ user.display || user.email }}"></a>
+                <a href="/profile" class="navbar-right navbar-text"><img ng-if="user" class="profile-image img-rounded" gravatar-src="user.email" gravatar-size="80" title="{{ user.display || user.email }}"></a>
                 <form class="navbar-form navbar-right" role="search">
                     <div class="form-group search-box">
                         <i class="fa fa-search"></i>

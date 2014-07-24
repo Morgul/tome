@@ -28,6 +28,13 @@ module.exports = {
     // The default message inserted when making a change
     defaultCommit: "minor edit",
 
+    // Changes the theme to any theme available from http://bootswatch.com/. Example values are:
+    // "Default", "Flatly", "Cyborg", "Readable", "Spacelab", "United", etc.
+    bootSwatchTheme: "Flatly",
+
+    // Any text you wish to display in the footer of every page, i.e. copyright, etc.
+    footerText: "Copyright 2014 Christopher Case. All rights reserved.",
+
     // -----------------------------------------------------------------------------------------------------------------
     // Authentication
     // -----------------------------------------------------------------------------------------------------------------
