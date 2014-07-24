@@ -10,12 +10,15 @@ function TagsPageController($scope, $route, wikiPage)
     $scope.singleTag = $route.current.params.tag;
     $scope.loaded = false;
 
+    $scope.$root.title = "Tags";
+
     if($scope.singleTag)
     {
         wikiPage.getByTag($scope.singleTag).$promise.then(function(docs)
         {
             $scope.loaded = true;
             $scope.tags[$scope.singleTag] = docs
+            $scope.$root.title = "Pages tagged with #" + $scope.singleTag;
         });
     }
     else

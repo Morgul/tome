@@ -9,6 +9,8 @@ function SearchPageController($scope, $route, wikiPage)
     $scope.loaded = false;
     $scope.query = $route.current.params.text;
 
+    $scope.$root.title = 'Search for "' + $scope.query + '"';
+
     wikiPage.search($route.current.params.text).$promise.then(function(results)
     {
         $scope.results = results;
