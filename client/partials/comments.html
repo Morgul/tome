@@ -68,8 +68,9 @@
                 </div>
                 <div class="form-group">
                     <label class="sr-only" for="pageBody">Body</label>
-                    <div ng-hide="isMobile()" id="pageBody" ng-class="'form-control'" ng-model="comment.body" ui-codemirror="editorOptions" ui-refresh="refresh"></div>
-                    <textarea ng-show="isMobile()" id="pageBody" class="form-control" ng-model="comment.body" style="min-height: 300px" placeholder="Comment..."></textarea>
+                    <!--div ng-hide="isMobile()" id="pageBody" ng-class="'form-control'" ng-model="comment.body" ui-codemirror="editorOptions" ui-refresh="refresh"></div>
+                    <textarea ng-show="isMobile()" id="pageBody" class="form-control" ng-model="comment.body" style="min-height: 300px" placeholder="Comment..."></textarea-->
+                    <textarea id="pageBody" class="form-control" ng-model="comment.body" style="min-height: 300px" placeholder="Comment..."></textarea>
                 </div>
                 <div class="media-footer">
                     <hr>
