@@ -20,6 +20,7 @@
     "connect-redirection": "0.0.1",
     "header-parse": "^0.1.0",
     "lodash": "^2.4.1",
+    "lunr": "^0.5.4",
     "omega-logger": "^0.5.5",
     "passport": "^0.2.0",
     "passport-persona": "^0.1.7",
