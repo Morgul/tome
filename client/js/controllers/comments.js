@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageCommentsController($scope, $route, $http, $document, wikiPage, Persona)
+function PageCommentsController($scope, $route, $http, $document, $timeout, wikiPage, Persona)
 {
     $scope.wikiPath = wikiPage.wikiPath;
     $scope.user = Persona.currentUser;
@@ -54,7 +54,7 @@ function PageCommentsController($scope, $route, $http, $document, wikiPage, Pers
     {
         $scope.comment = { title: title, body: body, id: id};
         $scope.newCommentCollapse = false;
-        setTimeout(function()
+        $timeout(function()
         {
             var newCommentElem = angular.element(document.getElementById('new-comment'));
             $document.scrollTo(newCommentElem, 0, 200)
@@ -104,7 +104,7 @@ function PageCommentsController($scope, $route, $http, $document, wikiPage, Pers
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('PageCommentsController', ['$scope', '$route', '$http', '$document', 'wikiPage', 'Persona', PageCommentsController]);
+angular.module('tome.controllers').controller('PageCommentsController', ['$scope', '$route', '$http', '$document', '$timeout', 'wikiPage', 'Persona', PageCommentsController]);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
