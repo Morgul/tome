@@ -19,6 +19,12 @@ module.exports = {
     // The database will be `tome_` plus this string.
     databaseSuffix: 'testing',
 
+    // The server for ReThinkDB, `undefined` for default
+    databaseHost: undefined,
+
+    // The port for ReThinkDB, `undefined` for default
+    databasePort: undefined,
+
     // The default message inserted when making a change
     defaultCommit: "minor edit",
 

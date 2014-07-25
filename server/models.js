@@ -10,7 +10,7 @@ var config = require('./config');
 
 //----------------------------------------------------------------------------------------------------------------------
 
-thinky = thinky({ db: 'tome_' + config.databaseSuffix });
+thinky = thinky({ db: 'tome_' + config.databaseSuffix, host: config.databaseHost, port: config.databasePort });
 
 var r = thinky.r;
 var db = { r: r, Errors: thinky.Errors };
