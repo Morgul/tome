@@ -4,9 +4,11 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function EditPageController($scope, $location, wikiPage)
+function EditPageController($scope, $location, $timeout, wikiPage)
 {
     $scope.wikiPath = wikiPage.wikiPath;
+    $scope.preview = false;
+    $scope.page = {};
 
     if(!$scope.wikiPath)
     {
@@ -61,6 +63,6 @@ function EditPageController($scope, $location, wikiPage)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('EditPageController', ['$scope', '$location', 'wikiPage', EditPageController]);
+angular.module('tome.controllers').controller('EditPageController', ['$scope', '$location', '$timeout', 'wikiPage', EditPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

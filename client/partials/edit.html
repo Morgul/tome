@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container">
     <br/>
     <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
 
@@ -10,42 +10,62 @@
 
     <!-- If we're authenticated, we show the edit page. -->
     <div ng-show="isAuthenticated()">
+        <div class="btn-group pull-right">
+            <button class="btn btn-sm btn-default" ng-model="preview" btn-radio="false">
+                <i class="fa fa-edit"></i> Editor
+            </button>
+            <button class="btn btn-sm btn-default" ng-model="preview" btn-radio="true">
+                <i class="fa fa-eye"></i> Preview
+            </button>
+        </div>
         <h2>Editing <code>{{ wikiPath }}</code></h2>
         <hr>
-        <div class="row">
-            <div class="col-sm-12 col-md-6">
-                <div class="form-group">
-                    <label for="pageTitle">Page Title</label>
-                    <input type="text" class="form-control" id="pageTitle" placeholder="Page Title" ng-model="page.title">
+        <div ng-hide="preview">
+            <div class="form-group">
+                <label for="pageTitle">Page Title</label>
+                <input type="text" class="form-control" id="pageTitle" placeholder="Page Title" ng-model="page.title">
+            </div>
+            <div class="form-group">
+                <label for="pageTags">Tags</label>
+                <ng-tags id="pageTags" unique-tags="true" replace-spaces="true" model="page.tags"></ng-tags>
+            </div>
+            <div class="form-group">
+                <label for="pageBody">Body</label>
+                <div ng-hide="isMobile()" id="pageBody" ng-class="'form-control'" ng-model="page.body" ui-codemirror="editorOptions"></div>
+                <textarea ng-show="isMobile()" id="pageBody" class="form-control" ng-model="page.body" style="min-height: 300px"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="commitMessage">Commit Message</label>
+                <input type="text" class="form-control" id="commitMessage" placeholder="Minor edit." ng-model="page.commit">
+            </div>
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i> Save Changes</button>
                 </div>
-                <div class="form-group">
-                    <label for="pageTags">Tags</label>
-                    <ng-tags id="pageTags" unique-tags="true" replace-spaces="true" model="page.tags"></ng-tags>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" ng-click="revert()"><i class="fa fa-undo"></i> Cancel Chances</button>
                 </div>
-                <div class="form-group">
-                    <label for="pageBody">Body</label>
-                    <div ng-hide="isMobile()" id="pageBody" ng-class="'form-control'" ng-model="page.body" ui-codemirror="editorOptions"></div>
-                    <textarea ng-show="isMobile()" id="pageBody" class="form-control" ng-model="page.body" style="min-height: 300px"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="commitMessage">Commit Message</label>
-                    <input type="text" class="form-control" id="commitMessage" placeholder="Minor edit." ng-model="page.commit">
-                </div>
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i> Save Changes</button>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default" ng-click="revert()"><i class="fa fa-undo"></i> Cancel Chances</button>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-danger" ng-click="delete()"><i class="fa fa-trash-o"></i> Delete Page</button>
-                    </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger" ng-click="delete()"><i class="fa fa-trash-o"></i> Delete Page</button>
                 </div>
             </div>
-            <div class="hidden-xs hidden-sm col-md-6">
-                <markdown src="page.body"></markdown>
-            </div>
+        </div>
+        <div ng-if="preview">
+            <header>
+                <span class="pull-right hidden-xs tags">
+                    <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
+                </span>
+                <h1 class="page-title"><i class="fa fa-file-text-o"></i> {{ page.title || wikiPath }}</h1>
+                <div ng-if="revision">
+                    <span class="text-muted">@Revision {{ revision }}</span> (<a href="/wiki/{{ wikiPath }}">current</a>)
+                </div>
+                <div class="visible-xs">
+                    <hr>
+                    <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
+                </div>
+                <hr>
+            </header>
+            <markdown src="page.body" skip-cache="true"></markdown>
         </div>
     </div>
 </div>
