@@ -9,7 +9,8 @@ function MarkdownDirective($compile, $filter)
     return {
         restrict: 'E',
         scope: {
-            src: '='
+            src: '=',
+            skipCache: '='
         },
         template: "<div></div>",
         link: function(scope, elem)
@@ -17,7 +18,7 @@ function MarkdownDirective($compile, $filter)
             scope.$watch('src', function()
             {
                 // Render the markdown text
-                var src = $filter('markdown')(scope.src);
+                var src = $filter('markdown')(scope.src, scope.skipCache);
 
                 // Add those rendered elements to our element
                 elem.html(src);
