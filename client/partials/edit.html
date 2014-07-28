@@ -10,7 +10,7 @@
 
     <!-- If we're authenticated, we show the edit page. -->
     <div ng-show="isAuthenticated()">
-        <div class="btn-group pull-right">
+        <div class="btn-group pull-right" style="position: relative; z-index: 10;">
             <button class="btn btn-sm btn-default" ng-model="preview" btn-radio="false">
                 <i class="fa fa-edit"></i> Editor
             </button>
@@ -69,4 +69,3 @@
         </div>
     </div>
 </div>
-
