@@ -39,7 +39,7 @@ var app = connect()
         key: config.sid || 'sid',
         store: new connect.session.MemoryStore()
     }))
-    .use(redirect())
+    .use(redirect());
 
 //----------------------------------------------------------------------------------------------------------------------
 
