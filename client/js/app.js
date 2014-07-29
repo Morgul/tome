@@ -82,8 +82,8 @@ angular.module('tome', [
         renderer.link = function(href, title, text)
         {
             var link = '<wiki-link url="\'' + href + '\'"';
-            link += title ? ' hover="\'' + title + '\'"' : '';
-            link += ' text="\'' + text + '\'"></wiki-link>';
+            link += title ? ' hover="\'' + title.replace("&#39;", "&#92;&#39;") + '\'"' : '';
+            link += ' text="\'' + text.replace("&#39;", "&#92;&#39;") + '\'"></wiki-link>';
 
             return link;
         }; // end link parsing
