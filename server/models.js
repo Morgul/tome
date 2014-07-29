@@ -4,6 +4,7 @@
 // @module models.js
 //----------------------------------------------------------------------------------------------------------------------
 
+var _ = require('lodash');
 var thinky = require('thinky');
 
 var config = require('./config');
@@ -13,7 +14,7 @@ var config = require('./config');
 thinky = thinky({ db: 'tome_' + config.databaseSuffix, host: config.databaseHost, port: config.databasePort });
 
 var r = thinky.r;
-var db = { r: r, Errors: thinky.Errors };
+var db = { r: r, Errors: _.assign({}, thinky.Errors, thinky.r.Error) };
 
 //----------------------------------------------------------------------------------------------------------------------
 // Users

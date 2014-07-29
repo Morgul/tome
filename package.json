@@ -24,6 +24,7 @@
     "omega-logger": "^0.5.5",
     "passport": "^0.2.0",
     "passport-persona": "^0.1.7",
+    "restify": "^2.8.1",
     "router": "^0.6.2",
     "slug": "^0.5.0",
     "thinky": "^1.13.9",

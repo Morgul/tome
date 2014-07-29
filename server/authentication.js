@@ -1,22 +1,31 @@
-//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
 // Brief description for authentication module.
 //
 // @module authentication
-//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
 
 var passport = require('passport');
 var PersonaStrategy = require('passport-persona').Strategy;
 
 var db = require('./database');
-var router = require('./routes');
 var errors = require('./errors');
 var config = require('./config');
 
 var logger = require('omega-logger').getLogger('auth');
 
-//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
 
-router.post('/auth/login-persona', function(request, response)
+module.exports = function configureAuth(app)
+{
+
+    //-----------------------------------------------------------------------------------------------------------------
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    //-----------------------------------------------------------------------------------------------------------------
+
+    app.post('/auth/login-persona', function(request, response, next)
     {
         passport.authenticate('persona', { failureRedirect: '/' }, function(error, user)
         {
@@ -43,76 +52,81 @@ router.post('/auth/login-persona', function(request, response)
             }
             else
             {
-                request.login(user, function(err)
+                request.login(user, function()//err)
                 {
                     //TODO: if this is a new user, we should redirect them to the profile page.
                     response.writeHead(200, {"Content-Type": "application/json"});
                     response.end(JSON.stringify(user));
                 });
             } // end if
-        })(request, response);
-    }
-);
-
-router.post('/auth/logout-persona', function(request, response)
-{
-    request.logout();
-    response.redirect('/');
-});
-
-//----------------------------------------------------------------------------------------------------------------------
-
-passport.serializeUser(function(user, done)
-{
-    done(null, user.email);
-});
-
-passport.deserializeUser(function(email, done)
-{
-    db.users.get(email).then(function(user)
-    {
-        done(null, user);
-    }).catch(function(error)
-    {
-        done(error);
+        })(request, response, next);
     });
-});
 
-passport.use(new PersonaStrategy({
-        audience: config.audience
-    },
-    function(email, done)
+    app.post('/auth/logout-persona', function(request, response, next)
+    {
+        request.logout();
+        response.redirect('/');
+        next();
+    });
+
+    //-----------------------------------------------------------------------------------------------------------------
+
+    passport.serializeUser(function(user, done)
+    {
+        done(null, user.email);
+    });
+
+    passport.deserializeUser(function(email, done)
     {
         db.users.get(email).then(function(user)
         {
-            if(user)
-            {
-                done(null, user);
-            } // end if
-        }).catch(db.Errors.DocumentNotFound, function()
+            done(null, user);
+        }).catch(function(error)
         {
-            if(config.registration === 'auto')
-            {
-                // Auto-create users
-                 user = { email: email };
-                 db.users.store(user).then(function()
-                 {
-                     done(null, user);
-                 });
-            }
-            else if(config.registration === true)
-            {
-                // Force registration
-                var error = new errors.RegistrationRequiredError();
-                error.email = email;
-                done(error);
-            }
-            else
-            {
-                done(new errors.NotAuthorizedError("Registration disabled."));
-            } // end if
+            done(error);
         });
-    })
-);
+    });
 
-//----------------------------------------------------------------------------------------------------------------------
+    passport.use(new PersonaStrategy({
+            audience: config.audience
+        },
+        function(email, done)
+        {
+            db.users.get(email).then(function(user)
+            {
+                if(user)
+                {
+                    done(null, user);
+                } // end if
+            }).catch(db.Errors.DocumentNotFound, function()
+            {
+                if(config.registration === 'auto')
+                {
+                    // Auto-create users
+                     var user = { email: email };
+                     db.users.store(user).then(function()
+                     {
+                         done(null, user);
+                     });
+                }
+                else if(config.registration === true)
+                {
+                    // Force registration
+                    var error = new errors.RegistrationRequiredError();
+                    error.email = email;
+                    done(error);
+                }
+                else
+                {
+                    done(new errors.NotAuthorizedError("Registration disabled."));
+                } // end if
+            });
+        })
+    );
+
+    //-----------------------------------------------------------------------------------------------------------------
+
+    return app;
+}; // end configureAuth
+
+//---------------------------------------------------------------------------------------------------------------------

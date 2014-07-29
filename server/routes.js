@@ -1,460 +1,442 @@
-//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
 // Build our routes for handling wiki pages
 //
 // @module routes.js
-//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
 
-var fs = require('fs');
-var path = require('path');
+var util = require('util');
 
-var router = require('router');
 var _ = require('lodash');
+var Promise = require('bluebird');
+var restify = require('restify');
 
 var db = require('./database');
 var config = require('./config');
 var package = require('../package');
 
-var logger = require('omega-logger').getLogger('router');
+var logger = require('omega-logger').loggerFor(module);
 
-//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
 
-function respond(object, response)
+function MissingEmailError(message)
 {
-    logger.debug('Response:', logger.dump(object));
-
-    response.writeHead(200, {"Content-Type": "application/json"});
-    response.end(JSON.stringify(object));
-} // end respond
-
-function error(message, response)
-{
-    logger.error('Error: "%s"', message);
-
-    response.writeHead(400, {"Content-Type": "application/json"});
-    response.end(JSON.stringify({ error: message }));
-} // end error
-
-function notAuthorized(message, response)
-{
-    logger.error('Not Authorized: "%s"', message);
-
-    response.writeHead(403, {"Content-Type": "application/json"});
-    response.end(JSON.stringify({ error: 'Not Authorized:' + message }));
-} // end error
-
-function wiki404(response)
-{
-    logger.debug('Wiki page not found.');
-
-    response.writeHead(404, {"Content-Type": "application/json"});
-    response.end("Wiki page not found.");
-} // end wiki404
-
-//----------------------------------------------------------------------------------------------------------------------
-
-var route = router();
-
-//----------------------------------------------------------------------------------------------------------------------
-// Tags
-//----------------------------------------------------------------------------------------------------------------------
-
-route.get('/api/tag', function(request, response)
-{
-    db.pages.getTags().then(function(results)
-    {
-        respond(results, response);
+    restify.RestError.call(this, {
+        restCode: 'MissingEmail',
+        statusCode: 418,
+        message: message,
+        constructorOpt: MissingEmailError
     });
-});
+    this.name = 'MissingEmailError';
+} // end MissingEmailError
+util.inherits(MissingEmailError, restify.RestError);
 
-//----------------------------------------------------------------------------------------------------------------------
-// Pages
-//----------------------------------------------------------------------------------------------------------------------
-
-route.get('/api/history', function(request, response)
+function RegistrationDeniedError(message)
 {
-    var limit = request.query.limit;
-    db.pages.recentActivity(limit).then(function(activity)
-    {
-        respond(activity, response);
+    restify.RestError.call(this, {
+        restCode: 'RegistrationDenied',
+        statusCode: 418,
+        message: message,
+        constructorOpt: RegistrationDeniedError
     });
-});
+    this.name = 'RegistrationDeniedError';
+} // end RegistrationDeniedError
+util.inherits(RegistrationDeniedError, restify.RestError);
 
-route.get('/api/history/*', function(request, response)
+function UserExistsError(message)
 {
-    var limit = request.query.limit;
-    var slug = '/' + request.params.wildcard;
-
-    // Handle welcome page
-    if(slug == '/' || slug == '//')
-    {
-        slug = config.frontPage || '/welcome';
-    } // end if
-
-    db.pages.getHistory(slug, limit).then(function(wikiPage)
-    {
-        respond(wikiPage, response);
-    }).catch(db.Errors.DocumentNotFound, function()
-    {
-        wiki404(response);
-    }).error(function(err)
-    {
-        // FIXME: Thinky doesn't throw a DocumentNotFound error when you use `getJoin()`, instead it throws an
-        // uncatchable error. This means we can't tell the difference between a page not found, or some other error.
-        //error(err.message || err.toString(), response);
-
-        wiki404(response);
+    restify.RestError.call(this, {
+        restCode: 'UserExists',
+        statusCode: 418,
+        message: message,
+        constructorOpt: UserExistsError
     });
-});
+    this.name = 'UserExistsError';
+} // end UserExistsError
+util.inherits(UserExistsError, restify.RestError);
 
-route.get('/api/revision/:revision', function(request, response)
+function UserDoesNotExistError(message)
 {
-    db.pages.getRevision(request.params.revision).then(function(revision)
-    {
-        respond(revision, response);
-    }).catch(db.Errors.DocumentNotFound, function()
-    {
-        wiki404(response);
-    }).error(function(err)
-    {
-        // FIXME: Thinky doesn't throw a DocumentNotFound error when you use `getJoin()`, instead it throws an
-        // uncatchable error. This means we can't tell the difference between a page not found, or some other error.
-        //error(err.message || err.toString(), response);
-
-        wiki404(response);
+    restify.RestError.call(this, {
+        restCode: 'UserDoesNotExist',
+        statusCode: 418,
+        message: message,
+        constructorOpt: UserDoesNotExistError
     });
-});
+    this.name = 'UserDoesNotExistError';
+} // end UserDoesNotExistError
+util.inherits(UserDoesNotExistError, restify.RestError);
 
-
-route.get('/api/page', function(request, response)
+function NotHumanError(message)
 {
-    if(request.query.body)
-    {
-        db.pages.search(request.query.body).then(function(results)
-        {
-            respond(results, response);
-        });
-    }
-    else if(request.query.tags)
-    {
-        // Build tags list
-        var tags = request.query.tags.replace(' ', '').split(';');
-        tags = tags.map(function(tag){ return tag.trim(); });
+    restify.RestError.call(this, {
+        restCode: 'NotHuman',
+        statusCode: 418,
+        message: message,
+        constructorOpt: NotHumanError
+    });
+    this.name = 'NotHumanError';
+} // end NotHumanError
+util.inherits(NotHumanError, restify.RestError);
 
-        db.pages.getByTags(tags).then(function(results)
-        {
-            respond(results, response);
-        });
-    }
-    else if(request.query.slug)
-    {
-        //TODO: implement slug search
-    }
-    else if(request.query.title)
-    {
-        //TODO: implement title search
-    }
-    else
-    {
-        cache.all(function(results)
-        {
-            respond(results, response);
-        });
-    } // end if
-});
+//---------------------------------------------------------------------------------------------------------------------
 
-route.head('/api/page/*', function(request, response)
+module.exports = function configureRoutes(app)
 {
-    var slug = '/' + request.params.wildcard;
+    //-----------------------------------------------------------------------------------------------------------------
+    // Tags
+    //-----------------------------------------------------------------------------------------------------------------
 
-    // Handle welcome page
-    if(slug == '/' || slug == '//')
+    app.get('/api/tag', function(request, response, next)
     {
-        slug = config.frontPage || '/welcome';
-    } // end if
+        db.pages.getTags()
+        .then(response.respondAsync)
+        .then(next, next);
+    });
 
-    db.pages.exists(slug).then(function(exists)
+    //-----------------------------------------------------------------------------------------------------------------
+    // Pages
+    //-----------------------------------------------------------------------------------------------------------------
+
+    app.get('/api/history', function(request, response, next)
     {
-        if(exists)
+        var limit = request.query.limit;
+        db.pages.recentActivity(limit)
+        .then(response.respondAsync)
+        .then(next, next);
+    });
+
+    app.get(/^\/api\/history\/(.*)$/, function(request, response, next)
+    {
+        var limit = request.query.limit;
+        var slug = '/' + request.params[0];
+
+        // Handle welcome page
+        if(slug == '/' || slug == '//')
         {
-            response.end();
+            slug = config.frontPage || '/welcome';
+        } // end if
+
+        db.pages.getHistory(slug, limit)
+        .then(response.respondAsync)
+        .catch(db.Errors.DocumentNotFound, db.Errors.ReqlRuntimeError, function()
+        {
+            return next(new restify.ResourceNotFoundError("Wiki page not found."));
+        })
+        .then(next, next);
+    });
+
+    app.get('/api/revision/:revision', function(request, response, next)
+    {
+        db.pages.getRevision(request.params.revision)
+        .then(response.respondAsync)
+        .catch(db.Errors.DocumentNotFound, db.Errors.ReqlRuntimeError, function()
+        {
+            return next(new restify.ResourceNotFoundError("Wiki page not found."));
+        })
+        .then(next, next);
+    });
+
+
+    app.get('/api/page', function(request, response, next)
+    {
+        new Promise(function(resolve, reject)
+        {
+            if(request.query.body)
+            {
+                resolve(db.pages.search(request.query.body));
+            }
+            else if(request.query.tags)
+            {
+                // Build tags list
+                var tags = request.query.tags.replace(' ', '').split(';');
+                tags = tags.map(function(tag){ return tag.trim(); });
+
+                resolve(db.pages.getByTags(tags));
+            }
+            else if(request.query.slug)
+            {
+                //TODO: implement slug search
+                reject(new restify.NotImplementedError("Not yet implemented."));
+            }
+            else if(request.query.title)
+            {
+                //TODO: implement title search
+                reject(new restify.NotImplementedError("Not yet implemented."));
+            }
+            else
+            {
+                reject(new restify.MissingParameterError("No body, tags, slug, or title query specified!"));
+            } // end if
+        })
+        .then(
+            function(data)
+            {
+                logger.warn("Succeeded, with data: %s", logger.dump(data));
+                return data;
+            },
+            function(error)
+            {
+                logger.warn("Failed, with error: %s", logger.dump(error));
+                throw error;
+            })
+        .then(response.respondAsync)
+        .then(next, next);
+    });
+
+    function apiPageHandler(request, response, next)
+    {
+        var slug = '/' + request.params[0];
+
+        // Handle welcome page
+        if(slug == '/' || slug == '//')
+        {
+            slug = config.frontPage || '/welcome';
+        } // end if
+
+        db.pages.get(slug)
+        .catch(db.Errors.DocumentNotFound, db.Errors.ReqlRuntimeError, function()
+        {
+            throw new restify.ResourceNotFoundError("Wiki page not found.");
+        })
+        .then(response.respondAsync)
+        .then(next, next);
+    } // end apiPageHandler
+
+    app.head(/^\/api\/page\/(.*)$/, apiPageHandler);
+    app.get(/^\/api\/page\/(.*)$/, apiPageHandler);
+
+    // Create new wiki pages
+    app.put(/^\/api\/page\/(.*)$/, function(request, response, next)
+    {
+        if(request.isAuthenticated())
+        {
+            var slug = '/' + request.params[0];
+            var reqBody = request.body;
+
+            db.pages.createOrUpdate(slug, reqBody, request.user)
+            .then(response.respondAsync)
+            .then(next, next);
         }
         else
         {
-            wiki404(response);
+            next(new restify.NotAuthorizedError("Authentication required."));
         } // end if
     });
-});
 
-route.get('/api/page/*', function(request, response)
-{
-    var slug = '/' + request.params.wildcard;
+    // Delete wiki pages
+    app.del(/^\/api\/page\/(.*)$/, function(request, response, next)
+    {
+        if(request.isAuthenticated())
+        {
+            var slug = '/' + request.params[0];
 
-    // Handle welcome page
-    if(slug == '/' || slug == '//')
-    {
-        slug = config.frontPage || '/welcome';
-    } // end if
-
-    db.pages.get(slug).then(function(wikiPage)
-    {
-        respond(wikiPage, response);
-    }).catch(db.Errors.DocumentNotFound, function()
-    {
-        wiki404(response);
-    }).error(function(err)
-    {
-        // FIXME: Thinky doesn't throw a DocumentNotFound error when you use `getJoin()`, instead it throws an
-        // uncatchable error. This means we can't tell the difference between a page not found, or some other error.
-        //error(err.message || err.toString(), response);
-
-        wiki404(response);
+            db.pages.delete(slug, request.user)
+            .then(response.respondAsync)
+            .then(next, next);
+        }
+        else
+        {
+            next(new restify.NotAuthorizedError("Authentication required."));
+        } // end if
     });
-});
 
-// Create new wiki pages
-route.put('/api/page/*', function(request, response)
-{
-    if(request.isAuthenticated())
+    //-----------------------------------------------------------------------------------------------------------------
+    // Commits
+    //-----------------------------------------------------------------------------------------------------------------
+
+    app.get('/api/commit', function(request, response, next)
     {
-        var slug = '/' + request.params.wildcard;
+        var user = request.query.user;
+        var limit = request.query.limit;
+
+        if(user)
+        {
+            db.users.getCommits(user, limit)
+            .then(response.respondAsync)
+            .then(next, next);
+        }
+        else
+        {
+            //TODO: Implement looking up commits without a user
+            next(new restify.NotImplementedError("Not yet implemented."));
+        } // end if
+    });
+
+    //-----------------------------------------------------------------------------------------------------------------
+    // Comments
+    //-----------------------------------------------------------------------------------------------------------------
+
+    app.get('/api/comment', function(request, response, next)
+    {
+        var page = request.query.page;
+        var group = request.query.group;
+        var limit = request.query.limit;
+
+        db.comments.get(page, group, limit)
+        .then(response.respondAsync)
+        .then(next, next);
+    });
+
+    app.put('/api/comment', function(request, response, next)
+    {
+        if(request.isAuthenticated())
+        {
+            var page = request.body.page;
+            var title = request.body.title;
+            var body = request.body.body;
+
+            db.comments.create(page, title, body, request.user)
+            .then(response.respondAsync)
+            .then(next, next);
+        }
+        else
+        {
+            next(new restify.NotAuthorizedError("Authentication required."));
+        } // end if
+    });
+
+    app.put('/api/comment/:comment', function(request, response, next)
+    {
+        if(request.isAuthenticated())
+        {
+            var comment = request.params.comment;
+            var title = request.body.title;
+            var body = request.body.body;
+            var resolved = request.body.resolved;
+
+            db.comments.update(comment, title, body, resolved)
+            .then(response.respondAsync)
+            .then(next, next);
+        }
+        else
+        {
+            next(new restify.NotAuthorizedError("Authentication required."));
+        } // end if
+    });
+
+    app.del('/api/comment/:comment', function(request, response, next)
+    {
+        if(request.isAuthenticated())
+        {
+            var comment = request.params.comment;
+
+            db.comments.delete(comment)
+            .then(response.respondAsync)
+            .then(next, next);
+        }
+        else
+        {
+            next(new restify.NotAuthorizedError("Authentication required."));
+        } // end if
+    });
+
+    //-----------------------------------------------------------------------------------------------------------------
+    // User
+    //-----------------------------------------------------------------------------------------------------------------
+
+    app.get('/api/user/:email', function(request, response, next)
+    {
+        db.users.get(request.params.email)
+        .then(response.respondAsync)
+        .catch(db.Errors.DocumentNotFound, function()
+        {
+            return next(new restify.ResourceNotFoundError("Wiki page not found."));
+        })
+        .then(next, next);
+    });
+
+    app.put('/api/user/:email', function(request, response, next)
+    {
         var reqBody = request.body;
 
-        db.pages.createOrUpdate(slug, reqBody, request.user).then(function()
+        if(!reqBody.email)
         {
-            response.end();
-        });
-    }
-    else
-    {
-        notAuthorized("Authentication Required.", response);
-    } // end if
-});
-
-// Delete wiki pages
-route.delete('/api/page/*', function(request, response)
-{
-    if(request.isAuthenticated())
-    {
-        var slug = '/' + request.params.wildcard;
-
-        db.pages.delete(slug, request.user).then(function()
+            next(new MissingEmailError("Email is required in order to register."));
+        }
+        else if(request.isAuthenticated())
         {
-            response.end();
-        });
-    }
-    else
-    {
-        notAuthorized("Authentication Required.", response);
-    } // end if
-});
-
-//----------------------------------------------------------------------------------------------------------------------
-// Commits
-//----------------------------------------------------------------------------------------------------------------------
-
-route.get('/api/commit', function(request, response)
-{
-    var user = request.query.user;
-    var limit = request.query.limit;
-
-    if(user)
-    {
-        db.users.getCommits(user, limit).then(function(commits)
-        {
-            respond(commits, response);
-        });
-    }
-    else
-    {
-        //TODO: Implement looking up commits without a user
-        error("Not Implemented.", response);
-    } // end if
-});
-
-//----------------------------------------------------------------------------------------------------------------------
-// Comments
-//----------------------------------------------------------------------------------------------------------------------
-
-route.get('/api/comment', function(request, response)
-{
-    var page = request.query.page;
-    var group = request.query.group;
-    var limit = request.query.limit;
-
-    db.comments.get(page, group, limit).then(function(comments)
-    {
-        respond(comments, response);
-    });
-});
-
-route.put('/api/comment', function(request, response)
-{
-    if(request.isAuthenticated())
-    {
-        var page = request.body.page;
-        var title = request.body.title;
-        var body = request.body.body;
-
-        db.comments.create(page, title, body, request.user).then(function()
-        {
-            response.end();
-        });
-    }
-    else
-    {
-        notAuthorized("Authentication Required.", response);
-    } // end if
-});
-
-route.put('/api/comment/:comment', function(request, response)
-{
-    if(request.isAuthenticated())
-    {
-        var comment = request.params.comment;
-        var title = request.body.title;
-        var body = request.body.body;
-        var resolved = request.body.resolved;
-
-        db.comments.update(comment, title, body, resolved).then(function()
-        {
-            response.end();
-        });
-    }
-    else
-    {
-        notAuthorized("Authentication Required.", response);
-    } // end if
-});
-
-route.delete('/api/comment/:comment', function(request, response)
-{
-    if(request.isAuthenticated())
-    {
-        var comment = request.params.comment;
-
-        db.comments.delete(comment).then(function()
-        {
-            response.end();
-        });
-    }
-    else
-    {
-        notAuthorized("Authentication Required.", response);
-    } // end if
-});
-
-//----------------------------------------------------------------------------------------------------------------------
-// User
-//----------------------------------------------------------------------------------------------------------------------
-
-route.get('/api/user/:email', function(request, response)
-{
-    db.users.get(request.params.email).then(function(user)
-    {
-        respond(user, response);
-    }).catch(db.Errors.DocumentNotFound, function()
-    {
-        wiki404(response);
-    }).error(function(err)
-    {
-        error(err.message || err.toString(), response);
-    });
-});
-
-route.put('/api/user/:email', function(request, response)
-{
-    var regBody = request.body;
-
-    if(regBody.email)
-    {
-        db.users.get(request.params.email).then(function()
-        {
-            error("User already exists.", response);
-        }).catch(db.Errors.DocumentNotFound, function()
-        {
-            if(!request.isAuthenticated() && config.registration === true)
+            if(!request.isAuthenticated())
             {
-                logger.info("Expected: %s, Actual: %s",
-                    logger.dump(config.humanVerificationQuestions[regBody.humanIndex].answer),
-                    logger.dump(regBody.answer));
+                next(new restify.NotAuthorizedError("You must be logged in to modify user information."));
+            }
+            else if(request.user != request.params.email)
+            {
+                next(new restify.NotAuthorizedError("You may only modify your own user information."));
+            } // end if
+
+            db.users.get(request.params.email)
+            .then(function()//user)
+            {
+                // Update the user
+                return db.users.merge(request.body);
+            })
+            .catch(db.Errors.DocumentNotFound, function()
+            {
+                throw new UserDoesNotExistError("User %j does not exist.", request.params.email);
+            })
+            .then(response.respond)
+            .then(next, next);
+        }
+        else
+        {
+            if(config.registration !== true)
+            {
+                next(new RegistrationDeniedError("Registration disabled."));
+            } // end if
+
+            db.users.get(request.params.email)
+            .then(function()
+            {
+                next(new UserExistsError("User %j already exists.", request.params.email));
+            })
+            .catch(db.Errors.DocumentNotFound, function()
+            {
+                var expectedAnswer = config.humanVerificationQuestions[reqBody.humanIndex].answer;
+                logger.info("Expected: %s, Actual: %s", logger.dump(expectedAnswer), logger.dump(reqBody.answer));
 
                 // Check the human verification question
-                if(config.humanVerificationQuestions[regBody.humanIndex].answer == regBody.answer)
+                if(expectedAnswer !== reqBody.answer)
                 {
-                    db.users.store({ email: regBody.email, display: regBody.display }).then(function()
-                    {
-                        response.end();
-                    });
+                    next(new NotHumanError("Failed human verification."));
                 }
                 else
                 {
-                    error('Failed human verification.', response);
+                    db.users.store({ email: reqBody.email, display: reqBody.display })
+                    .then(function()
+                    {
+                        response.end();
+                    });
                 } // end if
-            }
-            else
-            {
-                error("Registration not allowed.", response);
-            } // end if
-        });
-    }
-    else
+            });
+        } // end if
+    });
+
+    app.get('/api/human', function(request, response, next)
     {
-        error("Missing or invalid body.", response);
-    } // end if
-});
+        var questions = config.humanVerificationQuestions;
+        var randIdx = Math.floor(Math.random() * questions.length);
+        var question = questions[randIdx];
 
-route.post('/api/user/:email', function(request, response)
-{
-    if(request.body.email)
+        response.respondAsync({ question: question.question, hint: question.hint, index: randIdx })
+        .then(next, next);
+    });
+
+    //-----------------------------------------------------------------------------------------------------------------
+    // Misc
+    //-----------------------------------------------------------------------------------------------------------------
+
+    app.get('/api/config', function(request, response, next)
     {
-        db.users.get(request.params.email).then(function(user)
-        {
-            // Update the user
-            if(request.isAuthenticated() || request.user == request.params.email)
-            {
-                db.users.merge(request.body).then(function(){ response.end(); });
-            }
-            else
-            {
-                notAuthorized("You must be logged in as the user you are attempting to modify.", response);
-            } // end if
-        }).catch(db.Errors.DocumentNotFound, function()
-        {
-            error("User does not exist.", response);
-        });
-    }
-    else
-    {
-        error("Missing or invalid body.", response);
-    } // end if
-});
+        var exposedConfig = _.omit(config, ['sid', 'secret', 'humanVerificationQuestions']);
+        exposedConfig.version = package.version;
 
-route.get('/api/human', function(request, response)
-{
-    var questions = config.humanVerificationQuestions;
-    var randIdx = Math.floor(Math.random() * questions.length);
-    var question = questions[randIdx];
-    respond({ question: question.question, hint: question.hint, index: randIdx }, response);
-});
+        response.respondAsync(exposedConfig)
+        .then(next, next);
+    });
 
-//----------------------------------------------------------------------------------------------------------------------
-// Misc
-//----------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------
 
-route.get('/api/config', function(request, response)
-{
-    var exposedConfig = _.omit(config, ['sid', 'secret', 'humanVerificationQuestions']);
-    exposedConfig.version = package.version;
-    respond(exposedConfig, response);
-});
+    return app;
+}; // end configureRoutes
 
-route.get(function(request, response)
-{
-    response.end(fs.readFileSync(path.join(__dirname, '../client/index.html'), { encoding: 'utf8' }));
-});
-
-//----------------------------------------------------------------------------------------------------------------------
-
-module.exports = route;
-
-//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------

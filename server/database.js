@@ -178,6 +178,8 @@ var pages = {
                     return slugInst.save().then(function()
                     {
                         bodyIndex.add(revInst);
+
+                        return slugInst;
                     });
                 });
             });
@@ -348,7 +350,7 @@ var pages = {
             var tags = [];
             slugs.forEach(function(slugInst)
             {
-                tags = tags.concat((slugInst.currentRevision || {}).tags || [])
+                tags = tags.concat((slugInst.currentRevision || {}).tags || []);
             });
 
             return _.uniq(tags).sort();
@@ -369,7 +371,7 @@ var pages = {
 
             _.forEach(tags, function(tag, index)
             {
-                results = filterByTag(tag, index == 0 ? revisions : results);
+                results = filterByTag(tag, index === 0 ? revisions : results);
             });
 
             return results;
