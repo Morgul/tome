@@ -84,24 +84,9 @@ var app = restify.createServer(
         }
         else
         {
-            if(response._body)
-            {
-                logger.debug('%s %s -> %s: %s',
-                    request.method, logger.dump(request.url),
-                    logger.dump(response.statusCode), logger.dump(response._body));
-            }
-            else if(request.url == '/api/page/welcome')
-            {
-                logger.debug('%s %s -> %s: %s',
-                    request.method, logger.dump(request.url),
-                    logger.dump(response.statusCode), logger.dump(response, 1));
-            }
-            else
-            {
-                logger.debug('%s %s -> %s: (body not shown)',
-                    request.method, logger.dump(request.url),
-                    logger.dump(response.statusCode));
-            } // end if
+            logger.debug('%s %s -> %s: (body not shown)',
+                request.method, logger.dump(request.url),
+                logger.dump(response.statusCode));
 
             if(response._body instanceof Error)
             {
@@ -125,7 +110,9 @@ var app = restify.createServer(
                     statusCode = 200;
             } // end if
 
-            logger.debug('Responding with %s: %s', logger.dump(statusCode), logger.dump(data));
+            logger.debug('%s %s: Responding with %s: %s',
+                request.method, logger.dump(request.url),
+                logger.dump(statusCode), logger.dump(data));
 
             response.send(statusCode, data);
 
