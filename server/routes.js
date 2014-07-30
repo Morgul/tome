@@ -90,7 +90,7 @@ module.exports = function configureRoutes(app)
     {
         db.pages.getTags()
         .then(response.respondAsync)
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
 
     //-----------------------------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ module.exports = function configureRoutes(app)
         var limit = request.query.limit;
         db.pages.recentActivity(limit)
         .then(response.respondAsync)
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
 
     app.get(/^\/api\/history\/(.*)$/, function(request, response, next)
@@ -122,7 +122,7 @@ module.exports = function configureRoutes(app)
         {
             return next(new restify.ResourceNotFoundError("Wiki page not found."));
         })
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
 
     app.get('/api/revision/:revision', function(request, response, next)
@@ -133,9 +133,8 @@ module.exports = function configureRoutes(app)
         {
             return next(new restify.ResourceNotFoundError("Wiki page not found."));
         })
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
-
 
     app.get('/api/page', function(request, response, next)
     {
@@ -180,7 +179,7 @@ module.exports = function configureRoutes(app)
                 throw error;
             })
         .then(response.respondAsync)
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
 
     function apiPageHandler(request, response, next)
@@ -199,7 +198,7 @@ module.exports = function configureRoutes(app)
             throw new restify.ResourceNotFoundError("Wiki page not found.");
         })
         .then(response.respondAsync)
-        .then(next, next);
+        .then(function() { next(false); }, next);
     } // end apiPageHandler
 
     app.head(/^\/api\/page\/(.*)$/, apiPageHandler);
@@ -215,7 +214,7 @@ module.exports = function configureRoutes(app)
 
             db.pages.createOrUpdate(slug, reqBody, request.user)
             .then(response.respondAsync)
-            .then(next, next);
+            .then(function() { next(false); }, next);
         }
         else
         {
@@ -232,7 +231,7 @@ module.exports = function configureRoutes(app)
 
             db.pages.delete(slug, request.user)
             .then(response.respondAsync)
-            .then(next, next);
+            .then(function() { next(false); }, next);
         }
         else
         {
@@ -253,7 +252,7 @@ module.exports = function configureRoutes(app)
         {
             db.users.getCommits(user, limit)
             .then(response.respondAsync)
-            .then(next, next);
+            .then(function() { next(false); }, next);
         }
         else
         {
@@ -274,7 +273,7 @@ module.exports = function configureRoutes(app)
 
         db.comments.get(page, group, limit)
         .then(response.respondAsync)
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
 
     app.put('/api/comment', function(request, response, next)
@@ -287,7 +286,7 @@ module.exports = function configureRoutes(app)
 
             db.comments.create(page, title, body, request.user)
             .then(response.respondAsync)
-            .then(next, next);
+            .then(function() { next(false); }, next);
         }
         else
         {
@@ -306,7 +305,7 @@ module.exports = function configureRoutes(app)
 
             db.comments.update(comment, title, body, resolved)
             .then(response.respondAsync)
-            .then(next, next);
+            .then(function() { next(false); }, next);
         }
         else
         {
@@ -322,7 +321,7 @@ module.exports = function configureRoutes(app)
 
             db.comments.delete(comment)
             .then(response.respondAsync)
-            .then(next, next);
+            .then(function() { next(false); }, next);
         }
         else
         {
@@ -342,7 +341,7 @@ module.exports = function configureRoutes(app)
         {
             return next(new restify.ResourceNotFoundError("Wiki page not found."));
         })
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
 
     app.put('/api/user/:email', function(request, response, next)
@@ -375,7 +374,7 @@ module.exports = function configureRoutes(app)
                 throw new UserDoesNotExistError("User %j does not exist.", request.params.email);
             })
             .then(response.respond)
-            .then(next, next);
+            .then(function() { next(false); }, next);
         }
         else
         {
@@ -418,7 +417,7 @@ module.exports = function configureRoutes(app)
         var question = questions[randIdx];
 
         response.respondAsync({ question: question.question, hint: question.hint, index: randIdx })
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
 
     //-----------------------------------------------------------------------------------------------------------------
@@ -431,7 +430,7 @@ module.exports = function configureRoutes(app)
         exposedConfig.version = package.version;
 
         response.respondAsync(exposedConfig)
-        .then(next, next);
+        .then(function() { next(false); }, next);
     });
 
     //-----------------------------------------------------------------------------------------------------------------

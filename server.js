@@ -168,7 +168,7 @@ app.get(/.*/, function(request, response, next)
     } // end nextStaticOrDefault
 
     nextStaticOrDefault()
-    .then(next, next);
+    .then(function() { next(false); }, next);
 });
 
 //----------------------------------------------------------------------------------------------------------------------
