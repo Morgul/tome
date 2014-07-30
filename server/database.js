@@ -106,6 +106,12 @@ var pages = {
                 throw new db.Errors.DocumentNotFound();
             } // end if
 
+            //FIXME: Why did this break? I have no idea...
+            if(!fullPage.currentRevision.page_id)
+            {
+                fullPage.currentRevision.page_id = fullPage.page;
+            } // end if
+
             return fullPage.currentRevision;
         });
     },
