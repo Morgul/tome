@@ -19,6 +19,8 @@ function RegistrationPageController($scope, $route, $location, $http, Persona, W
         // Only try to do this if we're allowed to register
         if($scope.allowed)
         {
+            $scope.registerSucceeded = false;
+
             $http.get('/api/human')
                 .success(function(data)
                 {
@@ -31,13 +33,18 @@ function RegistrationPageController($scope, $route, $location, $http, Persona, W
                 $http.put('/api/user/' + $scope.user.email, $scope.user)
                     .success(function(data)
                     {
-                        Persona.login();
+                        $scope.registerSucceeded = true;
                     })
                     .error(function(data, status)
                     {
                         console.error('failed:', data, status);
                     });
             }; // end register
+
+            $scope.login = function()
+            {
+                Persona.login();
+            };
         } // end if
     } // end if
 } // end RegistrationPageController
