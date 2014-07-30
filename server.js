@@ -50,8 +50,20 @@ var app = restify.createServer({ name: 'Tome Wiki', version: package.version, lo
 
     .use(sessions({
         secret: config.secret || 'nosecret',
-        cookieName: config.sid || 'sid',
+        cookieName: config.sid || 'sid'
     }))
+
+    // Make sure we move the session to the right variable.
+    .use(function(req, res, next)
+    {
+        var session = req[config.sid || 'sid'];
+        if(session)
+        {
+            req.session = session;
+        } // end if
+
+        next();
+    })
 
     .use(restify.gzipResponse())
 
@@ -106,8 +118,8 @@ var app = restify.createServer({ name: 'Tome Wiki', version: package.version, lo
     })
 ;
 
-routes(app);
 auth(app);
+routes(app);
 
 var staticHandlers = [];
 
