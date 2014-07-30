@@ -207,36 +207,32 @@ module.exports = function configureRoutes(app)
     // Create new wiki pages
     app.put(/^\/api\/page\/(.*)$/, function(request, response, next)
     {
-        if(request.isAuthenticated())
+        if(!request.isAuthenticated())
         {
-            var slug = '/' + decodeURIComponent(request.params[0]);
-            var reqBody = request.body;
-
-            db.pages.createOrUpdate(slug, reqBody, request.user)
-            .then(response.respondAsync)
-            .then(function() { next(false); }, next);
-        }
-        else
-        {
-            next(new restify.NotAuthorizedError("Authentication required."));
+            return next(new restify.NotAuthorizedError("Authentication required."));
         } // end if
+
+        var slug = '/' + decodeURIComponent(request.params[0]);
+        var reqBody = request.body;
+
+        db.pages.createOrUpdate(slug, reqBody, request.user)
+        .then(response.respondAsync)
+        .then(function() { next(false); }, next);
     });
 
     // Delete wiki pages
     app.del(/^\/api\/page\/(.*)$/, function(request, response, next)
     {
-        if(request.isAuthenticated())
+        if(!request.isAuthenticated())
         {
-            var slug = '/' + decodeURIComponent(request.params[0]);
-
-            db.pages.delete(slug, request.user)
-            .then(response.respondAsync)
-            .then(function() { next(false); }, next);
-        }
-        else
-        {
-            next(new restify.NotAuthorizedError("Authentication required."));
+            return next(new restify.NotAuthorizedError("Authentication required."));
         } // end if
+
+        var slug = '/' + decodeURIComponent(request.params[0]);
+
+        db.pages.delete(slug, request.user)
+        .then(response.respondAsync)
+        .then(function() { next(false); }, next);
     });
 
     //-----------------------------------------------------------------------------------------------------------------
