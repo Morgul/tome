@@ -22,7 +22,7 @@ function MissingEmailError(message)
 {
     restify.RestError.call(this, {
         restCode: 'MissingEmail',
-        statusCode: 418,
+        statusCode: 400,
         message: message,
         constructorOpt: MissingEmailError
     });
@@ -34,7 +34,7 @@ function RegistrationDeniedError(message)
 {
     restify.RestError.call(this, {
         restCode: 'RegistrationDenied',
-        statusCode: 418,
+        statusCode: 403,
         message: message,
         constructorOpt: RegistrationDeniedError
     });
@@ -46,7 +46,7 @@ function UserExistsError(message)
 {
     restify.RestError.call(this, {
         restCode: 'UserExists',
-        statusCode: 418,
+        statusCode: 409,
         message: message,
         constructorOpt: UserExistsError
     });
@@ -70,7 +70,7 @@ function NotHumanError(message)
 {
     restify.RestError.call(this, {
         restCode: 'NotHuman',
-        statusCode: 418,
+        statusCode: 403,
         message: message,
         constructorOpt: NotHumanError
     });
