@@ -108,7 +108,7 @@ module.exports = function configureRoutes(app)
     app.get(/^\/api\/history\/(.*)$/, function(request, response, next)
     {
         var limit = request.query.limit;
-        var slug = '/' + request.params[0];
+        var slug = '/' + decodeURIComponent(request.params[0]);
 
         // Handle welcome page
         if(slug == '/' || slug == '//')
@@ -184,7 +184,7 @@ module.exports = function configureRoutes(app)
 
     function apiPageHandler(request, response, next)
     {
-        var slug = '/' + request.params[0];
+        var slug = '/' + decodeURIComponent(request.params[0]);
 
         // Handle welcome page
         if(slug == '/' || slug == '//')
@@ -209,7 +209,7 @@ module.exports = function configureRoutes(app)
     {
         if(request.isAuthenticated())
         {
-            var slug = '/' + request.params[0];
+            var slug = '/' + decodeURIComponent(request.params[0]);
             var reqBody = request.body;
 
             db.pages.createOrUpdate(slug, reqBody, request.user)
@@ -227,7 +227,7 @@ module.exports = function configureRoutes(app)
     {
         if(request.isAuthenticated())
         {
-            var slug = '/' + request.params[0];
+            var slug = '/' + decodeURIComponent(request.params[0]);
 
             db.pages.delete(slug, request.user)
             .then(response.respondAsync)
