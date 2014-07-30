@@ -54,18 +54,6 @@ function UserExistsError(message)
 } // end UserExistsError
 util.inherits(UserExistsError, restify.RestError);
 
-function UserDoesNotExistError(message)
-{
-    restify.RestError.call(this, {
-        restCode: 'UserDoesNotExist',
-        statusCode: 418,
-        message: message,
-        constructorOpt: UserDoesNotExistError
-    });
-    this.name = 'UserDoesNotExistError';
-} // end UserDoesNotExistError
-util.inherits(UserDoesNotExistError, restify.RestError);
-
 function NotHumanError(message)
 {
     restify.RestError.call(this, {
@@ -359,16 +347,8 @@ module.exports = function configureRoutes(app)
                 next(new restify.NotAuthorizedError("You may only modify your own user information."));
             } // end if
 
-            db.users.get(request.params.email)
-            .then(function()//user)
-            {
-                // Update the user
-                return db.users.merge(request.body);
-            })
-            .catch(db.Errors.DocumentNotFound, function()
-            {
-                throw new UserDoesNotExistError("User %j does not exist.", request.params.email);
-            })
+            // Update the user
+            db.users.merge(request.body)
             .then(response.respond)
             .then(function() { next(false); }, next);
         }
