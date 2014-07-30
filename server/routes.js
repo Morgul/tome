@@ -334,17 +334,17 @@ module.exports = function configureRoutes(app)
 
         if(!reqBody.email)
         {
-            next(new MissingEmailError("Email is required in order to register."));
+            return next(new MissingEmailError("Email is required in order to register."));
         }
         else if(request.isAuthenticated())
         {
             if(!request.isAuthenticated())
             {
-                next(new restify.NotAuthorizedError("You must be logged in to modify user information."));
+                return next(new restify.NotAuthorizedError("You must be logged in to modify user information."));
             }
-            else if(request.user != request.params.email)
+            else if(request.user.email != request.params.email)
             {
-                next(new restify.NotAuthorizedError("You may only modify your own user information."));
+                return next(new restify.NotAuthorizedError("You may only modify your own user information."));
             } // end if
 
             // Update the user
@@ -371,7 +371,7 @@ module.exports = function configureRoutes(app)
             db.users.get(request.params.email)
             .then(function()
             {
-                next(new UserExistsError("User %j already exists.", request.params.email));
+                return next(new UserExistsError("User %j already exists.", request.params.email));
             })
             .catch(db.Errors.DocumentNotFound, function()
             {

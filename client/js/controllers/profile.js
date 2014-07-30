@@ -85,9 +85,7 @@ function ProfilePageController($scope, $http, $route, $location, Persona)
 
     $scope.save = function()
     {
-        console.log('user:', $scope.user);
-
-        $http.post('/api/user/' + Persona.currentUser.email, $scope.user)
+        $http.put('/api/user/' + Persona.currentUser.email, $scope.user)
             .success(function(data)
             {
             })
