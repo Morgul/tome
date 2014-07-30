@@ -16,8 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^2.2.1",
-    "connect": "^2.17.3",
-    "connect-redirection": "0.0.1",
+    "client-sessions": "^0.6.0",
     "header-parse": "^0.1.0",
     "lodash": "^2.4.1",
     "lunr": "^0.5.4",

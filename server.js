@@ -19,11 +19,11 @@ var Promise = require('bluebird');
 
 var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
+var util = require('util');
 
 var _ = require('lodash');
-var connect = require('connect');
-var redirect = require('connect-redirection');
 var restify = require('restify');
+var sessions = require('client-sessions');
 
 var routes = require('./server/routes');
 var auth = require('./server/authentication');
@@ -44,35 +44,16 @@ catch(exc)
 
 //----------------------------------------------------------------------------------------------------------------------
 
-var app = restify.createServer(
-    {
-        name: 'Tome Wiki',
-        version: package.version,
-        log: logger,
-        formatters: {
-            'text/html': function(req, res, body)
-            {
-                if(body instanceof Error)
-                {
-                    return body.stack;
-                } // end if
-
-                return body;
-            }
-        }
-    })
+var app = restify.createServer({ name: 'Tome Wiki', version: package.version, log: logger })
     .use(bodyParser())
     .use(restify.queryParser())
 
-    .use(connect.cookieParser(config.secret))
-    .use(connect.session({
+    .use(sessions({
         secret: config.secret || 'nosecret',
-        key: config.sid || 'sid',
-        store: new connect.session.MemoryStore()
+        cookieName: config.sid || 'sid',
     }))
 
     .use(restify.gzipResponse())
-    .use(redirect())
 
     .on('after', function(request, response, route, error)
     {
@@ -153,17 +134,11 @@ app.get(/.*/, function(request, response, next)
         }
         else
         {
-            /*
             var fileStream = fs.createReadStream(path.join(__dirname, 'client', 'index.html'));
 
             response.writeHead(200, { 'Content-Type': 'text/html' });
             fileStream.pipe(response);
-
-            */
-
-            response.contentType = 'text/html';
-            var body = fs.readFileSync(path.join(__dirname, 'client', 'index.html'), {encoding: 'utf-8'});
-            return response.respondAsync(body);
+            return Promise.resolve();
         } // end if
     } // end nextStaticOrDefault
 
