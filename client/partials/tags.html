@@ -16,7 +16,7 @@
     <h2 ng-show="singleTag">#{{ tag }}</h2>
     <ul class="doc-list">
         <li ng-repeat="doc in docs">
-            <a href="/wiki/{{ doc.slug_id }}"><span class="doc-title">{{ doc.title || doc.slug_id }}</span></a> (<small><code>{{ doc.slug_id }}</code></small>)<br/>
+            <a href="/wiki{{ doc.slug_id }}"><span class="doc-title">{{ doc.title || doc.slug_id }}</span></a> (<small><code>{{ doc.slug_id }}</code></small>)<br/>
             <span class="label label-default" ng-repeat="tag in doc.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
         </li>
     </ul>
