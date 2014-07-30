@@ -356,7 +356,16 @@ module.exports = function configureRoutes(app)
         {
             if(config.registration !== true)
             {
-                next(new RegistrationDeniedError("Registration disabled."));
+                return next(new RegistrationDeniedError("Registration disabled."));
+            } // end if
+
+            var expectedAnswer = config.humanVerificationQuestions[reqBody.humanIndex].answer;
+            logger.info("Expected: %s, Actual: %s", logger.dump(expectedAnswer), logger.dump(reqBody.answer));
+
+            // Check the human verification question
+            if(expectedAnswer !== reqBody.answer)
+            {
+                return next(new NotHumanError("Failed human verification."));
             } // end if
 
             db.users.get(request.params.email)
@@ -366,22 +375,11 @@ module.exports = function configureRoutes(app)
             })
             .catch(db.Errors.DocumentNotFound, function()
             {
-                var expectedAnswer = config.humanVerificationQuestions[reqBody.humanIndex].answer;
-                logger.info("Expected: %s, Actual: %s", logger.dump(expectedAnswer), logger.dump(reqBody.answer));
-
-                // Check the human verification question
-                if(expectedAnswer !== reqBody.answer)
+                db.users.store({ email: reqBody.email, display: reqBody.display })
+                .then(function()
                 {
-                    next(new NotHumanError("Failed human verification."));
-                }
-                else
-                {
-                    db.users.store({ email: reqBody.email, display: reqBody.display })
-                    .then(function()
-                    {
-                        response.end();
-                    });
-                } // end if
+                    response.end();
+                });
             });
         } // end if
     });
