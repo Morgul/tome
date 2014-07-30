@@ -65,7 +65,7 @@ module.exports = function configureAuth(app)
     app.post('/auth/logout-persona', function(request, response, next)
     {
         request.logout();
-        response.redirect('/');
+        response.send(200);
         next();
     });
 
