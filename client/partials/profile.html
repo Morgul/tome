@@ -9,9 +9,13 @@
             <h4 class="media-heading">Email: <code>{{ user.email }}</code></h4>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Display Name" ng-model="user.display">
-            <span class="input-group-btn">
-                <button class="btn btn-primary" type="button" ng-click="save()"><i class="fa fa-save"></i> Save</button>
-            </span>
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button" ng-click="save()"><i class="fa fa-save"></i> Save</button>
+                </span>
+            </div>
+            <div ng-if="displaySuccess" class="alert alert-success alert-dismissible" role="alert" style="margin-top: 10px">
+                <button type="button" class="close" data-dismiss="alert" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <strong>Success!</strong> Your display name has been updated.
             </div>
         </div>
     </div>

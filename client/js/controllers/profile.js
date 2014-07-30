@@ -88,12 +88,18 @@ function ProfilePageController($scope, $http, $route, $location, Persona)
         $http.put('/api/user/' + Persona.currentUser.email, $scope.user)
             .success(function(data)
             {
+                $scope.displaySuccess = true;
             })
             .error(function(data, status)
             {
                 console.error('failed:', data, status);
             });
     }; // end save
+
+    $scope.dismiss = function()
+    {
+        $scope.displaySuccess = false;
+    };
 } // end ProfilePageController
 
 // ---------------------------------------------------------------------------------------------------------------------
