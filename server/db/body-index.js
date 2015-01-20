@@ -8,11 +8,11 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 var lunr = require('lunr');
 
-var db = require('./models');
+var db = require('./../models');
 
 //----------------------------------------------------------------------------------------------------------------------
 
-function BodyIndex(cache)
+function BodyIndex()
 {
     this._idx = lunr(function()
     {
@@ -25,28 +25,34 @@ function BodyIndex(cache)
 BodyIndex.prototype._initCache = function()
 {
     var self = this;
-    db.Slug.getJoin().run().then(function(slugs)
-    {
-        slugs.forEach(function(slugInst)
+
+    db.Page.filter()
+        .then(function(pages)
         {
-            self.add(slugInst.currentRevision);
-        });
-    });
+            _.each(pages, function(page)
+            {
+                db.Revision.get(page.revisionID)
+                    .then(function(revision)
+                    {
+                        self.add(revision);
+                    });
+            });
+        })
 }; // end _initCache
 
 BodyIndex.prototype.search = function(queryString)
 {
-    var self = this;
     var results = this._idx.search(queryString);
 
     console.log('got results:', results);
 
     return Promise.map(results, function(result)
     {
-        return db.Revision.get(result.ref).run().then(function(doc)
-        {
-            return { doc: doc, score: result.score };
-        });
+        return db.Revision.get(result.ref)
+            .then(function(doc)
+            {
+                return { doc: doc, score: result.score };
+            });
     }).then(function(results)
     {
         return Promise.resolve(_.sortBy(results, 'score'));
