@@ -23,7 +23,7 @@ module.exports = {
     // Authentication
     // -----------------------------------------------------------------------------------------------------------------
 
-    audience: "http://cypher:4000",
+    //audience: "http://cypher:4000",
     sid: 'tome-example',
     secret: '72156a61342c86841041126761d94667b74434cf',
     registration: "auto"

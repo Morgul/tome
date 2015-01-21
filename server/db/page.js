@@ -97,15 +97,10 @@ module.exports =  {
                 return db.Revision.filter({ pageID: page.id })
                     .then(function(revisions)
                     {
-                        revisions = _.sortBy(revisions, function(revision)
+                        return _.sortBy(revisions, function(revision)
                         {
                             return new Date(revision.created);
-                        });
-
-                        // Descending order
-                        revisions.reverse();
-
-                        return revisions;
+                        }).reverse();
                     })
                     .then(function(revisions)
                     {
@@ -181,7 +176,7 @@ module.exports =  {
                     .then(function()
                     {
                         page.revisionID = rev.id;
-                        page.updated = new Date();
+                        page.updated = new Date().toString();
 
                         return page.save();
                     })
@@ -240,7 +235,7 @@ module.exports =  {
                     .then(function()
                     {
                         page.revisionID = rev.id;
-                        page.updated = new Date();
+                        page.updated = new Date().toString();
 
                         return page.save();
                     })

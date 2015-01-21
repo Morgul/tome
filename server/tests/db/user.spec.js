@@ -13,7 +13,6 @@ var User;
 
 describe('User API', function()
 {
-
     beforeEach(function(done)
     {
         var users = jbase.db('users', { writeToDisk: false, loadFromDisk: false });

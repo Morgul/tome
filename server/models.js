@@ -12,7 +12,7 @@ var config = require('./config');
 //----------------------------------------------------------------------------------------------------------------------
 
 var db = { errors: jbase.errors };
-var rootPath = path.join(__dirname, 'db');
+var rootPath = path.resolve('./db');
 
 //----------------------------------------------------------------------------------------------------------------------
 // Wiki models
@@ -21,15 +21,15 @@ var rootPath = path.join(__dirname, 'db');
 db.Page = jbase.defineModel('pages', {
     url: { type: String, required: true },
     revisionID: String,
-    created: { type: Date, default: new Date() },
-    updated: { type: Date, default: new Date() }
+    created: { type: String, default: new Date().toString() },
+    updated: { type: String, default: new Date().toString() }
 }, { rootPath: rootPath });
 
 db.Revision = jbase.defineModel('revisions', {
     pageID: { type: String, required: true },
     url: { type: String, required: true },
     userID: { type: String, required: true },
-    created: { type: Date, default: new Date() },
+    created: { type: String, default: new Date().toString() },
     message: { type: String, default: (config.defaultCommit || "minor edit") },
 
     // Content
@@ -47,8 +47,8 @@ db.Comment = jbase.defineModel('comments', {
     userID: { type: String, required: true },
     title: { type: String, default: "" },
     body: { type: String, default: "" },
-    created: { type: Date, default: new Date() },
-    updated: { type: Date, default: new Date() },
+    created: { type: String, default: new Date().toString() },
+    updated: { type: String, default: new Date().toString() },
     resolved: { type: Boolean, default: false }
 }, { rootPath: rootPath });
 

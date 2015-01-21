@@ -22,8 +22,8 @@ describe("Page API", function()
         pages.store('page1', {
                 url: '/foo',
                 revisionID: 'rev3',
-                created: new Date(),
-                updated: new Date()
+                created: new Date().toString(),
+                updated: new Date().toString()
             })
             .then(function()
             {
@@ -35,7 +35,7 @@ describe("Page API", function()
                     body: "Welcome to the Foo Page!",
                     userID: 'user1',
                     message: "minor edit 1",
-                    created: new Date(),
+                    created: new Date().toString(),
                     moved: false,
                     deleted: false
                 });
@@ -50,7 +50,7 @@ describe("Page API", function()
                     body: "Welcome to the Foo Page 2!",
                     userID: 'user1',
                     message: "minor edit 2",
-                    created: new Date(),
+                    created: new Date().toString(),
                     moved: false,
                     deleted: false
                 });
@@ -65,7 +65,7 @@ describe("Page API", function()
                     body: "Welcome to the Foo Page 3!",
                     userID: 'user1',
                     message: "minor edit 3",
-                    created: new Date(),
+                    created: new Date().toString(),
                     moved: false,
                     deleted: false
                 });

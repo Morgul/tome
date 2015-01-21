@@ -21,15 +21,10 @@ module.exports = {
         return db.Comment.filter({ pageID: pageID })
             .then(function(comments)
             {
-                comments = _.sortBy(comments, function(comment)
+                return _.sortBy(comments, function(comment)
                 {
                     return new Date(comment.created);
-                });
-
-                // Descending order
-                comments.reverse();
-
-                return comments;
+                }).reverse();
             })
             .then(function(comments)
             {

@@ -24,8 +24,8 @@ describe('Comments API', function()
                 userID: 'user1',
                 title: "Test",
                 body: "This is a test.",
-                created: new Date(),
-                updated: new Date(),
+                created: new Date().toString(),
+                updated: new Date().toString(),
                 resolved: false
             })
             .then(function()
@@ -35,8 +35,8 @@ describe('Comments API', function()
                     userID: 'user2',
                     title: "Test",
                     body: "This is also a test.",
-                    created: new Date(),
-                    updated: new Date(),
+                    created: new Date().toString(),
+                    updated: new Date().toString(),
                     resolved: false
                 })
             })
@@ -47,8 +47,8 @@ describe('Comments API', function()
                     userID: 'user1',
                     title: "Test 2",
                     body: "This is another test.",
-                    created: new Date(),
-                    updated: new Date(),
+                    created: new Date().toString(),
+                    updated: new Date().toString(),
                     resolved: false
                 })
             })

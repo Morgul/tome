@@ -15,148 +15,71 @@ var logger = logging.getLogger('server');
 
 //----------------------------------------------------------------------------------------------------------------------
 
-var Promise = require('bluebird');
-
-var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
-var util = require('util');
 
-var _ = require('lodash');
-var restify = require('restify');
-var sessions = require('client-sessions');
-
-var routes = require('./server/routes');
-var auth = require('./server/authentication');
+var express = require('express');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var passport = require('passport');
 
 var package = require('./package');
 var config = require('./server/config');
 
-// Use 'restify-async-json-body-parser' if available.
-var bodyParser;
-try
-{
-    bodyParser = require('restify-async-json-body-parser');
-}
-catch(exc)
-{
-    bodyParser = restify.bodyParser;
-} // end try
+// Auth
+var serialization = require('./server/auth/serialization');
+var gPlusAuth = require('./server/auth/google-plus');
+
+// Routers
+var routeUtils = require('./server/routes/utils');
+var pagesRouter = require('./server/routes/pages');
+var tagsRouter = require('./server/routes/tags');
+var searchRouter = require('./server/routes/search');
+var recentRouter = require('./server/routes/recent');
+var commentsRouter = require('./server/routes/comments');
+var usersRouter = require('./server/routes/users');
+var configRouter = require('./server/routes/config');
 
 //----------------------------------------------------------------------------------------------------------------------
 
-var app = restify.createServer({ name: 'Tome Wiki', version: package.version, log: logger })
-    .use(bodyParser())
-    .use(restify.queryParser())
+// Build the express app
+var app = express();
 
-    .use(sessions({
-        secret: config.secret || 'nosecret',
-        cookieName: config.sid || 'sid'
-    }))
+// Basic request logging
+app.use(routeUtils.requestLogger(logger));
 
-    // Make sure we move the session to the right variable.
-    .use(function(req, res, next)
-    {
-        var session = req[config.sid || 'sid'];
-        if(session)
-        {
-            req.session = session;
-        } // end if
+// Basic error logging
+app.use(routeUtils.errorLogger(logger));
 
-        next();
-    })
+// Passport support
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(session({
+    secret: config.secret || 'nosecret',
+    key: config.key || 'sid',
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
-    .use(restify.gzipResponse())
+// Set up out authentication support
+gPlusAuth.initialize(app);
 
-    .on('after', function(request, response, route, error)
-    {
-        if(error)
-        {
-            logger.warn('%s %s -> %s: %s',
-                request.method, logger.dump(request.url),
-                logger.dump(response.statusCode), error.stack || error.toString());
-        }
-        else
-        {
-            logger.debug('%s %s -> %s: (body not shown)',
-                request.method, logger.dump(request.url),
-                logger.dump(response.statusCode));
+// Setup static serving
+app.use(express.static(path.resolve(__dirname + '/client')));
 
-            if(response._body instanceof Error)
-            {
-                logger.warn('Error stack: %s', response._body.stack || response._body.toString());
-            } // end if
-        } // end if
-    }) // end 'after' handler
+// Set up our application routes
+app.use('/wiki', pagesRouter);
+app.use('/tags', tagsRouter);
+app.use('/search', searchRouter);
+app.use('/recent', recentRouter);
+app.use('/comments', commentsRouter);
+app.use('/users', usersRouter);
+app.use('/config', configRouter);
 
-    .use(function(request, response, next)
-    {
-        response.respond = function(statusCode, data, callback)
-        {
-            switch(arguments.length)
-            {
-                case 2:
-                    if(!_.isFunction(data)) { break; }
-                    callback = data;
-                    /* falls through */
-                case 1:
-                    data = statusCode;
-                    statusCode = 200;
-            } // end if
-
-            logger.debug('%s %s: Responding with %s: %s',
-                request.method, logger.dump(request.url),
-                logger.dump(statusCode), logger.dump(data));
-
-            response.send(statusCode, data);
-
-            if(callback) { callback(); }
-        }; // end response.respond
-
-        response.respondAsync = Promise.promisify(response.respond);
-
-        next();
-    })
-;
-
-auth(app);
-routes(app);
-
-var staticHandlers = [];
-
-function serveStatic(options)
-{
-    staticHandlers.push(
-        Promise.promisify(restify.serveStatic(options))
-    );
-} // end serveStatic
-
-serveStatic({directory: path.join(__dirname, 'client')});
-
-app.get(/.*/, function(request, response, next)
-{
-    var remainingHandlers = staticHandlers.slice();
-
-    function nextStaticOrDefault()
-    {
-        var handler = remainingHandlers.pop();
-        if(handler)
-        {
-            return handler(request, response)
-            .catch(restify.ResourceNotFoundError, nextStaticOrDefault);
-        }
-        else
-        {
-            var fileStream = fs.createReadStream(path.join(__dirname, 'client', 'index.html'));
-
-            response.writeHead(200, { 'Content-Type': 'text/html' });
-            fileStream.pipe(response);
-            return Promise.resolve();
-        } // end if
-    } // end nextStaticOrDefault
-
-    nextStaticOrDefault()
-    .then(function() { next(false); }, next);
-});
+// Serve index.html
+app.get('/', routeUtils.serveIndex);
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -164,12 +87,18 @@ module.exports = {
     app: app,
     listen: function()
     {
-        var server = app.listen(config.port || 4000);
+        // The fallback route, always serves index.html
+        //app.use(routeUtils.serveIndex);
 
-        logger.info('%s v%s started on %s, port %s.',
-            app.name, package.version, server.address().address, server.address().port);
-    }, // end listen
-    serveStatic: serveStatic
+        // Start the server
+        var server = app.listen(config.port || 3000, function()
+        {
+            var host = server.address().address;
+            var port = server.address().port;
+
+            logger.info('Tome v%s listening at http://%s:%s', package.version, host, port);
+        });
+    } // end listen
 }; // end exports
 
 //----------------------------------------------------------------------------------------------------------------------
