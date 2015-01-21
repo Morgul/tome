@@ -19,10 +19,12 @@
                     <li><a href="/recent"><i class="fa fa-history"></i> Recent Activity</a></li>
                     <li><a href="/tags"><i class="fa fa-tags"></i> Tags</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li ng-if="!user"><a ng-click="login()"><i class="icon-persona"></i> Sign in</a></li>
-                    <li ng-if="user"><a ng-click="logout()"><i class="fa fa-sign-out"></i> Sign out</a></li>
-                </ul>
+                <!-- TODO: Make this configurable! -->
+                <google-plus-signin ng-if="!user" class="navbar-right" clientid="353888173268-4luhg23ai0i6rskck2pjcs4bdssnhshk.apps.googleusercontent.com">
+                    <button type="button" class="btn btn-danger navbar-btn"><i class="fa fa-google-plus"></i> Sign in</button>
+                </google-plus-signin>
+                <button ng-if="user" type="button" class="btn btn-danger navbar-btn navbar-right"><i class="fa fa-sign-out"></i> Sign out</button>
+
                 <a href="/profile" class="navbar-right navbar-text"><img ng-if="user" class="profile-image img-rounded" gravatar-src="user.email" gravatar-size="80" title="{{ user.display || user.email }}"></a>
                 <form class="navbar-form navbar-right" role="search">
                     <div class="form-group search-box">

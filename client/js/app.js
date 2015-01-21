@@ -13,6 +13,8 @@ angular.module('tome', [
         'ui.codemirror',
         'duScroll',
 
+        'directive.g+signin',
+
         'tome.services',
         'tome.controllers',
         'tome.directives',
@@ -44,7 +46,7 @@ angular.module('tome', [
         // Use https endpoint
         gravatarServiceProvider.secure = true;
     }])
-    .run(['$rootScope', '$route', 'WikiConfig', function($rootScope, $route, WikiConfig)
+    .run(['$rootScope', '$route', 'WikiConfig', 'AuthService', function($rootScope, $route, WikiConfig, authSvc)
     {
         Object.defineProperty($rootScope, 'config',
         {
@@ -53,7 +55,7 @@ angular.module('tome', [
 
         $rootScope.isAuthenticated = function()
         {
-            return true;
+            return authSvc.authorized;
         }; // end isAuthenticated
 
         //--------------------------------------------------------------------------------------------------------------

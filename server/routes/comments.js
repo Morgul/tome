@@ -8,6 +8,7 @@ var _ = require('lodash');
 var express = require('express');
 
 var routeUtils = require('./utils');
+var models = require('../models');
 var Comment = require('../db/comment');
 
 var logger = require('omega-logger').loggerFor(module);
@@ -40,7 +41,7 @@ router.use(function(req, resp, next)
 
 router.param('comment_id', function(req, resp, next, id)
 {
-    models.Comment.get(id)
+    Comment.get(id)
         .then(function(comment)
         {
             req.comment = comment;

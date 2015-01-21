@@ -16,8 +16,8 @@ var logger = require('omega-logger').loggerFor(module);
 //----------------------------------------------------------------------------------------------------------------------
 
 passport.use(new GooglePlusStrategy({
-        clientId: '181559541496-qgr8tj4majtvqb4et17nvpp99jggslba.apps.googleusercontent.com',
-        clientSecret: 'OsuI18LNshsnzURkwjwTPNOE'
+        clientId: '353888173268-4luhg23ai0i6rskck2pjcs4bdssnhshk.apps.googleusercontent.com',
+        clientSecret: 'ZsjeJtlyB2H3XxUvD4V2JW4Q'
     },
     function(tokens, profile, done)
     {

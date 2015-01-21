@@ -12,14 +12,9 @@ function HeaderController($scope, $location, authSvc)
         get: function(){ return authSvc.user; }
     });
 
-    $scope.login = function()
+    $scope.signOut = function()
     {
-        authSvc.login();
-    };
-
-    $scope.logout = function()
-    {
-        authSvc.logout();
+        authSvc.signOut();
     };
 
     $scope.search = function()
