@@ -12,7 +12,7 @@
 </div>
 
 <div ng-if="loaded" ng-repeat="(tag, docs) in tags" class="container">
-    <h2 ng-hide="singleTag"><a href="/tags/{{ tag }}">#{{ tag }}</a></h2>
+    <h2 ng-hide="singleTag"><a href="/components/tags/{{ tag }}">#{{ tag }}</a></h2>
     <h2 ng-show="singleTag">#{{ tag }}</h2>
     <ul class="doc-list">
         <li ng-repeat="doc in docs">

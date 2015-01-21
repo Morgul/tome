@@ -45,7 +45,7 @@ function WikiLinkDirective()
             title: "=hover",
             text: "="
         },
-        templateUrl: "/directives/wikilink/partials/wikilink.html",
+        templateUrl: "/components/wikilink/wikilink.html",
         link: function(scope, elem, attr)
         {
             if(scope.title)

@@ -24,16 +24,16 @@ angular.module('tome', [
     {
         $locationProvider.html5Mode(true);
         $routeProvider
-            .when('/registration', {templateUrl: '/partials/registration.html',   controller: 'RegistrationPageController'})
-            .when('/search', {templateUrl: '/partials/search.html',   controller: 'SearchPageController'})
-            .when('/recent', {templateUrl: '/partials/recent.html',   controller: 'RecentPageController'})
-            .when('/diff/:rev1/:rev2', {templateUrl: '/partials/diff.html',   controller: 'DiffController'})
-            .when('/tags/:tag?', {templateUrl: '/partials/tags.html',   controller: 'TagsPageController'})
-            .when('/profile/:email?', {templateUrl: '/partials/profile.html',   controller: 'ProfilePageController'})
-            .when('/edit/:wikiPath*', {templateUrl: '/partials/edit.html',   controller: 'EditPageController'})
-            .when('/comments/:wikiPath*', {templateUrl: '/partials/comments.html',   controller: 'PageCommentsController'})
-            .when('/history/:wikiPath*', {templateUrl: '/partials/history.html',   controller: 'PageHistoryController'})
-            .when('/wiki/:wikiPath*', {templateUrl: '/partials/page.html',   controller: 'WikiPageController'})
+            .when('/registration', {templateUrl: '/components/registration/registration.html',   controller: 'RegistrationPageController'})
+            .when('/search', {templateUrl: '/components/search/search.html',   controller: 'SearchPageController'})
+            .when('/recent', {templateUrl: '/components/recent/recent.html',   controller: 'RecentPageController'})
+            .when('/diff/:rev1/:rev2', {templateUrl: '/components/diff/diff.html',   controller: 'DiffController'})
+            .when('/tags/:tag?', {templateUrl: '/components/tags/tags.html',   controller: 'TagsPageController'})
+            .when('/profile/:email?', {templateUrl: '/components/profile/profile.html',   controller: 'ProfilePageController'})
+            .when('/edit/:wikiPath*', {templateUrl: '/components/page/edit.html',   controller: 'EditPageController'})
+            .when('/comments/:wikiPath*', {templateUrl: '/components/page/comments.html',   controller: 'PageCommentsController'})
+            .when('/history/:wikiPath*', {templateUrl: '/components/history/history.html',   controller: 'PageHistoryController'})
+            .when('/wiki/:wikiPath*', {templateUrl: '/components/page/page.html',   controller: 'WikiPageController'})
             .otherwise({redirectTo: '/wiki/welcome'});
     }])
     .config(['gravatarServiceProvider', function(gravatarServiceProvider)

@@ -14,9 +14,6 @@
         <!-- Font Awesome -->
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-        <!-- Persona -->
-        <script src="https://login.persona.org/include.js"></script>
-
         <!-- Angular JS -->
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-route.min.js"></script>
@@ -48,27 +45,27 @@
         <script src="/vendor/angular-gplus-button/google-plus-signin.js"></script>
 
         <!-- Tome -->
-        <script src="/js/app.js"></script>
-        <script src="/auth/auth.js"></script>
-        <script src="/js/controllers/edit.js"></script>
-        <script src="/js/controllers/diff.js"></script>
-        <script src="/js/controllers/page.js"></script>
-        <script src="/js/controllers/comments.js"></script>
-        <script src="/js/controllers/history.js"></script>
-        <script src="/js/controllers/registration.js"></script>
-        <script src="/js/controllers/profile.js"></script>
-        <script src="/js/controllers/search.js"></script>
-        <script src="/js/controllers/recent.js"></script>
-        <script src="/js/controllers/tags.js"></script>
-        <script src="/js/services/config.js"></script>
-        <script src="/js/services/wikipage.js"></script>
+        <script src="/components/app.js"></script>
+        <script src="/components/auth/auth.js"></script>
+        <script src="/components/diff/diff.js"></script>
+        <script src="/components/page/edit.js"></script>
+        <script src="/components/page/page.js"></script>
+        <script src="/components/page/comments.js"></script>
+        <script src="/components/page/history.js"></script>
+        <script src="/components/page/wikipage.js"></script>
+        <script src="/components/registration/registration.js"></script>
+        <script src="/components/profile/profile.js"></script>
+        <script src="/components/search/search.js"></script>
+        <script src="/components/recent/recent.js"></script>
+        <script src="/components/tags/tags.js"></script>
+        <script src="/components/config/config.js"></script>
 
-        <script src="/directives/header/header.js"></script>
-        <script src="/directives/breadcrumbs/breadcrumbs.js"></script>
-        <script src="/directives/wikilink/wikilink.js"></script>
+        <script src="/components/header/header.js"></script>
+        <script src="/components/breadcrumbs/breadcrumbs.js"></script>
+        <script src="/components/wikilink/wikilink.js"></script>
 
-        <script src="/js/utils/utils.directives.js"></script>
-        <script src="/js/utils/utils.filters.js"></script>
+        <script src="/components/utils/utils.directives.js"></script>
+        <script src="/components/utils/utils.filters.js"></script>
 
         <link href="/css/tome.min.css" rel="stylesheet">
 
@@ -91,7 +88,7 @@
         <!-- Main View -->
         <div id="main-view" class="container-fluid" data-ng-view></div>
 
-        <div class="container" ng-include="'/partials/footer.html'"></div>
+        <div class="container" ng-include="'/components/footer/footer.html'"></div>
 
         <!-- Angular UI Bootstrap -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap-tpls.min.js"></script>
