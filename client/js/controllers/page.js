@@ -15,7 +15,8 @@ function WikiPageController($scope, $route, wikiPage)
         wikiPage.getRevision($scope.revision).$promise.then(function(page)
         {
             $scope.loaded = true;
-            $scope.page = page;
+
+            $scope.page = page.revision;
             $scope.$root.title = $scope.page.title;
         }, function(error)
         {
@@ -33,7 +34,7 @@ function WikiPageController($scope, $route, wikiPage)
         wikiPage.get($scope.wikiPath).$promise.then(function(page)
         {
             $scope.loaded = true;
-            $scope.page = page;
+            $scope.page = page.revision;
             $scope.$root.title = $scope.page.title;
         }, function(error)
         {

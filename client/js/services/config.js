@@ -14,7 +14,7 @@ function ConfigService($http)
 ConfigService.prototype._getConfig = function()
 {
     var self = this;
-    this.$http.get('/api/config').then(function(success)
+    this.$http.get('/config').then(function(success)
     {
         self.config = success.data;
     });

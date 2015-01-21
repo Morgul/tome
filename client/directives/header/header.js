@@ -4,22 +4,22 @@
 // @module header.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function HeaderController($scope, $location, Persona)
+function HeaderController($scope, $location, authSvc)
 {
     $scope.isCollapsed = true;
 
     Object.defineProperty($scope, 'user', {
-        get: function(){ return Persona.currentUser; }
+        get: function(){ return authSvc.user; }
     });
 
     $scope.login = function()
     {
-        Persona.login();
+        authSvc.login();
     };
 
     $scope.logout = function()
     {
-        Persona.logout();
+        authSvc.logout();
     };
 
     $scope.search = function()
@@ -36,7 +36,7 @@ function TomeHeaderDirective()
         restrict: 'E',
         scope: true,
         templateUrl: "/directives/header/partials/header.html",
-        controller: ['$scope', '$location', 'Persona', HeaderController],
+        controller: ['$scope', '$location', 'AuthService', HeaderController],
         replace: true
     }
 } // end TomeHeaderDirective

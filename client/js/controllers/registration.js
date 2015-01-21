@@ -4,10 +4,10 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function RegistrationPageController($scope, $route, $location, $http, Persona, WikiConfig)
+function RegistrationPageController($scope, $route, $location, $http, authSvc, WikiConfig)
 {
     // We're already logged in, go to the profile page.
-    if(Persona.currentUser)
+    if(authSvc.user)
     {
         $location.path('/profile');
     }
@@ -43,7 +43,7 @@ function RegistrationPageController($scope, $route, $location, $http, Persona, W
 
             $scope.login = function()
             {
-                Persona.login();
+                authSvc.login();
             };
         } // end if
     } // end if
@@ -52,6 +52,6 @@ function RegistrationPageController($scope, $route, $location, $http, Persona, W
 // ---------------------------------------------------------------------------------------------------------------------
 
 angular.module('tome.controllers').controller('RegistrationPageController',
-    ['$scope', '$route', '$location', '$http', 'Persona', 'WikiConfig', RegistrationPageController]);
+    ['$scope', '$route', '$location', '$http', 'AuthService', 'WikiConfig', RegistrationPageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

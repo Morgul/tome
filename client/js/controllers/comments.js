@@ -4,10 +4,10 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageCommentsController($scope, $route, $http, $document, $timeout, wikiPage, Persona)
+function PageCommentsController($scope, $route, $http, $document, $timeout, wikiPage, authSvc)
 {
     $scope.wikiPath = wikiPage.wikiPath;
-    $scope.user = Persona.currentUser;
+    $scope.user = authSvc.user;
     $scope.newCommentCollapse = true;
     $scope.comment = {};
     $scope.refresh = false;
@@ -104,7 +104,7 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('PageCommentsController', ['$scope', '$route', '$http', '$document', '$timeout', 'wikiPage', 'Persona', PageCommentsController]);
+angular.module('tome.controllers').controller('PageCommentsController', ['$scope', '$route', '$http', '$document', '$timeout', 'wikiPage', 'AuthService', PageCommentsController]);
 
 // ---------------------------------------------------------------------------------------------------------------------
 

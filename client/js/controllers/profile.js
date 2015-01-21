@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function ProfilePageController($scope, $http, $route, $location, Persona)
+function ProfilePageController($scope, $http, $route, $location, authSvc)
 {
 
     function getCommits() {
@@ -56,15 +56,15 @@ function ProfilePageController($scope, $http, $route, $location, Persona)
     });
 
     // Support `/profile` as a redirect to your profile, when signed in.
-    if(!$scope.email && Persona.currentUser)
+    if(!$scope.email && authSvc.user)
     {
-        $location.path('/profile/' + Persona.currentUser.email)
+        $location.path('/profile/' + authSvc.user.email)
     } // end if
 
-    if($scope.email == (Persona.currentUser || {}).email)
+    if($scope.email == (authSvc.user || {}).email)
     {
         $scope.editing = true;
-        $scope.user = Persona.currentUser;
+        $scope.user = authSvc.user;
         $scope.$root.title = ($scope.user.display || $scope.user.email) + "'s Profile";
 
         // Get our commits
@@ -85,7 +85,7 @@ function ProfilePageController($scope, $http, $route, $location, Persona)
 
     $scope.save = function()
     {
-        $http.put('/api/user/' + Persona.currentUser.email, $scope.user)
+        $http.put('/api/user/' + authSvc.user.email, $scope.user)
             .success(function(data)
             {
                 $scope.displaySuccess = true;
@@ -104,6 +104,6 @@ function ProfilePageController($scope, $http, $route, $location, Persona)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('ProfilePageController', ['$scope', '$http', '$route', '$location', 'Persona', ProfilePageController]);
+angular.module('tome.controllers').controller('ProfilePageController', ['$scope', '$http', '$route', '$location', 'AuthService', ProfilePageController]);
 
 // ---------------------------------------------------------------------------------------------------------------------

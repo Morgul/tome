@@ -44,7 +44,7 @@ angular.module('tome', [
         // Use https endpoint
         gravatarServiceProvider.secure = true;
     }])
-    .run(['$rootScope', '$route', 'WikiConfig', 'Persona', function($rootScope, $route, WikiConfig, Persona)
+    .run(['$rootScope', '$route', 'WikiConfig', function($rootScope, $route, WikiConfig)
     {
         Object.defineProperty($rootScope, 'config',
         {
@@ -53,7 +53,7 @@ angular.module('tome', [
 
         $rootScope.isAuthenticated = function()
         {
-            return !!Persona.currentUser;
+            return true;
         }; // end isAuthenticated
 
         //--------------------------------------------------------------------------------------------------------------

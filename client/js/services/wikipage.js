@@ -9,17 +9,17 @@ function PageService($resource, $route, $cacheFactory)
     this.existsCache = $cacheFactory('existsCache', { capacity: 500 });
     this.expirations = {};
 
-    this.Tags = $resource('/api/tag', {}, {
+    this.Tags = $resource('/tags', {}, {
         get: { method: 'GET', isArray: true }
     });
 
-    this.Page = $resource('/api/page/:wikiPath', {}, {
+    this.Page = $resource('/wiki/:wikiPath', {}, {
         save: { method: 'PUT' },
         exists: { method: 'HEAD' },
-        revision: { method: 'GET', url:'/api/revision/:revision', cache: true },
-        history: { method: 'GET', url: '/api/history/:wikiPath', isArray: true },
+        revision: { method: 'GET', url:'/wiki/:wikiPath/?revision=:revision', cache: true },
+        history: { method: 'GET', url: '/wiki:wikiPath?history', isArray: true },
         search: { method: 'GET', isArray: true },
-        recent: { method: 'GET', url: '/api/history', isArray: true }
+        recent: { method: 'GET', url: '/recent', isArray: true }
     });
 
     Object.defineProperty(this, 'wikiPath', {
