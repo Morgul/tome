@@ -4,9 +4,8 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageHistoryController($scope, $http, $location, wikiPage)
+function PageHistoryController($scope, $location, userSvc)
 {
-    $scope.wikiPath = wikiPage.wikiPath;
     $scope.limit = 25;
     $scope.limits = [
         {
@@ -35,24 +34,38 @@ function PageHistoryController($scope, $http, $location, wikiPage)
         }
     ]; // end limits
 
+    $scope.page.loadHistory();
+    $scope.page.loadComments(false);
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Watches
+    //------------------------------------------------------------------------------------------------------------------
+
     $scope.$watch('limit', function()
     {
-        wikiPage.getHistory($scope.wikiPath, $scope.limit).$promise.then(function(revisions)
-        {
-            $scope.revisions = revisions;
-            $scope.$root.title = $scope.revisions[0].title + " History";
-        }).then(function()
-        {
-            var url = '/api/comment?page=' + $scope.revisions[0].page_id;
-            url += $scope.limit ? '&limit=' + $scope.limit : '';
-
-            $http.get(url).success(function(comments)
-            {
-                $scope.comments = comments;
-            });
-        });
+        $scope.page.loadHistory();
+        $scope.page.loadComments(false);
     });
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Functions
+    //------------------------------------------------------------------------------------------------------------------
+
+    //TODO: Turn this into a filter
+    $scope.toDate = function(dateStr)
+    {
+        return new Date(dateStr);
+    }; // end toDate
+
+    $scope.getUser = function(email)
+    {
+        if(email)
+        {
+            return userSvc.get(email);
+        } // end if
+    }; // end getUser
+
+    // TODO: Turn this into a link
     $scope.profile = function(event, email)
     {
         event.stopPropagation();
@@ -60,6 +73,7 @@ function PageHistoryController($scope, $http, $location, wikiPage)
         $location.path('/profile/' + email);
     }; // end profile
 
+    // TODO: Turn this into a link
     $scope.diff = function(event, rev1, rev2)
     {
         event.stopPropagation();
@@ -72,9 +86,8 @@ function PageHistoryController($scope, $http, $location, wikiPage)
 
 angular.module('tome.controllers').controller('PageHistoryController', [
     '$scope',
-    '$http',
     '$location',
-    'PageService',
+    'UserService',
     PageHistoryController
 ]);
 

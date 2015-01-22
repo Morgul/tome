@@ -32,10 +32,11 @@ router.use(routeUtils.errorLogger(logger));
 
 router.param('user_email', function(req, resp, next, email)
 {
+
     models.User.filter({ email: email })
         .then(function(users)
         {
-            if(_.isEmpty(users)) { throw models.errors.DocumentNotFound(); }
+            if(_.isEmpty(users)) { throw new models.errors.DocumentNotFound(); }
 
             req.user = users[0];
             next();

@@ -116,7 +116,7 @@ module.exports =  {
             .then(function(page)
             {
                 var rev = new db.Revision({
-                    userID: user.id,
+                    userID: user.email,
                     pageID: page.id,
                     url: oldURL,
                     message: message || "Moved '" + oldURL + "' to '" + newURL + "'.",
@@ -152,7 +152,7 @@ module.exports =  {
                 var rev = new db.Revision({
                     pageID: page.id,
                     url: url,
-                    userID: user.id,
+                    userID: user.email,
                     message: data.message,
                     title: data.title,
                     tags: data.tags || [],
@@ -209,7 +209,7 @@ module.exports =  {
                 var rev = new db.Revision({
                     pageID: page.id,
                     url: url,
-                    userID: user.id,
+                    userID: user.email,
                     message: message || "deleted page",
                     deleted: true
                 });

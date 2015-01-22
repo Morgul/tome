@@ -8,7 +8,7 @@ function PageServiceFactory($q, $route, $cacheFactory, $http, PageResource)
 {
     function PageService()
     {
-        this.pageCache = $cacheFactory('existsCache', { capacity: 500 });
+        this.pageCache = $cacheFactory('pageCache', { capacity: 500 });
 
         Object.defineProperties(this, {
             wikiPath: {

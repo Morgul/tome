@@ -1,16 +1,16 @@
-<div class="container">
+<div class="container" ng-controller="PageHistoryController">
     <br/>
     <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
     <div class="form-group item-limit">
         <select class="pull-right form-control" id="limitList" ng-model="limit" ng-options="limit.value as limit.text for limit in limits"></select>
         <label class="pull-right" for="limitList">Show</label>
     </div>
-    <h2><i class="fa fa-history"></i> {{ revisions[0].title }} History</h2>
+    <h2><i class="fa fa-history"></i> "{{ page.title }}" History</h2>
     <hr>
     <div class="row">
         <div class="col-sm-6">
             <h2 class="text-center">Revisions</h2>
-            <div ng-if="!revisions" class="row">
+            <div ng-if="!page.history" class="row">
                 <div class="col-xs-6 col-xs-offset-3">
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
@@ -20,19 +20,19 @@
                 </div>
             </div>
             <div class="list-group history-list">
-                <a href="/wiki{{ revision.slug_id }}?revision={{ revision.id }}" class="list-group-item clearfix" ng-repeat="revision in revisions">
-                    <button ng-if="revision.prevRev" class="btn btn-xs btn-default pull-right diff-btn" ng-click="diff($event, revision.prevRev, revision.id)">
+                <a href="/wiki/{{ revision.url }}?revision={{ revision.id }}" class="list-group-item clearfix" ng-repeat="revision in page.history">
+                    <button ng-if="!$last" class="btn btn-xs btn-default pull-right diff-btn" ng-click="diff($event, page.history[$index - 1].id, revision.id)">
                         <i class="fa fa-file-code-o"></i> Diff
                     </button>
-                    <h4 class="list-group-item-heading"><b>{{ revision.commit.message }}</b></h4>
+                    <h4 class="list-group-item-heading"><b>{{ revision.message }}</b></h4>
                     <p class="list-group-item-text">
                         <small>
-                            <span class="text-mono">{{ revision.slug_id }}</span>
+                            <span class="text-mono text-muted">/{{ revision.url }}</span>
                             <span class="pull-right">
-                                <span class="text-muted">{{  revision.commit.committed | date:'short' }}</span>
-                                (<button class="btn btn-link profile-btn" ng-click="profile($event, revision.commit.user.email)">
-                                <small>{{ revision.commit.user.display || revision.commit.user.email }}</small>
-                            </button>)
+                                <span class="text-muted">{{ toDate(revision.created) | date:'short' }}</span>
+                                (<button class="btn btn-link profile-btn" ng-click="profile($event, revision.userID)">
+                                    <small>{{ getUser(revision.userID).nickname }}</small>
+                                </button>)
                             </span>
                         </small>
                     </p>
@@ -41,7 +41,7 @@
         </div>
         <div class="col-sm-6">
             <h2 class="text-center">Comments</h2>
-            <div ng-if="!comments" class="row">
+            <div ng-if="!page.comments" class="row">
                 <div class="col-xs-6 col-xs-offset-3">
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
@@ -51,16 +51,16 @@
                 </div>
             </div>
             <div class="list-group history-list">
-                <a href="/comments{{ comment.slug }}" class="list-group-item clearfix" ng-repeat="comment in comments">
+                <a href="/wiki/{{ wikiPath }}?comments&comment={{ comment.id }}" class="list-group-item clearfix" ng-repeat="comment in page.comments">
                     <h4 class="list-group-item-heading"><b>{{ comment.body | truncate:true:50 }}</b></h4>
                     <p class="list-group-item-text">
                         <small>
                             <span class="text-mono">{{ comment.title }}</span>
                             <span class="pull-right">
-                                <span class="text-muted">{{  comment.created | date:'short' }}</span>
-                                (<button class="btn btn-link profile-btn" ng-click="profile($event, comment.user.email)">
-                                <small>{{ comment.user.display || comment.user.email }}</small>
-                            </button>)
+                                <span class="text-muted">{{  toDate(comment.created) | date:'short' }}</span>
+                                (<button class="btn btn-link profile-btn" ng-click="profile($event, comment.userID)">
+                                    <small>{{ getUser(comment.userID).nickname }}</small>
+                                </button>)
                             </span>
                         </small>
                     </p>

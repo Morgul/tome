@@ -11,6 +11,9 @@ function EditPageController($scope, $location)
         mode: 'gfm'
     };
 
+    // Clear commit message
+    $scope.page.message = undefined;
+
     //TODO: Find a better way to handle this.
     $scope.$root.title = 'Editing ' + $scope.page.title;
 
@@ -49,55 +52,6 @@ function EditPageController($scope, $location)
     {
         $location.search({});
     }; // end revert
-
-    /*
-    $scope.wikiPath = pageSvc.wikiPath;
-    $scope.preview = false;
-    $scope.page = {};
-
-    if(!$scope.wikiPath)
-    {
-        $location.path('/edit/welcome');
-        return;
-    } // end if
-
-
-    pageSvc.get($scope.wikiPath).$promise.then(function(page)
-    {
-        $scope.page = page;
-
-        // Clear out existing commit, if any
-        delete $scope.page.commit;
-
-        // Set the page title
-        $scope.$root.title = "Editing " +  $scope.page.title;
-    });
-
-    $scope.delete = function()
-    {
-        //TODO: Pop a modal form confirming the deletion!
-
-        pageSvc.remove($scope.wikiPath).$promise.then(function()
-        {
-            $scope.page = undefined;
-            $location.path('/wiki/' + $scope.wikiPath);
-        });
-    }; // end delete
-
-    $scope.save = function()
-    {
-        pageSvc.set($scope.wikiPath, $scope.page).$promise.then(function()
-        {
-            $location.path('/wiki/' + $scope.wikiPath);
-        });
-    }; // end save
-
-    $scope.revert = function()
-    {
-        $location.path('/wiki/' + $scope.wikiPath);
-    }; // end revert
-
-    */
 } // end EditPageController
 
 // ---------------------------------------------------------------------------------------------------------------------

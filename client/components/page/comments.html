@@ -1,5 +1,5 @@
 <!-- While we're waiting for the page to load, we should display something nice -->
-<div ng-if="!loaded" class="container">
+<div ng-if="!page.resolved" class="container" ng-controller="PageCommentsController">
     <h3 class="text-center">The comments are currently loading.</h3>
     <div class="row">
         <div class="col-xs-6 col-xs-offset-3">
@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<div ng-if="loaded" class="container comments">
+<div ng-if="page.resolved" class="container comments">
     <br/>
     <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
     <div class="form-group item-limit">

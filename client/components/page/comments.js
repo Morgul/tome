@@ -6,7 +6,7 @@
 
 function PageCommentsController($scope, $route, $http, $document, $timeout, wikiPage, authSvc)
 {
-    $scope.wikiPath = wikiPage.wikiPath;
+    //$scope.wikiPath = wikiPage.wikiPath;
     $scope.user = authSvc.user;
     $scope.newCommentCollapse = true;
     $scope.comment = {};
@@ -30,6 +30,7 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
         }
     ];
 
+    /*
     wikiPage.get($scope.wikiPath).$promise.then(function(page)
     {
         $scope.page = page;
@@ -42,6 +43,7 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
             $scope.comments = comments;
         });
     });
+    */
 
     // -----------------------------------------------------------------------------------------------------------------
 

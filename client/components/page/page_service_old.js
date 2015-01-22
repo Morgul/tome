@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 // A service for retrieving/working with wiki pages.
 //
-// @module wikipage.js
+// @module page_service_old.js
 // ---------------------------------------------------------------------------------------------------------------------
 
 function PageService($resource, $route, $cacheFactory)
@@ -110,6 +110,11 @@ PageService.prototype.search = function(searchText)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.services').service('wikiPage', ['$resource', '$route', '$cacheFactory', PageService]);
+angular.module('tome.services').service('PageServiceOld', [
+    '$resource',
+    '$route',
+    '$cacheFactory',
+    PageService
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------

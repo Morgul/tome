@@ -188,7 +188,7 @@ describe("Page API", function()
     {
         it('correctly moves the page', function(done)
         {
-            Page.move('/foo', '/bar', { id: 'user2' })
+            Page.move('/foo', '/bar', { email: 'user2' })
                 .then(function(page)
                 {
                     assert.equal(page.url, '/bar');
@@ -199,7 +199,7 @@ describe("Page API", function()
 
         it('supports passing in a message', function(done)
         {
-            Page.move('/foo', '/bar', { id: 'user2' }, "dude!")
+            Page.move('/foo', '/bar', { email: 'user2' }, "dude!")
                 .then(function(page)
                 {
                     assert.equal(page.revision.message, "dude!");
@@ -209,7 +209,7 @@ describe("Page API", function()
 
         it('throws an error on a nonexistent page', function(done)
         {
-            Page.move('/dne', '/bar', { id: 'user2' })
+            Page.move('/dne', '/bar', { email: 'user2' })
                 .then(function()
                 {
                     assert(false, "Should have thrown.");
@@ -227,7 +227,7 @@ describe("Page API", function()
         it("creates a new page when one doesn't exist", function(done)
         {
             Page.store('/foo2',
-                { message: "initial commit", title: "Foo2", body: "Foo2 Page." }, { id: 'user2' })
+                { message: "initial commit", title: "Foo2", body: "Foo2 Page." }, { email: 'user2' })
                 .then(function(page)
                 {
                     assert.equal(page.url, '/foo2');
@@ -238,7 +238,7 @@ describe("Page API", function()
         it('updates a page', function(done)
         {
             Page.store('/foo',
-                { message: "update", title: "New Foo", body: "Totes-legit." }, { id: 'user2' })
+                { message: "update", title: "New Foo", body: "Totes-legit." }, { email: 'user2' })
                 .then(function()
                 {
                     return Page.get('/foo');
@@ -276,7 +276,7 @@ describe("Page API", function()
 
         it("returns false for a page that has been deleted", function(done)
         {
-            Page.delete('/foo', { id: 'user2' })
+            Page.delete('/foo', { email: 'user2' })
                 .then(function()
                 {
                     Page.exists('/foo')
@@ -293,7 +293,7 @@ describe("Page API", function()
     {
         it('deletes the page', function(done)
         {
-            Page.delete('/foo', { id: 'user2' })
+            Page.delete('/foo', { email: 'user2' })
                 .then(function(page)
                 {
                     assert.equal(page.revision.deleted, true);
@@ -307,7 +307,7 @@ describe("Page API", function()
 
         it('supports passing in a message', function(done)
         {
-            Page.delete('/foo', { id: 'user2' }, "test")
+            Page.delete('/foo', { email: 'user2' }, "test")
                 .then(function(page)
                 {
                     assert.equal(page.revision.message, "test");
@@ -317,7 +317,7 @@ describe("Page API", function()
 
         it('throws an error on a nonexistent page', function(done)
         {
-            Page.delete('/dne', { id: 'user2' })
+            Page.delete('/dne', { email: 'user2' })
                 .then(function()
                 {
                     assert(false, "Should have thrown.");

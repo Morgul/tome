@@ -16,7 +16,7 @@ module.exports = {
         return db.Comment.get(id);
     },
 
-    getByPage: function(pageID, limit)
+    getByPage: function(pageID, limit, group)
     {
         return db.Comment.filter({ pageID: pageID })
             .then(function(comments)
@@ -33,7 +33,14 @@ module.exports = {
             })
             .then(function(comments)
             {
-                return _.groupBy(comments, 'title');
+                if(group)
+                {
+                    return _.groupBy(comments, 'title');
+                }
+                else
+                {
+                    return comments;
+                } // end if
             });
     },
 

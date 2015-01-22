@@ -76,11 +76,35 @@ router.get('/*', function(req, resp)
         Page.get(slug)
             .then(function(page)
             {
-                return page;
-            })
-            .then(function(page)
-            {
-                resp.json(renderPage(page));
+                if(req.query.history)
+                {
+                    return Page.history(slug, req.query.limit)
+                        .then(function(history)
+                        {
+                            resp.json(history);
+                        });
+                }
+                else if(req.query.comments)
+                {
+                    return Comment.getByPage(page.id, req.query.limit, (req.query.group === 'true'))
+                        .then(function(comments)
+                        {
+                            resp.json(comments);
+                        });
+                }
+                else if(req.query.revision)
+                {
+                    models.Revision.get(req.query.revision)
+                        .then(function(rev)
+                        {
+                            page.revision = rev;
+                            resp.json(renderPage(page));
+                        });
+                }
+                else
+                {
+                    resp.json(renderPage(page));
+                } // end if
             })
             .catch(models.errors.DocumentNotFound, function(error)
             {
