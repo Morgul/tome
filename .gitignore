@@ -3,18 +3,12 @@
 # Pycharm artifacts
 .idea
 
-# js artifacts
-client/js/systems.controllers.js
-client/js/systems.filters.js
-client/js/systems.widgets.js
-client/js/systems.templates.js
-client/js/client.templates.js
-
 # Testing artifacts
 wiki
 
 # DB artifacts
 server/db/*.json
+example/db/*.json
 
 # Node artifacts
 node_modules
