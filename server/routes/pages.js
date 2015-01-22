@@ -42,29 +42,17 @@ router.use(routeUtils.requestLogger(logger));
 // Basic error logging
 router.use(routeUtils.errorLogger(logger));
 
-/*
-//FOR DEBUGGING ONLY!!!!
-router.use(function(req, resp, next)
-{
-    req.user = {id: 'test-user'};
-    req.isAuthenticated = function(){ return true; };
-    next();
-});
-*/
-
 //----------------------------------------------------------------------------------------------------------------------
 // Pages Endpoint
 //----------------------------------------------------------------------------------------------------------------------
 
-router.param('slug', function(req, resp, next, slug)
-{
-    req.slug = slug;
-    next();
-});
 
-router.head('/:slug*', function(req, resp)
+router.head('/*', function(req, resp)
 {
-    Page.exists(req.slug)
+    // Get wildcard parameter
+    var slug = req.params[0];
+
+    Page.exists(slug)
         .then(function(exists)
         {
             if(exists)
@@ -78,37 +66,17 @@ router.head('/:slug*', function(req, resp)
         });
 });
 
-router.get('/:slug*', function(req, resp)
+router.get('/*', function(req, resp)
 {
+    // Get wildcard parameter
+    var slug = req.params[0];
+
     routeUtils.interceptHTML(resp, function()
     {
-        Page.get(req.slug)
+        Page.get(slug)
             .then(function(page)
             {
-                if(req.query.history)
-                {
-                    console.log('history!');
-                    return Page.history(req.slug, req.query.limit)
-                        .then(function(history)
-                        {
-                            page.history = history;
-                            return page;
-                        });
-                }
-                else if(req.query.comments)
-                {
-                    console.log('comments!');
-                    return Comment.getByPage(page.id, req.query.limit)
-                        .then(function(comments)
-                        {
-                            page.comments = comments;
-                            return page;
-                        });
-                }
-                else
-                {
-                    return page;
-                } // end if
+                return page;
             })
             .then(function(page)
             {
@@ -116,7 +84,7 @@ router.get('/:slug*', function(req, resp)
             })
             .catch(models.errors.DocumentNotFound, function(error)
             {
-                logger.warn("[404] Page '%s' not found.", req.slug);
+                logger.warn("[404] Page '%s' not found.", slug);
 
                 resp.status(404).json({
                     human: "Page not found.",
@@ -127,11 +95,14 @@ router.get('/:slug*', function(req, resp)
     });
 });
 
-router.put('/:slug*', function(req, resp)
+router.put('/*', function(req, resp)
 {
+    // Get wildcard parameter
+    var slug = req.params[0];
+
     if(req.isAuthenticated())
     {
-        Page.store(req.slug, req.body, req.user)
+        Page.store(slug, req.body, req.user)
             .then(function(page)
             {
                 resp.json(renderPage(page));
@@ -143,11 +114,14 @@ router.put('/:slug*', function(req, resp)
     } // end if
 });
 
-router.delete('/:slug*', function(req, resp)
+router.delete('/*', function(req, resp)
 {
+    // Get wildcard parameter
+    var slug = req.params[0];
+
     if(req.isAuthenticated())
     {
-        Page.delete(req.slug, req.user, req.body.message)
+        Page.delete(slug, req.user, req.body.message)
             .then(function()
             {
                 resp.end();
