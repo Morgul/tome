@@ -59,7 +59,7 @@ function PageResourceFactory($resource, $http)
         options.slug = this.url;
         options.revision = this.$revision;
 
-        this.$resource = Page.get(options, function(){}, function(response)
+        this.$resource = Page.get(options, function(){ self.error = undefined; }, function(response)
         {
             self.$resource = {
                 revision: {},
@@ -105,7 +105,7 @@ function PageResourceFactory($resource, $http)
 
     PageResource.prototype.delete = function()
     {
-        return this.$resource.delete({ slug: this.url });
+        return this.$resource.$delete({ slug: this.url });
     }; // end delete
 
     return function(url, revision){ return new PageResource(url, revision) };
