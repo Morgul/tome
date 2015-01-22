@@ -15,12 +15,12 @@ function PageServiceFactory($q, $route, $cacheFactory, $http, PageResource)
                 get: function(){ return $route.current.params.wikiPath; }
             },
             current: {
-                get: function(){ return this.get(); }
+                get: function(){ return this.get(null, null, true); }
             }
         });
     } // end PageService
 
-    PageService.prototype.get = function(wikiPath, revision)
+    PageService.prototype.get = function(wikiPath, revision, skipRefresh)
     {
         wikiPath = wikiPath || this.wikiPath;
         var key = revision ? wikiPath + '@' + revision : wikiPath;
@@ -35,8 +35,11 @@ function PageServiceFactory($q, $route, $cacheFactory, $http, PageResource)
         }
         else
         {
-            // Get the latest version of the page
-            page.refresh();
+            if(!skipRefresh)
+            {
+                // Get the latest version of the page
+                page.refresh();
+            } // end if
         } // end if
 
         return page;
