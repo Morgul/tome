@@ -4,7 +4,7 @@
 // @module header.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function HeaderController($scope, $location, authSvc)
+function HeaderController($scope, $location, authSvc, pageSvc)
 {
     $scope.isCollapsed = true;
 
@@ -31,7 +31,7 @@ function TomeHeaderDirective()
         restrict: 'E',
         scope: true,
         templateUrl: "/components/header/header.html",
-        controller: ['$scope', '$location', 'AuthService', HeaderController],
+        controller: ['$scope', '$location', 'AuthService', 'PageService', HeaderController],
         replace: true
     }
 } // end TomeHeaderDirective

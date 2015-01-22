@@ -69,6 +69,12 @@ function RecentPageController($scope, $http, $location, wikiPage)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('RecentPageController', ['$scope', '$http', '$location', 'wikiPage', RecentPageController]);
+angular.module('tome.controllers').controller('RecentPageController', [
+    '$scope',
+    '$http',
+    '$location',
+    'PageService',
+    RecentPageController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------

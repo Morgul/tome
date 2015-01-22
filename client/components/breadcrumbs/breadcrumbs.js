@@ -39,7 +39,7 @@ function BreadcrumbsController($scope, $location, wikiPage)
 
     $scope.edit = function()
     {
-        $location.path('/edit/' + wikiPage.wikiPath);
+        $location.search({ edit: true });
     }; // end edit
 
     $scope.delete = function()
@@ -49,7 +49,7 @@ function BreadcrumbsController($scope, $location, wikiPage)
 
     $scope.history = function()
     {
-        $location.path('/history/' + wikiPage.wikiPath);
+        $location.search({ history: true });
     }; // end history
 
     $scope.comment = function()
@@ -59,7 +59,7 @@ function BreadcrumbsController($scope, $location, wikiPage)
 
     $scope.comments = function()
     {
-        $location.path('/comments/' + wikiPage.wikiPath);
+        $location.search({ comments: true });
     }; // end history
 
     //------------------------------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ function StickyBreadcrumbsDirective($document)
                 });
             });
         },
-        controller: ['$scope', '$location', 'wikiPage', BreadcrumbsController],
+        controller: ['$scope', '$location', 'PageService', BreadcrumbsController],
         replace: true
     }
 }

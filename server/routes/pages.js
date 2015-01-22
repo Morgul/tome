@@ -62,7 +62,23 @@ router.param('slug', function(req, resp, next, slug)
     next();
 });
 
-router.get('/:slug', function(req, resp)
+router.head('/:slug*', function(req, resp)
+{
+    Page.exists(req.slug)
+        .then(function(exists)
+        {
+            if(exists)
+            {
+                resp.end();
+            }
+            else
+            {
+                resp.status(404).end();
+            } // end if
+        });
+});
+
+router.get('/:slug*', function(req, resp)
 {
     routeUtils.interceptHTML(resp, function()
     {
@@ -111,7 +127,7 @@ router.get('/:slug', function(req, resp)
     });
 });
 
-router.put('/:slug', function(req, resp)
+router.put('/:slug*', function(req, resp)
 {
     if(req.isAuthenticated())
     {
@@ -127,7 +143,7 @@ router.put('/:slug', function(req, resp)
     } // end if
 });
 
-router.delete('/:slug', function(req, resp)
+router.delete('/:slug*', function(req, resp)
 {
     if(req.isAuthenticated())
     {

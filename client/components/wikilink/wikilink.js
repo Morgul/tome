@@ -29,10 +29,11 @@ function WikiLinkController($scope, $route, wikiPage)
 
     if(!$scope.external)
     {
-        wikiPage.exists($scope.href, function(exists)
-        {
-            $scope.nonexistant = !exists;
-        });
+        wikiPage.exists($scope.href)
+            .then(function(exists)
+            {
+                $scope.nonexistant = !exists;
+            });
     } // end if
 } // end WikiLinkController
 
@@ -53,7 +54,7 @@ function WikiLinkDirective()
                 elem.attr('title', scope.title);
             } // end if
         },
-        controller: ['$scope', '$route', 'wikiPage', WikiLinkController],
+        controller: ['$scope', '$route', 'PageService', WikiLinkController],
         replace: true
     }
 } // end WikiLinkDirective

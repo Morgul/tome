@@ -37,6 +37,11 @@ function TagsPageController($scope, $route, wikiPage)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('TagsPageController', ['$scope', '$route', 'wikiPage', TagsPageController]);
+angular.module('tome.controllers').controller('TagsPageController', [
+    '$scope',
+    '$route',
+    'PageService',
+    TagsPageController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------

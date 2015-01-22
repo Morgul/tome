@@ -35,6 +35,12 @@ function DiffController($scope, $route, $location, wikiPage)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('DiffController', ['$scope', '$route', '$location', 'wikiPage', DiffController]);
+angular.module('tome.controllers').controller('DiffController', [
+    '$scope',
+    '$route',
+    '$location',
+    'PageService',
+    DiffController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------

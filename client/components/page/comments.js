@@ -104,7 +104,16 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('PageCommentsController', ['$scope', '$route', '$http', '$document', '$timeout', 'wikiPage', 'AuthService', PageCommentsController]);
+angular.module('tome.controllers').controller('PageCommentsController', [
+    '$scope',
+    '$route',
+    '$http',
+    '$document',
+    '$timeout',
+    'PageService',
+    'AuthService',
+    PageCommentsController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------
 

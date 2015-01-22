@@ -20,6 +20,11 @@ function SearchPageController($scope, $route, wikiPage)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('SearchPageController', ['$scope', '$route', 'wikiPage', SearchPageController]);
+angular.module('tome.controllers').controller('SearchPageController', [
+    '$scope',
+    '$route',
+    'PageService',
+    SearchPageController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------

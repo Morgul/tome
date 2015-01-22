@@ -4,53 +4,43 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function WikiPageController($scope, $route, wikiPage)
+function WikiPageController($scope, $route, $routeParams, pageSvc)
 {
-    $scope.wikiPath = wikiPage.wikiPath || "welcome";
+    $scope.wikiPath = pageSvc.wikiPath || "welcome";
     $scope.revision = $route.current.params.revision;
-    $scope.loaded = false;
 
-    if($scope.revision)
+    $scope.page = pageSvc.get(null, $scope.revision);
+
+    // Determine what sub page we should load.
+    if($routeParams.edit)
     {
-        wikiPage.getRevision($scope.revision).$promise.then(function(page)
-        {
-            $scope.loaded = true;
-
-            $scope.page = page.revision;
-            $scope.$root.title = $scope.page.title;
-        }, function(error)
-        {
-            $scope.loaded = true;
-            $scope.error = error || {};
-
-            if(error.status != 404)
-            {
-                console.error("Error loading revision:", error);
-            } // end if
-        });
+        $scope.subPage = '/components/page/edit.html';
+    }
+    else if($routeParams.history)
+    {
+        $scope.subPage = '/components/page/history.html';
+    }
+    else if($routeParams.comments)
+    {
+        $scope.subPage = '/components/page/comments.html';
     }
     else
     {
-        wikiPage.get($scope.wikiPath).$promise.then(function(page)
-        {
-            $scope.loaded = true;
-            $scope.page = page.revision;
-            $scope.$root.title = $scope.page.title;
-        }, function(error)
-        {
-            $scope.loaded = true;
-            $scope.error = error || {};
-
-            if(error.status != 404)
-            {
-                console.error("Error loading revision:", error);
-            } // end if
-        });
+        $scope.subPage = '/components/page/display.html';
     } // end if
+
+    //TODO: Find a better way to handle this
+    $scope.$root.title = ($scope.page || {}).title;
 } // end WikiPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('WikiPageController', ['$scope', '$route', 'wikiPage', WikiPageController]);
+angular.module('tome.controllers').controller('WikiPageController', [
+    '$scope',
+    '$route',
+    '$routeParams',
+    'PageService',
+    WikiPageController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------

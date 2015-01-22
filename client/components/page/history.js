@@ -70,7 +70,13 @@ function PageHistoryController($scope, $http, $location, wikiPage)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('PageHistoryController', ['$scope', '$http', '$location', 'wikiPage', PageHistoryController]);
+angular.module('tome.controllers').controller('PageHistoryController', [
+    '$scope',
+    '$http',
+    '$location',
+    'PageService',
+    PageHistoryController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------
 

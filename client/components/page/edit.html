@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-controller="EditPageController">
     <br/>
     <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
 
@@ -43,7 +43,7 @@
                     <button type="button" class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i> Save Changes</button>
                 </div>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-default" ng-click="revert()"><i class="fa fa-undo"></i> Cancel Chances</button>
+                    <button type="button" class="btn btn-default" ng-click="revert()"><i class="fa fa-undo"></i> Cancel Changes</button>
                 </div>
                 <div class="btn-group">
                     <button type="button" class="btn btn-danger" ng-click="delete()"><i class="fa fa-trash-o"></i> Delete Page</button>

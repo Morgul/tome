@@ -4,9 +4,54 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function EditPageController($scope, $location, $timeout, wikiPage)
+function EditPageController($scope, $location)
 {
-    $scope.wikiPath = wikiPage.wikiPath;
+    $scope.editorOptions = {
+        lineWrapping : true,
+        mode: 'gfm'
+    };
+
+    //TODO: Find a better way to handle this.
+    $scope.$root.title = 'Editing ' + $scope.page.title;
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Events
+    //------------------------------------------------------------------------------------------------------------------
+
+    $scope.$on('save', $scope.save);
+    $scope.$on('revert', $scope.revert);
+    $scope.$on('delete', $scope.delete);
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Functions
+    //------------------------------------------------------------------------------------------------------------------
+
+    $scope.delete = function()
+    {
+        //TODO: Pop a modal form confirming the deletion!
+        $scope.page.delete()
+            .then(function()
+            {
+                $location.search({});
+            });
+    }; // end delete
+
+    $scope.save = function()
+    {
+        $scope.page.save()
+            .then(function()
+            {
+                $location.search({});
+            });
+    }; // end save
+
+    $scope.revert = function()
+    {
+        $location.search({});
+    }; // end revert
+
+    /*
+    $scope.wikiPath = pageSvc.wikiPath;
     $scope.preview = false;
     $scope.page = {};
 
@@ -16,12 +61,8 @@ function EditPageController($scope, $location, $timeout, wikiPage)
         return;
     } // end if
 
-    $scope.editorOptions = {
-        lineWrapping : true,
-        mode: 'gfm'
-    };
 
-    wikiPage.get($scope.wikiPath).$promise.then(function(page)
+    pageSvc.get($scope.wikiPath).$promise.then(function(page)
     {
         $scope.page = page;
 
@@ -36,7 +77,7 @@ function EditPageController($scope, $location, $timeout, wikiPage)
     {
         //TODO: Pop a modal form confirming the deletion!
 
-        wikiPage.remove($scope.wikiPath).$promise.then(function()
+        pageSvc.remove($scope.wikiPath).$promise.then(function()
         {
             $scope.page = undefined;
             $location.path('/wiki/' + $scope.wikiPath);
@@ -45,7 +86,7 @@ function EditPageController($scope, $location, $timeout, wikiPage)
 
     $scope.save = function()
     {
-        wikiPage.set($scope.wikiPath, $scope.page).$promise.then(function()
+        pageSvc.set($scope.wikiPath, $scope.page).$promise.then(function()
         {
             $location.path('/wiki/' + $scope.wikiPath);
         });
@@ -56,13 +97,16 @@ function EditPageController($scope, $location, $timeout, wikiPage)
         $location.path('/wiki/' + $scope.wikiPath);
     }; // end revert
 
-    $scope.$on('save', $scope.save);
-    $scope.$on('revert', $scope.revert);
-    $scope.$on('delete', $scope.delete);
+    */
 } // end EditPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('EditPageController', ['$scope', '$location', '$timeout', 'wikiPage', EditPageController]);
+angular.module('tome.controllers').controller('EditPageController', [
+    '$scope',
+    '$location',
+    '$timeout',
+    EditPageController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------
