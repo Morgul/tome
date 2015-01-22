@@ -179,12 +179,6 @@ module.exports =  {
                         page.updated = new Date().toString();
 
                         return page.save();
-                    })
-                    .then(function()
-                    {
-                        // We want to return the same thing as a `get()`.
-                        page.revision = rev;
-                        return page;
                     });
             });
     },

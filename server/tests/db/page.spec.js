@@ -231,7 +231,6 @@ describe("Page API", function()
                 .then(function(page)
                 {
                     assert.equal(page.url, '/foo2');
-                    assert.equal(page.revision.title, "Foo2");
                     done();
                 });
         });
