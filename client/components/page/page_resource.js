@@ -36,6 +36,8 @@ function PageResourceFactory($resource, $http)
     } // end PageResource
 
     PageResource.prototype = {
+        get id(){ return (this.$resource || {}).id; },
+        set id(val){ (this.$resource || {}).id = val; },
         get title(){ return (this.$resource.revision || {}).title; },
         set title(val){ (this.$resource.revision || {}).title = val; },
         get tags(){ return (this.$resource.revision || {}).tags; },

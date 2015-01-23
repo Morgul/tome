@@ -27,14 +27,6 @@ router.use(routeUtils.requestLogger(logger));
 // Basic error logging
 router.use(routeUtils.errorLogger(logger));
 
-//FOR DEBUGGING ONLY!!!!
-router.use(function(req, resp, next)
-{
-    req.user = {id: 'test-user'};
-    req.isAuthenticated = function(){ return true; };
-    next();
-});
-
 //----------------------------------------------------------------------------------------------------------------------
 // Comments Endpoint
 //----------------------------------------------------------------------------------------------------------------------
@@ -62,7 +54,7 @@ router.post('/', function(req, resp)
     if(req.isAuthenticated())
     {
         // We only ever allow posting as the current user.
-        req.body.userID = req.user.id;
+        req.body.userID = req.user.email;
 
         Comment.store(null, req.body)
             .then(function(comment)
@@ -89,6 +81,22 @@ router.put('/:comment_id', function(req, resp)
             .then(function(comment)
             {
                 resp.json(comment);
+            });
+    }
+    else
+    {
+        resp.status(403).end();
+    } // end if
+});
+
+router.delete('/:comment_id', function(req, resp)
+{
+    if(req.isAuthenticated())
+    {
+        Comment.delete(req.comment.id)
+            .then(function(comment)
+            {
+                resp.end();
             });
     }
     else

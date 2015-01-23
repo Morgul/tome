@@ -7,7 +7,9 @@
 function PageCommentsController($scope, $route, $http, $document, $timeout, wikiPage, authSvc)
 {
     //$scope.wikiPath = wikiPage.wikiPath;
-    $scope.user = authSvc.user;
+
+    console.log('auth.user:', $scope.user);
+
     $scope.newCommentCollapse = true;
     $scope.comment = {};
     $scope.refresh = false;
@@ -30,27 +32,28 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
         }
     ];
 
-    /*
-    wikiPage.get($scope.wikiPath).$promise.then(function(page)
-    {
-        $scope.page = page;
-        $scope.$root.title = $scope.page.title + ' Comments';
-    }).then(function()
-    {
-        $http.get('/api/comment?group=true&page=' + $scope.page.page_id).success(function(comments)
-        {
-            $scope.loaded = true;
-            $scope.comments = comments;
-        });
-    });
-    */
+    //TODO: Figure out a better way to handle this.
+    $scope.$root.title = $scope.page.title + ' Comments';
 
+    // Load comments
+    $scope.page.loadComments(true);
+
+    Object.defineProperty($scope, 'user', {
+        get: function(){  return authSvc.user; }
+    });
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Events
     // -----------------------------------------------------------------------------------------------------------------
 
     $scope.$on('comment', function()
     {
         $scope.startComment();
     });
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Functions
+    // -----------------------------------------------------------------------------------------------------------------
 
     $scope.startComment = function(title, body, id)
     {
@@ -69,10 +72,13 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
 
     $scope.finishComment = function()
     {
-        $scope.comment.page = $scope.page.page_id;
+        $scope.comment.pageID = $scope.page.id;
+
+        console.log("comment", $scope.comment, $scope.page);
+
         if($scope.comment.id)
         {
-            $http.put('/api/comment/' + $scope.comment.id, $scope.comment)
+            $http.put('/comments/' + $scope.comment.id, $scope.comment)
                 .success(function()
                 {
                     $route.reload();
@@ -80,7 +86,7 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
         }
         else
         {
-            $http.put('/api/comment', $scope.comment)
+            $http.post('/comments', $scope.comment)
                 .success(function()
                 {
                     $route.reload();
@@ -90,7 +96,7 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
 
     $scope.delete = function(id)
     {
-        $http.delete('/api/comment/' + id, $scope.comment)
+        $http.delete('/comments/' + id, $scope.comment)
             .success(function()
             {
                 $route.reload();
