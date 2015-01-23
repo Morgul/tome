@@ -4,10 +4,8 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageCommentsController($scope, $route, $http, $document, $timeout, wikiPage, authSvc)
+function PageCommentsController($scope, $route, $http, $document, $timeout, authSvc)
 {
-    //$scope.wikiPath = wikiPage.wikiPath;
-
     console.log('auth.user:', $scope.user);
 
     $scope.newCommentCollapse = true;
@@ -74,8 +72,6 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, wiki
     {
         $scope.comment.pageID = $scope.page.id;
 
-        console.log("comment", $scope.comment, $scope.page);
-
         if($scope.comment.id)
         {
             $http.put('/comments/' + $scope.comment.id, $scope.comment)
@@ -118,7 +114,6 @@ angular.module('tome.controllers').controller('PageCommentsController', [
     '$http',
     '$document',
     '$timeout',
-    'PageService',
     'AuthService',
     PageCommentsController
 ]);
