@@ -4,20 +4,34 @@
 // @module breadcrumbs.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function BreadcrumbsController($scope, $location, wikiPage)
+function BreadcrumbsController($scope, $location, pageSvc)
 {
-    $scope.isEdit = function()
-    {
-        re = new RegExp("^\/edit.*$");
-        return re.test($location.path());
-    };
+    Object.defineProperties($scope, {
+        pageType: {
+            get: function()
+            {
+                var prefix = $location.path().split('/')[1];
 
-    $scope.prefix = function()
-    {
-        var prefix = $location.path().split('/')[1];
+                switch(prefix)
+                {
+                    case 'wiki':
+                        if($location.search().edit)
+                        {
+                            return 'edit';
+                        }
+                        else if($location.search().comments)
+                        {
+                            return 'comments';
+                        } // end if
 
-        return prefix;
-    }; // end prefix
+                        return 'wiki';
+
+                    default:
+                        return prefix;
+                } // end switch
+            } // end get
+        }
+    });
 
     //------------------------------------------------------------------------------------------------------------------
     // Edit page functions
@@ -33,33 +47,33 @@ function BreadcrumbsController($scope, $location, wikiPage)
         $scope.$root.$broadcast('revert');
     }; // end revert
 
-    //------------------------------------------------------------------------------------------------------------------
-    // View page functions
-    //------------------------------------------------------------------------------------------------------------------
-
-    $scope.edit = function()
-    {
-        $location.search({ edit: true });
-    }; // end edit
-
     $scope.delete = function()
     {
         $scope.$root.$broadcast('delete');
     }; // end delete
 
-    $scope.history = function()
+    //------------------------------------------------------------------------------------------------------------------
+    // View page functions
+    //------------------------------------------------------------------------------------------------------------------
+
+    $scope.goToEdit = function()
+    {
+        $location.search({ edit: true });
+    }; // end edit
+
+    $scope.goToComments = function()
+    {
+        $location.search({ comments: true });
+    }; // end history
+
+    $scope.goToHistory = function()
     {
         $location.search({ history: true });
     }; // end history
 
-    $scope.comment = function()
+    $scope.addComment = function()
     {
         $scope.$root.$broadcast('comment');
-    }; // end history
-
-    $scope.comments = function()
-    {
-        $location.search({ comments: true });
     }; // end history
 
     //------------------------------------------------------------------------------------------------------------------
@@ -68,7 +82,7 @@ function BreadcrumbsController($scope, $location, wikiPage)
 
     $scope.breadcrumbs = function()
     {
-        var wikiPath = wikiPage.wikiPath || "";
+        var wikiPath = pageSvc.wikiPath || "";
         var pathElems = wikiPath.split('/');
         if(pathElems.length < 2 && pathElems[0] == "")
         {
@@ -79,7 +93,7 @@ function BreadcrumbsController($scope, $location, wikiPage)
 
     $scope.buildCrumbUrl = function($index)
     {
-        var wikiPath = wikiPage.wikiPath || "";
+        var wikiPath = pageSvc.wikiPath || "";
         return wikiPath.split('/').slice(0, $index).join('/');
     }; // end buildCrumbUrl
 } // end BreadcrumbsController

@@ -26,6 +26,12 @@ function UserServiceFactory($resource, $cacheFactory)
         return user;
     }; // end get
 
+    UserService.prototype.getDisplay = function(email)
+    {
+        var user = this.get(email);
+        return user.nickname || user.displayName || user.email || email;
+    }; // end getDisplay
+
     return new UserService();
 } // end UserServiceFactory
 

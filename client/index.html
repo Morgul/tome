@@ -8,6 +8,9 @@
 
         <link rel="shortcut icon" type="image/png" ng-attr-href="{{ config.logo }}">
 
+        <!-- Lodash -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+
         <!-- BootSwatch -->
         <link ng-attr-href="http://bootswatch.com/{{ config.bootSwatchTheme.toLowerCase() || 'flatly' }}/bootstrap.min.css" rel="stylesheet">
 
@@ -46,6 +49,7 @@
 
         <!-- Tome -->
         <script src="/components/app.js"></script>
+        <script src="/components/libs.js"></script>
         <script src="/components/auth/auth.js"></script>
         <script src="/components/diff/diff.js"></script>
         <script src="/components/page/edit.js"></script>

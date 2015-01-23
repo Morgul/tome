@@ -94,11 +94,15 @@ function PageResourceFactory($resource, $http)
     PageResource.prototype.loadComments = function(group)
     {
         this.comments = group ? Page.commentsGroup({ slug: this.url }) : Page.comments({ slug: this.url });
+
+        return this.comments.$promise;
     }; // end loadComments
 
     PageResource.prototype.loadHistory = function()
     {
         this.history = Page.history({ slug: this.url });
+
+        return this.history.$promise;
     }; // end loadComments
 
     PageResource.prototype.save = function()

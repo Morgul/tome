@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageCommentsController($scope, $route, $http, $document, $timeout, authSvc)
+function PageCommentsController($scope, $route, $location, $http, $document, $timeout, authSvc)
 {
     console.log('auth.user:', $scope.user);
 
@@ -49,9 +49,35 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, auth
         $scope.startComment();
     });
 
+    $scope.$on('scrollToComment', function()
+    {
+        var commentID = $location.search().comment;
+        if(commentID)
+        {
+            $timeout(function()
+            {
+                $scope.scrollTo(commentID);
+            }, 1000);
+        } // end if
+    });
+
     // -----------------------------------------------------------------------------------------------------------------
     // Functions
     // -----------------------------------------------------------------------------------------------------------------
+
+    $scope.scrollToComment = function()
+    {
+        $scope.$broadcast('scrollToComment');
+    }; // end scrollToComment
+
+    $scope.scrollTo = function(elemID)
+    {
+        var elem = angular.element(document.getElementById(elemID));
+        if(elem[0])
+        {
+            return $document.scrollTo(elem, 0, 200);
+        } // end if
+    }; // end scrollTo
 
     $scope.startComment = function(title, body, id)
     {
@@ -59,8 +85,7 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, auth
         $scope.newCommentCollapse = false;
         $timeout(function()
         {
-            var newCommentElem = angular.element(document.getElementById('new-comment'));
-            $document.scrollTo(newCommentElem, 0, 200)
+            $scope.scrollTo.scrollTo(id)
                 .then(function()
                 {
                     $scope.refresh = !$scope.refresh;
@@ -111,6 +136,7 @@ function PageCommentsController($scope, $route, $http, $document, $timeout, auth
 angular.module('tome.controllers').controller('PageCommentsController', [
     '$scope',
     '$route',
+    '$location',
     '$http',
     '$document',
     '$timeout',

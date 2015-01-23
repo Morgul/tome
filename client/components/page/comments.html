@@ -32,7 +32,7 @@
             </div>
             <h3 class="group-title text-center"><i class="fa fa-comments-o"></i> {{ title }}</h3>
 
-            <div class="media" ng-repeat="comment in group | orderBy: order">
+            <div id="{{ comment.id }}"  class="media" ng-repeat="comment in group | orderBy: order">
                 <a class="pull-left" href="/components/profile/{{ comment.user.email }}">
                     <img class="media-object img-thumbnail navbar-right profile-image" gravatar-src="comment.userID" gravatar-size="140" title="{{ getUserName(comment.userID) }}">
                     <span ng-if="comment.user.display" class="media-object text-center">{{ comment.user.display }}</span>
@@ -58,6 +58,8 @@
                         <i ng-if="comment.edited && comment.edited != comment.created"><small> (Edited: <span class="text-muted">{{ comment.edited | date:'short' }}</span>)</small></i>
                     </div>
                 </div>
+                <!-- This is a little trick that makes sure the ng-repeat has run before attempting to scroll. -->
+                <div ng-if="$last" ng-init="scrollToComment()"></div>
             </div>
         </div>
         <div id="new-comment" ng-class="{ border: !newCommentCollapse }">

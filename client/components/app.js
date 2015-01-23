@@ -13,6 +13,7 @@ angular.module('tome', [
         'ui.codemirror',
         'duScroll',
 
+        'lodash',
         'directive.g+signin',
 
         'tome.services',
@@ -30,9 +31,6 @@ angular.module('tome', [
             .when('/diff/:rev1/:rev2', {templateUrl: '/components/diff/diff.html', controller: 'DiffController'})
             .when('/tags/:tag?', {templateUrl: '/components/tags/tags.html', controller: 'TagsPageController'})
             .when('/profile/:email?', {templateUrl: '/components/profile/profile.html', controller: 'ProfilePageController'})
-            //.when('/comments/:wikiPath*', {templateUrl: '/components/page/comments.html', controller: 'PageCommentsController'})
-            //.when('/history/:wikiPath*', {templateUrl: '/components/history/history.html', controller: 'PageHistoryController'})
-            //.when('/wiki/:wikiPath*?edit', {templateUrl: '/components/page/edit.html', controller: 'EditPageController'})
             .when('/wiki/:wikiPath*', {templateUrl: '/components/page/page.html', controller: 'WikiPageController'})
             .otherwise({redirectTo: '/wiki/welcome'});
     }])

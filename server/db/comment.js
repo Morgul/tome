@@ -16,6 +16,23 @@ module.exports = {
         return db.Comment.get(id);
     },
 
+    getAll: function(limit)
+    {
+        return db.Comment.filter()
+            .then(function(comments)
+            {
+                return _.sortBy(comments, function(comment)
+                {
+                    return new Date(comment.created);
+                }).reverse();
+            })
+            .then(function(comments)
+            {
+                var lastIdx = limit || comments.length;
+                return comments.slice(0, lastIdx);
+            });
+    },
+
     getByPage: function(pageID, limit, group)
     {
         return db.Comment.filter({ pageID: pageID })

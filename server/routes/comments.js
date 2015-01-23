@@ -68,6 +68,15 @@ router.post('/', function(req, resp)
     } // end if
 });
 
+router.get('/', function(req, resp)
+{
+    Comment.getAll(req.query.limit)
+        .then(function(comments)
+        {
+            resp.json(comments);
+        });
+});
+
 router.get('/:comment_id', function(req, resp)
 {
     resp.json(req.comment);

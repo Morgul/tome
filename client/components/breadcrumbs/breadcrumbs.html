@@ -1,17 +1,17 @@
 <div id="breadcrumbs">
     <div ng-class="{ fixed: fixed }">
-        <div ng-show="prefix() == 'edit' && isAuthenticated()" class="page-buttons btn-group pull-right">
+        <div ng-show="pageType == 'edit' && isAuthenticated()" class="page-buttons btn-group pull-right">
             <button class="btn btn-link" ng-click="save()"><i class="fa fa-save"></i> Save</button>
             <button class="btn btn-link" ng-click="revert()"><i class="fa fa-undo"></i> Cancel</button>
             <button class="btn btn-link" ng-click="delete()"><i class="fa fa-trash-o"></i> Delete</button>
         </div>
-        <div ng-hide="prefix() != 'wiki'" class="page-buttons btn-group pull-right">
-            <button ng-hide="!isAuthenticated()" class="btn btn-link" ng-click="edit()"><i class="fa fa-edit"></i> Edit</button>
-            <button class="btn btn-link" ng-click="history()"><i class="fa fa-history"></i> History</button>
-            <button class="btn btn-link" ng-click="comments()"><i class="fa fa-comments-o"></i> Comments</button>
+        <div ng-hide="pageType != 'wiki'" class="page-buttons btn-group pull-right">
+            <button ng-hide="!isAuthenticated()" class="btn btn-link" ng-click="goToEdit()"><i class="fa fa-edit"></i> Edit</button>
+            <button class="btn btn-link" ng-click="goToHistory()"><i class="fa fa-history"></i> History</button>
+            <button class="btn btn-link" ng-click="goToComments()"><i class="fa fa-comments-o"></i> Comments</button>
         </div>
-        <div ng-hide="prefix() != 'comments'" class="page-buttons btn-group pull-right">
-            <button class="btn btn-link" ng-click="comment()"><i class="fa fa-plus"></i> New Comment</button>
+        <div ng-hide="pageType != 'comments'" class="page-buttons btn-group pull-right">
+            <button class="btn btn-link" ng-click="addComment()"><i class="fa fa-plus"></i> New Comment</button>
         </div>
         <ol class="breadcrumb">
             <li ng-repeat="crumb in breadcrumbs() track by $index" ng-class="{ active: $last }">

@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function RecentPageController($scope, $http, $location, wikiPage)
+function RecentPageController($scope, $http, $location, _, userSvc)
 {
     $scope.limit = 25;
     $scope.limits = [
@@ -36,21 +36,68 @@ function RecentPageController($scope, $http, $location, wikiPage)
 
     $scope.$root.title = "Recent Activity";
 
+    getRecent();
+    getComments();
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Watched
+    // -----------------------------------------------------------------------------------------------------------------
+
     $scope.$watch('limit', function()
     {
-        wikiPage.recent($scope.limit).$promise.then(function(revisions)
-        {
-            $scope.revisions = revisions;
-        });
-
-        var url = '/api/comment';
-        url += $scope.limit ? '?limit=' + $scope.limit : '';
-
-        $http.get(url).success(function(comments)
-        {
-            $scope.comments = comments;
-        });
+        getRecent();
+        getComments();
     });
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    function getRecent()
+    {
+        $http.get('/recent', { params: { limit: $scope.limit } })
+            .success(function(data)
+            {
+                $scope.revisions = _.reduce(data, function(results, revision)
+                {
+                    revision.created = new Date(revision.created);
+
+                    results.push(revision);
+                    return results;
+                }, []);
+            });
+    } // end getRecent
+
+    function getComments()
+    {
+        $http.get('/comments', { params: { limit: $scope.limit } })
+            .success(function(data)
+            {
+                $scope.comments = _.reduce(data, function(results, comment)
+                {
+                    comment.created = new Date(comment.created);
+                    comment.updated = new Date(comment.updated);
+
+                    results.push(comment);
+                    return results;
+                }, []);
+            });
+    } // end getComments
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Functions
+    // -----------------------------------------------------------------------------------------------------------------
+
+    $scope.getDisplay = function(email)
+    {
+        return userSvc.getDisplay(email);
+    }; // end getDisplay
+
+    $scope.getPageUrlByID = function(pageID)
+    {
+        //TODO: Need to figure out how to do this.
+        return 'welcome';
+    }; // end getPageUrlByID
 
     $scope.profile = function(event, email)
     {
@@ -73,7 +120,8 @@ angular.module('tome.controllers').controller('RecentPageController', [
     '$scope',
     '$http',
     '$location',
-    'PageService',
+    'lodash',
+    'UserService',
     RecentPageController
 ]);
 

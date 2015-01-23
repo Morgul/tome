@@ -21,9 +21,9 @@ function EditPageController($scope, $location)
     // Events
     //------------------------------------------------------------------------------------------------------------------
 
-    $scope.$on('save', $scope.save);
-    $scope.$on('revert', $scope.revert);
-    $scope.$on('delete', $scope.delete);
+    $scope.$on('save', function(){ $scope.save() });
+    $scope.$on('revert', function(){ $scope.revert() });
+    $scope.$on('delete', function(){ $scope.delete() });
 
     //------------------------------------------------------------------------------------------------------------------
     // Functions
