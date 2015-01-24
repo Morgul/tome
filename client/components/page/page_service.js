@@ -45,6 +45,23 @@ function PageServiceFactory($q, $route, $cacheFactory, $http, PageResource)
         return page;
     }; // end get
 
+    PageService.prototype.getByTag = function(tag)
+    {
+        var self = this;
+        var pages = [];
+        $http.get('/tags/' + tag)
+            .success(function(data)
+            {
+                _.each(data, function(page)
+                {
+                    // While there may be a more efficient way to do this, this is by far the most elegant.
+                    pages.push(self.get(page.url, null, true));
+                }); // end each
+            });
+
+        return pages;
+    }; // end getByTag
+
     PageService.prototype.exists = function(url)
     {
         var deferred = $q.defer();

@@ -4,34 +4,28 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function TagsPageController($scope, $route, wikiPage)
+function TagsPageController($scope, $routeParams, $http, pageSvc)
 {
     $scope.tags = {};
-    $scope.singleTag = $route.current.params.tag;
-    $scope.loaded = false;
+    $scope.singleTag = $routeParams.tag;
 
     $scope.$root.title = "Tags";
 
     if($scope.singleTag)
     {
-        wikiPage.getByTag($scope.singleTag).$promise.then(function(docs)
-        {
-            $scope.loaded = true;
-            $scope.tags[$scope.singleTag] = docs
-            $scope.$root.title = "Pages tagged with #" + $scope.singleTag;
-        });
+        $scope.tags[$routeParams.tag] = pageSvc.getByTag($routeParams.tag);
+        $scope.$root.title = "Pages tagged with #" + $scope.singleTag;
     }
     else
     {
-        wikiPage.getAllTags().$promise.then(function(tags)
-        {
-            tags.forEach(function(tag)
+        $http.get('/tags')
+            .success(function(tags)
             {
-                $scope.tags[tag] = wikiPage.getByTag(tag);
+                tags.forEach(function(tag)
+                {
+                    $scope.tags[tag] = pageSvc.getByTag(tag);
+                });
             });
-
-            $scope.loaded = true;
-        });
     } // end if
 } // end TagsPageController
 
@@ -39,7 +33,8 @@ function TagsPageController($scope, $route, wikiPage)
 
 angular.module('tome.controllers').controller('TagsPageController', [
     '$scope',
-    '$route',
+    '$routeParams',
+    '$http',
     'PageService',
     TagsPageController
 ]);
