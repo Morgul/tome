@@ -31,7 +31,7 @@ function PageCommentsController($scope, $route, $location, $http, $document, $ti
     ];
 
     //TODO: Figure out a better way to handle this.
-    $scope.$root.title = $scope.page.title + ' Comments';
+    $scope.$root.title = $scope.page.revision.title + ' Comments';
 
     // Load comments
     $scope.page.loadComments(true);
