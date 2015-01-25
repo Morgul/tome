@@ -18,7 +18,6 @@ function UserServiceFactory($resource, $cacheFactory)
 
         if(!user)
         {
-            console.log('user not found!');
             user = User.get({ email: email });
             this.userCache.put(email, user);
         } // end if

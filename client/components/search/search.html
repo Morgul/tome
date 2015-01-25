@@ -1,4 +1,4 @@
-<div ng-if="!loaded" class="container">
+<div ng-if="!results" class="container">
     <h3 class="text-center">The search results are currently loading.</h3>
     <div class="row">
         <div class="col-xs-6 col-xs-offset-3">
@@ -11,11 +11,11 @@
     </div>
 </div>
 
-<div ng-if="loaded" class="container">
+<div ng-if="results" class="container">
     <h2>Search Results for "<code>{{ query }}</code>":</h2>
     <ul class="search-results">
         <li ng-repeat="result in results">
-            <a href="/wiki{{ result.doc.slug_id }}"><span class="result-title">{{ result.doc.title || result.doc.id }}</span></a> (<small><code>{{ result.doc.slug_id }}</code></small>)<br/>
+            <a href="/wiki/{{ result.doc.url }}"><span class="result-title">{{ result.doc.title }}</span></a> (<small><code>{{ result.doc.url }}</code></small>)<br/>
             <span class="label label-default" ng-repeat="tag in result.doc.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
         </li>
     </ul>

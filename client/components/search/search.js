@@ -4,26 +4,25 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function SearchPageController($scope, $route, wikiPage)
+function SearchPageController($scope, $routeParams, $http)
 {
-    $scope.loaded = false;
-    $scope.query = $route.current.params.text;
+    $scope.query = $routeParams.text;
 
     $scope.$root.title = 'Search for "' + $scope.query + '"';
 
-    wikiPage.search($route.current.params.text).$promise.then(function(results)
-    {
-        $scope.results = results;
-        $scope.loaded = true;
-    });
+    $http.get('/search', { params: { body: $scope.query } })
+        .success(function(data)
+        {
+            $scope.results = data;
+        });
 } // end SearchPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 angular.module('tome.controllers').controller('SearchPageController', [
     '$scope',
-    '$route',
-    'PageService',
+    '$routeParams',
+    '$http',
     SearchPageController
 ]);
 
