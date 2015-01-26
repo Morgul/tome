@@ -51,12 +51,6 @@ function PageHistoryController($scope, $location, userSvc)
     // Functions
     //------------------------------------------------------------------------------------------------------------------
 
-    //TODO: Turn this into a filter
-    $scope.toDate = function(dateStr)
-    {
-        return new Date(dateStr);
-    }; // end toDate
-
     $scope.getUser = function(email)
     {
         if(email)

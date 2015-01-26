@@ -34,11 +34,11 @@
         </div>
     </div>
     <hr>
-    <div class="form-group item-limit">
+    <div class="form-group item-limit clearfix">
         <select class="pull-right form-control" id="limitList" ng-model="limit" ng-options="limit.value as limit.text for limit in limits"></select>
         <label class="pull-right" for="limitList">Show</label>
+        <h2><i class="fa fa-history"></i> Activity</h2>
     </div>
-    <h3><i class="fa fa-history"></i> Activity</h3>
     <ul>
         <li ng-repeat="revision in revisions | orderBy: '-created'">
             <span class="text-muted">{{  revision.created | date:'short' }}</span>:

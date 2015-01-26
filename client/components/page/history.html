@@ -29,7 +29,7 @@
                         <small>
                             <span class="text-mono text-muted">/{{ revision.url }}</span>
                             <span class="pull-right">
-                                <span class="text-muted">{{ toDate(revision.created) | date:'short' }}</span>
+                                <span class="text-muted">{{ revision.created | date:'short' }}</span>
                                 (<button class="btn btn-link profile-btn" ng-click="profile($event, revision.userID)">
                                     <small>{{ getUser(revision.userID).nickname }}</small>
                                 </button>)
@@ -57,7 +57,7 @@
                         <small>
                             <span class="text-mono">{{ comment.title }}</span>
                             <span class="pull-right">
-                                <span class="text-muted">{{  toDate(comment.created) | date:'short' }}</span>
+                                <span class="text-muted">{{ comment.created | date:'short' }}</span>
                                 (<button class="btn btn-link profile-btn" ng-click="profile($event, comment.userID)">
                                     <small>{{ getUser(comment.userID).nickname }}</small>
                                 </button>)

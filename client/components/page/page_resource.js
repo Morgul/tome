@@ -4,12 +4,60 @@
 // @module page_resource.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageResourceFactory($resource, $http)
+function PageResourceFactory($resource, $http, _)
 {
     var Page = $resource('/wiki/:slug', {}, {
-        history: { method: 'GET', params: { history: true }, isArray: true },
-        comments: { method: 'GET', params: { comments: true }, isArray: true },
-        commentsGroup: { method: 'GET', params: { comments: true, group: true } },
+        history: {
+            method: 'GET',
+            params: { history: true },
+            isArray: true,
+            transformResponse: function(data)
+            {
+                var histories = angular.fromJson(data);
+                return _.reduce(histories, function(results, history)
+                {
+                    history.created = new Date(history.created);
+                    results.push(history);
+                    return results;
+                }, []);
+            }
+        },
+        comments: {
+            method: 'GET',
+            params: { comments: true },
+            isArray: true,
+            transformResponse: function(data)
+            {
+                var comments = angular.fromJson(data);
+                return _.reduce(comments, function(results, comment)
+                {
+                    comment.created = new Date(comment.created);
+                    comment.updated = new Date(comment.updated);
+                    results.push(comment);
+                    return results;
+                }, []);
+            }
+        },
+        commentsGroup: {
+            method: 'GET',
+            params: { comments: true, group: true },
+            transformResponse: function(data)
+            {
+                var groups = angular.fromJson(data);
+                return _.transform(groups, function(results, comments, group)
+                {
+                    results[group] = _.reduce(comments, function(results, comment)
+                    {
+                        comment.created = new Date(comment.created);
+                        comment.updated = new Date(comment.updated);
+                        results.push(comment);
+                        return results;
+                    }, []);
+
+                    return results;
+                }, {});
+            }
+        },
         save: {
             method: 'PUT',
             transformRequest: function(data)
@@ -123,6 +171,7 @@ function PageResourceFactory($resource, $http)
 angular.module('tome').factory('PageResource', [
     '$resource',
     '$http',
+    'lodash',
     PageResourceFactory
 ]);
 

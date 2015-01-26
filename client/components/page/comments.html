@@ -34,7 +34,7 @@
 
             <div id="{{ comment.id }}"  class="media" ng-repeat="comment in group | orderBy: order">
                 <a class="pull-left" href="/components/profile/{{ comment.user.email }}">
-                    <img class="media-object img-thumbnail navbar-right profile-image" gravatar-src="comment.userID" gravatar-size="140" title="{{ getUserName(comment.userID) }}">
+                    <img class="media-object img-thumbnail profile-image" gravatar-src="comment.userID" gravatar-size="140" title="{{ getUserName(comment.userID) }}">
                     <span ng-if="comment.user.display" class="media-object text-center">{{ comment.user.display }}</span>
                 </a>
                 <div class="media-body">
@@ -65,7 +65,7 @@
         <div id="new-comment" ng-class="{ border: !newCommentCollapse }">
             <div class="media" collapse="newCommentCollapse">
                 <a class="pull-left" href="/components/profile/{{ user.email }}">
-                    <img class="media-object img-thumbnail navbar-right profile-image" gravatar-src="user.email" gravatar-size="140" title="{{ user.display || user.email }}">
+                    <img class="media-object img-thumbnail profile-image" gravatar-src="user.email" gravatar-size="140" title="{{ user.display || user.email }}">
                     <span ng-if="user.display" class="media-object text-center">{{ user.display }}</span>
                 </a>
                 <div class="media-body">
