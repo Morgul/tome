@@ -4,22 +4,10 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function ProfilePageController($scope, $http, $route, $location, authSvc)
+function ProfilePageController($scope, $http, $routeParams, $location, authSvc, userSvc)
 {
-
-    function getCommits() {
-        var url = '/api/commit?user=' + $scope.user.email;
-        url += $scope.bleh.limit ? "&limit=" + $scope.bleh.limit : "";
-
-        $http.get(url)
-            .success(function(commits)
-            {
-                $scope.commits = commits;
-            });
-    } // end getCommits
-
-    $scope.email = $route.current.params.email;
-    $scope.bleh = { limit: 25 };
+    $scope.email = $routeParams.email;
+    $scope.limit = 25;
     $scope.limits = [
         {
             text: "5",
@@ -47,12 +35,8 @@ function ProfilePageController($scope, $http, $route, $location, authSvc)
         }
     ]; // end limits
 
-    $scope.$watch('bleh.limit', function()
-    {
-        if($scope.user)
-        {
-            getCommits();
-        } // end if
+    Object.defineProperty($scope, 'isUserProfile', {
+        get: function(){ return $scope.email == (authSvc.user || {}).email; }
     });
 
     // Support `/profile` as a redirect to your profile, when signed in.
@@ -61,49 +45,52 @@ function ProfilePageController($scope, $http, $route, $location, authSvc)
         $location.path('/profile/' + authSvc.user.email)
     } // end if
 
-    if($scope.email == (authSvc.user || {}).email)
+    // Get the user
+    $scope.user = userSvc.get($scope.email);
+    $scope.revisions = userSvc.getRevisions($scope.email, $scope.limit);
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Watches
+    // -----------------------------------------------------------------------------------------------------------------
+
+    $scope.$watch('limit', function()
+    {
+        // Get the revisions
+        $scope.revisions = userSvc.getRevisions($scope.email, $scope.limit);
+    });
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Functions
+    // -----------------------------------------------------------------------------------------------------------------
+
+    $scope.getDisplay = function(email)
+    {
+        return userSvc.getDisplay(email);
+    }; // end getDisplay
+
+    $scope.edit = function()
     {
         $scope.editing = true;
-        $scope.user = authSvc.user;
-        $scope.$root.title = ($scope.user.display || $scope.user.email) + "'s Profile";
-
-        // Get our commits
-        getCommits();
-    }
-    else
-    {
-        $http.get('/api/user/' + $scope.email)
-            .success(function(user)
-            {
-                $scope.user = user;
-                $scope.$root.title = (user.display || user.email) + "'s Profile";
-
-                // Get our commits
-                getCommits();
-            });
-    } // end if
+    }; // end edit
 
     $scope.save = function()
     {
-        $http.put('/api/user/' + authSvc.user.email, $scope.user)
-            .success(function(data)
-            {
-                $scope.displaySuccess = true;
-            })
-            .error(function(data, status)
-            {
-                console.error('failed:', data, status);
-            });
-    }; // end save
+        $scope.editing = false;
 
-    $scope.dismiss = function()
-    {
-        $scope.displaySuccess = false;
-    };
+        $http.put('/users/' + $scope.email, { bio: $scope.user.bio });
+    }; // end save
 } // end ProfilePageController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.controllers').controller('ProfilePageController', ['$scope', '$http', '$route', '$location', 'AuthService', ProfilePageController]);
+angular.module('tome.controllers').controller('ProfilePageController', [
+    '$scope',
+    '$http',
+    '$routeParams',
+    '$location',
+    'AuthService',
+    'UserService',
+    ProfilePageController
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------

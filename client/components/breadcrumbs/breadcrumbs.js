@@ -88,6 +88,12 @@ function BreadcrumbsController($scope, $location, pageSvc)
         {
             pathElems = $location.path() == '/' ? ["welcome"] : [];
         } // end if
+
+        if($scope.pageType !== 'wiki')
+        {
+            pathElems.push($scope.pageType);
+        } // end if
+
         return [""].concat(pathElems);
     }; // end breadcrumbs
 

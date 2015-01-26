@@ -63,6 +63,7 @@ db.User = jbase.defineModel('users', {
     email: String,
     displayName: String,
     avatar: String,
+    created: { type: String, default: new Date().toString() },
     bio: String
 }, { rootPath: rootPath });
 

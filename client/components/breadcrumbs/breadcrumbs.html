@@ -16,8 +16,8 @@
         <ol class="breadcrumb">
             <li ng-repeat="crumb in breadcrumbs() track by $index" ng-class="{ active: $last }">
                 <a ng-if="$first" href="/wiki/welcome"><i class="fa fa-home"></i></a>
-                <a ng-if="!$last || prefix() != 'wiki'" href="/wiki/{{ buildCrumbUrl($index) }}">{{ crumb }}</a>
-                <span ng-if="$last && prefix() == 'wiki'">{{ crumb }}</span>
+                <a ng-if="!$last" href="/wiki/{{ buildCrumbUrl($index) }}">{{ crumb }}</a>
+                <span ng-if="$last">{{ crumb }}</span>
             </li>
         </ol>
     </div>

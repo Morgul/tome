@@ -67,7 +67,30 @@ router.get('/:user_email', function(req, resp)
 {
     routeUtils.interceptHTML(resp, function()
     {
-        resp.json(req.user);
+        if(req.query.recent)
+        {
+            models.Revision.filter({ userID: req.user.email })
+                .then(function(revisions)
+                {
+                    return _.sortBy(revisions, function(revision)
+                    {
+                        return new Date(revision.created);
+                    }).reverse();
+                })
+                .then(function(revisions)
+                {
+                    var lastIdx = req.query.limit || revisions.length;
+                    return revisions.slice(0, lastIdx);
+                })
+                .then(function(revisions)
+                {
+                    resp.json(revisions);
+                });
+        }
+        else
+        {
+            resp.json(req.user);
+        } // end if
     });
 });
 

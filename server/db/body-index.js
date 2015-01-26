@@ -44,8 +44,6 @@ BodyIndex.prototype.search = function(queryString)
 {
     var results = this._idx.search(queryString);
 
-    console.log('got results:', results);
-
     return Promise.map(results, function(result)
     {
         return db.Revision.get(result.ref)

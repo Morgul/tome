@@ -1,75 +1,53 @@
-<!-- If we're editing our profile in -->
-<div ng-if="editing" class="container">
-    <h2>Edit Your Profile</h2>
+<div id="profile" class="container">
+    <h2>{{ getDisplay(email) }}'s Profile</h2>
     <div class="media">
-        <a class="pull-left" href="#">
-            <img class="media-object img-thumbnail navbar-right profile-image" gravatar-src="user.email" gravatar-size="200" title="{{ user.display || user.email }}">
-        </a>
+        <div class="media-left">
+            <img class="media-object img-thumbnail" gravatar-src="user.email" gravatar-size="200" title="{{ user.display || user.email }}">
+        </div>
         <div class="media-body">
-            <h4 class="media-heading">Email: <code>{{ user.email }}</code></h4>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Display Name" ng-model="user.display">
-                <span class="input-group-btn">
-                    <button class="btn btn-primary" type="button" ng-click="save()"><i class="fa fa-save"></i> Save</button>
-                </span>
-            </div>
-            <div ng-if="displaySuccess" class="alert alert-success alert-dismissible" role="alert" style="margin-top: 10px">
-                <button type="button" class="close" data-dismiss="alert" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <strong>Success!</strong> Your display name has been updated.
+            <h3 class="media-heading">Email: <small class="text-mono">{{ user.email }}</small></h3>
+            <h3 class="media-heading">Display Name: <small>{{ user.displayName }}</small></h3>
+            <h3 class="media-heading">Joined: <small>{{ user.created | date:'shortDate' }}</small></h3>
+            <br/>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <button ng-if="isUserProfile && editing"
+                            class="btn btn-success btn-sm pull-right"
+                            ng-click="save()"
+                            style="position: relative; z-index: 100">
+                        <i class="fa fa-save"></i> Save
+                    </button>
+                    <button ng-if="isUserProfile && !editing"
+                            class="btn btn-primary btn-sm pull-right"
+                            ng-click="edit()"
+                            style="position: relative; z-index: 100">
+                        <i class="fa fa-edit"></i> Edit
+                    </button>
+                    <h4 class="panel-title">Bio</h4>
+                </div>
+                <div ng-if="!editing" class="panel-body">
+                    <span ng-if="user.bio">{{ user.bio }}</span>
+                    <h4 ng-if="!user.bio">No bio yet.</h4>
+                </div>
+                <textarea ng-if="editing" class="form-control monospace" ng-model="user.bio"></textarea>
             </div>
         </div>
     </div>
     <hr>
     <div class="form-group item-limit">
-        <select class="pull-right form-control" id="limitList" ng-model="bleh.limit" ng-options="limit.value as limit.text for limit in limits"></select>
+        <select class="pull-right form-control" id="limitList" ng-model="limit" ng-options="limit.value as limit.text for limit in limits"></select>
         <label class="pull-right" for="limitList">Show</label>
     </div>
-    <h3>Commit History</h3>
+    <h3><i class="fa fa-history"></i> Activity</h3>
     <ul>
-        <li ng-repeat="commit in commits | orderBy: '-committed'">
-            <span class="text-muted">{{  commit.committed | date:'short' }}</span>:
-            <code>{{ commit.revisions[0].slug_id }}</code> -
-            <b>{{ commit.message }}</b>
-            (<a href="/wiki{{ commit.revisions[0].slug_id }}?revision={{ commit.revisions[0].id }}">view</a>) (<a href="/components/diff/{{ commit.revisions[0].id }}">diff</a>)
+        <li ng-repeat="revision in revisions | orderBy: '-created'">
+            <span class="text-muted">{{  revision.created | date:'short' }}</span>:
+            <code>{{ revision.url }}</code> -
+            <b>{{ revision.message }}</b>
+            (<a href="/wiki/{{ revision.url }}?revision={{ revision.id }}">view</a>)
+            <span ng-if="!$last">
+                (<a href="/diff/{{ revisions[$index + 1].id }}/{{ revision.id }}">diff</a>)
+            </span>
         </li>
     </ul>
 </div>
-
-<!-- If we're just viewing -->
-<div ng-if="!editing">
-    <!-- If we can't find the profile -->
-    <div ng-if="!user" class="container">
-        <h3 class="text-center">User not found.</h3>
-    </div>
-
-    <!-- If we have the user -->
-    <div ng-if="user" class="container">
-        <h2>{{user.display || user.email}}'s Profile</h2>
-        <div class="media">
-            <a class="pull-left" href="#">
-                <img class="media-object img-thumbnail navbar-right profile-image" gravatar-src="user.email" gravatar-size="200" title="{{ user.display || user.email }}">
-            </a>
-            <div class="media-body">
-                <h4 class="media-heading">Email: <code>{{ user.email }}</code></h4>
-                <h4 class="media-heading">Display Name: <span class="">{{ user.display }}</span></h4>
-                <h4 class="media-heading">Joined: <span class="">{{ user.created | date:'shortDate' }}</span></h4>
-            </div>
-        </div>
-        <hr>
-        <div class="form-group item-limit">
-            <select class="pull-right form-control" id="limitList" ng-model="bleh.limit" ng-options="limit.value as limit.text for limit in limits"></select>
-            <label class="pull-right" for="limitList">Show</label>
-        </div>
-        <h3>Commit History</h3>
-        <ul>
-            <li ng-repeat="commit in commits | orderBy: '-committed'">
-                <span class="text-muted">{{  commit.committed | date:'short' }}</span>:
-                <code>{{ commit.revisions[0].slug_id }}</code> -
-                <b>{{ commit.message }}</b>
-                (<a href="/wiki{{ commit.revisions[0].slug_id }}?revision={{ commit.revisions[0].id }}">view</a>) (<a href="/components/diff/{{ commit.revisions[0].id }}">diff</a>)
-            </li>
-        </ul>
-    </div>
-</div>
-
-
