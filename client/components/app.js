@@ -38,19 +38,14 @@ angular.module('tome', [
     {
         gravatarServiceProvider.defaults = {
             size     : 80,
-            "default": 'identicon'  // Mystery man as default for missing avatars
+            "default": 'identicon'
         };
 
         // Use https endpoint
         gravatarServiceProvider.secure = true;
     }])
-    .run(['$rootScope', '$route', 'WikiConfig', 'AuthService', function($rootScope, $route, WikiConfig, authSvc)
+    .run(['$rootScope', '$route', 'AuthService', function($rootScope, $route, authSvc)
     {
-        Object.defineProperty($rootScope, 'config',
-        {
-            get: function(){ return WikiConfig.config; }
-        });
-
         $rootScope.isAuthenticated = function()
         {
             return authSvc.authorized;

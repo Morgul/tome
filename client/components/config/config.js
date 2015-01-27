@@ -4,29 +4,28 @@
 // @module config.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function ConfigService($http)
+function ConfigServiceFactory($resource)
 {
-    this.$http = $http;
-    this.config = {};
-    this._getConfig();
-} // end ConfigService
+    var Config = $resource('/config');
 
-ConfigService.prototype._getConfig = function()
-{
-    var self = this;
-    this.$http.get('/config').then(function(success)
+    function ConfigService()
     {
-        self.config = success.data;
-    });
-};
+        this.config = Config.get();
+    } // end ConfigService
 
-ConfigService.prototype.refresh = function()
-{
-    this._getConfig();
-};
+    ConfigService.prototype.refresh = function()
+    {
+        this.config = Config.get();
+    }; // end refresh
+
+    return new ConfigService();
+} // end ConfigServiceFactory
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-angular.module('tome.services').service('WikiConfig', ['$http', ConfigService]);
+angular.module('tome.services').service('ConfigService', [
+    '$resource',
+    ConfigServiceFactory
+]);
 
 // ---------------------------------------------------------------------------------------------------------------------

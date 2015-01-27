@@ -33,7 +33,7 @@ module.exports = {
     description: 'This is the initial (for testing) Tome Wiki',
 
     // Changes the theme to any theme available from http://bootswatch.com/. Example values are:
-    // "Default", "Flatly", "Cyborg", "Readable", "Spacelab", "United", etc.
+    // "Flatly", "Cyborg", "Readable", "Spacelab", "United", etc.
     bootSwatchTheme: "Flatly",
 
     // Template to include at the bottom of the body block; useful for adding in your own css file, etc.
@@ -52,9 +52,12 @@ module.exports = {
     // Replace this with any random string. This is used for your secure cookies.
     secret: '72156a61342a86841047426761d94687b74434cf',
 
-    // Supports `"auto"` for automatically creating users, `true` to enable registration, or `false` to disable new user
-    // creation.
-    registration: "auto"
+    // The application's client id and secret from Google.
+    googleClientID: '353888173268-4luhg23ai0i6rskck2pjcs4bdssnhshk.apps.googleusercontent.com',
+    googleSecret: 'ZsjeJtlyB2H3XxUvD4V2JW4Q',
+
+    // Supports `true` for automatically creating users, or `false` to disable new user creation.
+    autoCreateUsers: true
 
     // -----------------------------------------------------------------------------------------------------------------
 

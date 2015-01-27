@@ -9,15 +9,16 @@ var url = require('url');
 var passport = require('passport');
 var GooglePlusStrategy = require('passport-google-plus');
 
-var models = require('./../models');
+var config = require('../config');
+var models = require('../models');
 
 var logger = require('omega-logger').loggerFor(module);
 
 //----------------------------------------------------------------------------------------------------------------------
 
 passport.use(new GooglePlusStrategy({
-        clientId: '353888173268-4luhg23ai0i6rskck2pjcs4bdssnhshk.apps.googleusercontent.com',
-        clientSecret: 'ZsjeJtlyB2H3XxUvD4V2JW4Q'
+        clientId: config.googleClientID,
+        clientSecret: config.googleSecret
     },
     function(tokens, profile, done)
     {

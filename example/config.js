@@ -14,18 +14,18 @@ module.exports = {
     frontPage: '/welcome',
     name: 'Example Wiki',
     description: 'This is an example wiki',
-    databaseSuffix: 'example',
-    defaultCommit: "minor edit",
+    defaultCommit: "Minor edit.",
     bootSwatchTheme: "Flatly",
 
     // -----------------------------------------------------------------------------------------------------------------
     // Authentication
     // -----------------------------------------------------------------------------------------------------------------
 
-    //audience: "http://cypher:4000",
     sid: 'tome-example',
     secret: '72156a61342c86841041126761d94667b74434cf',
-    registration: "auto"
+    googleClientID: '353888173268-4luhg23ai0i6rskck2pjcs4bdssnhshk.apps.googleusercontent.com',
+    googleSecret: 'ZsjeJtlyB2H3XxUvD4V2JW4Q',
+    autoCreateUsers: true
 
     // -----------------------------------------------------------------------------------------------------------------
 };

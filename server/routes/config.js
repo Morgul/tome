@@ -33,7 +33,7 @@ router.use(routeUtils.errorLogger(logger));
 
 router.get('/', function(req, resp)
 {
-    var exposedConfig = _.omit(config, ['sid', 'secret']);
+    var exposedConfig = _.omit(config, ['sid', 'secret', 'googleSecret']);
     exposedConfig.version = package.version;
 
     resp.json(exposedConfig);

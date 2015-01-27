@@ -4,13 +4,32 @@
 // @module header.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function HeaderController($scope, $location, authSvc, pageSvc)
+function HeaderController($scope, $location, authSvc, configSvc)
 {
+    $scope.loaded = false;
     $scope.isCollapsed = true;
 
-    Object.defineProperty($scope, 'user', {
-        get: function(){ return authSvc.user; }
+    Object.defineProperties($scope, {
+        user: {
+            get: function(){ return authSvc.user; }
+        },
+        clientID: {
+            get: function(){
+                return configSvc.config.googleClientID;
+            }
+        }
     });
+
+    // Wait for the config to be loaded before we enable to button
+    configSvc.config.$promise
+        .then(function()
+        {
+            $scope.loaded = true;
+        });
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Functions
+    // -----------------------------------------------------------------------------------------------------------------
 
     $scope.signOut = function()
     {
@@ -31,7 +50,7 @@ function TomeHeaderDirective()
         restrict: 'E',
         scope: true,
         templateUrl: "/components/header/header.html",
-        controller: ['$scope', '$location', 'AuthService', 'PageService', HeaderController],
+        controller: ['$scope', '$location', 'AuthService', 'ConfigService', HeaderController],
         replace: true
     }
 } // end TomeHeaderDirective
