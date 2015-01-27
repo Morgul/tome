@@ -4,11 +4,33 @@
 // @module diff.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function DiffController($scope, $route, $location, wikiPage)
+function DiffController($scope, $http, $routeParams, $location, pageSvc)
 {
-    $scope.rev1 = $route.current.params.rev1;
-    $scope.rev2 = $route.current.params.rev2;
+    var revs = $routeParams.revisions.split('...');
 
+    $http.get('/wiki?revision=' + revs[0])
+        .success(function(data)
+        {
+            $scope.rev1 = data;
+        });
+
+    $http.get('/wiki?revision=' + revs[1])
+        .success(function(data)
+        {
+            $scope.rev2 = data;
+        });
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Functions
+    // -----------------------------------------------------------------------------------------------------------------
+
+    $scope.swap = function()
+    {
+        $location.path('/diff/' + $scope.rev2.id + '...' + $scope.rev1.id);
+    }; // end swap
+
+
+    /*
     wikiPage.getRevision($scope.rev1).$promise.then(function(revision)
     {
         $scope.rev1 = revision;
@@ -27,17 +49,15 @@ function DiffController($scope, $route, $location, wikiPage)
         } // end if
     });
 
-    $scope.swap = function()
-    {
-        $location.path('/diff/' + $scope.rev2.id + '/' + $scope.rev1.id);
-    }; // end swap
+    */
 } // end DiffController
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 angular.module('tome.controllers').controller('DiffController', [
     '$scope',
-    '$route',
+    '$http',
+    '$routeParams',
     '$location',
     'PageService',
     DiffController

@@ -25,12 +25,14 @@ function PageServiceFactory($q, $route, $cacheFactory, $http, PageResource)
         wikiPath = wikiPath || this.wikiPath;
         var key = revision ? wikiPath + '@' + revision : wikiPath;
 
-        // Attempt to get a cached page object
         var page = this.pageCache.get(key);
 
         if(!page)
         {
             page = PageResource(wikiPath, revision);
+
+            // We always want to pull the details from the page, in case we're loading a revision without a url.
+            key = revision ? page.url + '@' + revision : page.url;
             this.pageCache.put(key, page);
         }
         else

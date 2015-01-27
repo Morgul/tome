@@ -4,10 +4,8 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageCommentsController($scope, $route, $location, $http, $document, $timeout, authSvc)
+function PageCommentsController($scope, $q, $route, $location, $http, $document, $timeout, authSvc)
 {
-    console.log('auth.user:', $scope.user);
-
     $scope.newCommentCollapse = true;
     $scope.comment = {};
     $scope.refresh = false;
@@ -76,6 +74,12 @@ function PageCommentsController($scope, $route, $location, $http, $document, $ti
         if(elem[0])
         {
             return $document.scrollTo(elem, 0, 200);
+        }
+        else
+        {
+            var deferred = $q.defer();
+            deferred.reject();
+            return deferred.promise;
         } // end if
     }; // end scrollTo
 
@@ -85,7 +89,7 @@ function PageCommentsController($scope, $route, $location, $http, $document, $ti
         $scope.newCommentCollapse = false;
         $timeout(function()
         {
-            $scope.scrollTo.scrollTo(id)
+            $scope.scrollTo('new-comment')
                 .then(function()
                 {
                     $scope.refresh = !$scope.refresh;
@@ -135,6 +139,7 @@ function PageCommentsController($scope, $route, $location, $http, $document, $ti
 
 angular.module('tome.controllers').controller('PageCommentsController', [
     '$scope',
+    '$q',
     '$route',
     '$location',
     '$http',

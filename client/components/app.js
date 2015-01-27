@@ -14,6 +14,7 @@ angular.module('tome', [
         'duScroll',
 
         'lodash',
+        'diff-match-patch',
         'directive.g+signin',
 
         'tome.services',
@@ -28,7 +29,7 @@ angular.module('tome', [
             .when('/registration', {templateUrl: '/components/registration/registration.html',   controller: 'RegistrationPageController'})
             .when('/search', {templateUrl: '/components/search/search.html', controller: 'SearchPageController'})
             .when('/recent', {templateUrl: '/components/recent/recent.html', controller: 'RecentPageController'})
-            .when('/diff/:rev1/:rev2', {templateUrl: '/components/diff/diff.html', controller: 'DiffController'})
+            .when('/diff/:revisions', {templateUrl: '/components/diff/diff.html', controller: 'DiffController'})
             .when('/tags/:tag?', {templateUrl: '/components/tags/tags.html', controller: 'TagsPageController'})
             .when('/profile/:email?', {templateUrl: '/components/profile/profile.html', controller: 'ProfilePageController'})
             .when('/wiki/:wikiPath*', {templateUrl: '/components/page/page.html', controller: 'WikiPageController'})

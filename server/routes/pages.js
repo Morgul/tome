@@ -108,13 +108,34 @@ router.get('/*', function(req, resp)
             })
             .catch(models.errors.DocumentNotFound, function(error)
             {
-                logger.warn("[404] Page '%s' not found.", slug);
+                if(req.query.revision)
+                {
+                    models.Revision.get(req.query.revision)
+                        .then(function(rev)
+                        {
+                            resp.json(rev);
+                        })
+                        .catch(models.errors.DocumentNotFound, function(error)
+                        {
+                            logger.warn("[404] Page '%s' not found.", slug);
 
-                resp.status(404).json({
-                    human: "Page not found.",
-                    message: error.message,
-                    stack: error.stack
-                });
+                            resp.status(404).json({
+                                human: "Revision not found.",
+                                message: error.message,
+                                stack: error.stack
+                            });
+                        });
+                }
+                else
+                {
+                    logger.warn("[404] Page '%s' not found.", slug);
+
+                    resp.status(404).json({
+                        human: "Page not found.",
+                        message: error.message,
+                        stack: error.stack
+                    });
+                } // end if
             });
     });
 });

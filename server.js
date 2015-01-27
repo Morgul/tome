@@ -80,6 +80,7 @@ app.use('/config', configRouter);
 
 // Serve index.html
 app.get('/', routeUtils.serveIndex);
+app.get('/diff/*', routeUtils.serveIndex);
 app.get('/profile/*', routeUtils.serveIndex);
 
 //----------------------------------------------------------------------------------------------------------------------

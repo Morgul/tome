@@ -110,7 +110,7 @@ function RecentPageController($scope, $http, $location, _, userSvc)
     {
         event.stopPropagation();
         event.preventDefault();
-        $location.path('/diff/' + rev1 + '/' + rev2);
+        $location.path('/diff/' + rev1 + '...' + rev2);
     }; // end diff
 } // end RecentPageController
 
