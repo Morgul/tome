@@ -17,7 +17,7 @@ function TitleServiceFactory($rootScope, $q, pageSvc)
         // Resolve the deferred
         pageDeferred.resolve(page);
 
-        if(page)
+        if(page && page.promise)
         {
             pagePromise = page.promise;
         } // end if

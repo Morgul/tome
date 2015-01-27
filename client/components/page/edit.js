@@ -12,18 +12,22 @@ function EditPageController($scope, $location, titleSvc)
         mode: 'gfm'
     };
 
-    // Clear commit message
-    $scope.page.promise
-        .then(function()
-        {
-            $scope.page.message = undefined;
-
-            // Set the page title
-            titleSvc.set(function(page)
+    if($scope.page.promise)
+    {
+        // Clear commit message
+        $scope.page.promise
+            .then(function()
             {
-                return 'Editing ' + (page.title || page.url);
+                $scope.page.message = undefined;
+
             });
-        });
+    } // end if
+
+    // Set the page title
+    titleSvc.set(function(page)
+    {
+        return 'Editing ' + (page.title || page.url);
+    });
 
     //------------------------------------------------------------------------------------------------------------------
     // Events
