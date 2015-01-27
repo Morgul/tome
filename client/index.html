@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="tome">
+<html lang="en" ng-app="tome" ng-cloak>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,65 +8,82 @@
 
         <link rel="shortcut icon" type="image/png" ng-attr-href="{{ config.logo }}">
 
+        <!-- Lodash -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+
+        <!-- Highlight.js -->
+        <link href="/vendor/highlightjs/styles/github.min.css" rel="stylesheet">
+        <script src="/vendor/highlightjs/highlight.min.js"></script>
+
+        <!-- Marked -->
+        <script src="/vendor/marked/marked.js"></script>
+
         <!-- BootSwatch -->
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
         <link ng-attr-href="http://bootswatch.com/{{ config.bootSwatchTheme.toLowerCase() || 'flatly' }}/bootstrap.min.css" rel="stylesheet">
 
         <!-- Font Awesome -->
-        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-        <!-- Persona -->
-        <script src="https://login.persona.org/include.js"></script>
+        <!-- OpenWebIcons -->
+        <link href="/vendor/openwebicons/css/openwebicons-bootstrap.min.css" rel="stylesheet">
 
         <!-- Angular JS -->
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-route.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-resource.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-sanitize.min.js"></script>
 
-        <!-- Vendor Files -->
-        <link href="/vendor/openwebicons/css/openwebicons-bootstrap.min.css" rel="stylesheet">
-
-        <link href="/vendor/highlightjs/styles/github.min.css" rel="stylesheet">
-        <script src="/vendor/highlightjs/highlight.min.js"></script>
-
-        <script src="/vendor/marked/marked.js"></script>
-
+        <!-- Angular Gravatar -->
         <script src="/vendor/angular-gravatar/md5.min.js"></script>
         <script src="/vendor/angular-gravatar/angular-gravatar.min.js"></script>
 
+        <!-- ngTags -->
         <link href="/vendor/ng-tags/ng-tags-0.1.1.min.css" rel="stylesheet">
         <script src="/vendor/ng-tags/ng-tags-0.1.1.min.js"></script>
 
-        <script src="/vendor/jsdiff/diff.js"></script>
-
+        <!-- Angular Scroll -->
         <script src="/vendor/angular-scroll/angular-scroll.min.js"></script>
 
+        <!-- Code Mirror -->
         <link href="/vendor/codemirror/codemirror.css" rel="stylesheet">
         <script src="/vendor/codemirror/codemirror-compressed.js"></script>
         <script src="/vendor/ui-codemirror/ui-codemirror.min.js"></script>
 
+        <!-- Google Plus -->
+        <script src="/vendor/angular-gplus-button/google-plus-signin.js"></script>
+
+        <!-- Angular Diff -->
+        <script src="/vendor/angular-diff/diff_match_patch.js"></script>
+        <script src="/vendor/angular-diff/angular-diff-match-patch.js"></script>
+
         <!-- Tome -->
-        <script src="/js/app.js"></script>
-        <script src="/js/controllers/edit.js"></script>
-        <script src="/js/controllers/diff.js"></script>
-        <script src="/js/controllers/page.js"></script>
-        <script src="/js/controllers/comments.js"></script>
-        <script src="/js/controllers/history.js"></script>
-        <script src="/js/controllers/registration.js"></script>
-        <script src="/js/controllers/profile.js"></script>
-        <script src="/js/controllers/search.js"></script>
-        <script src="/js/controllers/recent.js"></script>
-        <script src="/js/controllers/tags.js"></script>
-        <script src="/js/services/config.js"></script>
-        <script src="/js/services/persona.js"></script>
-        <script src="/js/services/wikipage.js"></script>
+        <script src="/components/app.js"></script>
+        <script src="/components/libs.js"></script>
+        <script src="/components/auth/auth.js"></script>
+        <script src="/components/diff/diff.js"></script>
+        <script src="/components/page/edit.js"></script>
+        <script src="/components/page/page.js"></script>
+        <script src="/components/page/comments.js"></script>
+        <script src="/components/page/history.js"></script>
+        <script src="/components/page/page_resource.js"></script>
+        <script src="/components/page/page_service.js"></script>
+        <script src="/components/registration/registration.js"></script>
+        <script src="/components/profile/profile.js"></script>
+        <script src="/components/search/search.js"></script>
+        <script src="/components/recent/recent.js"></script>
+        <script src="/components/tags/tags.js"></script>
+        <script src="/components/config/config.js"></script>
+        <script src="/components/users/user_service.js"></script>
 
-        <script src="/directives/header/header.js"></script>
-        <script src="/directives/breadcrumbs/breadcrumbs.js"></script>
-        <script src="/directives/wikilink/wikilink.js"></script>
+        <script src="/components/header/header.js"></script>
+        <script src="/components/breadcrumbs/breadcrumbs.js"></script>
+        <script src="/components/wikilink/wikilink.js"></script>
 
-        <script src="/js/utils/utils.directives.js"></script>
-        <script src="/js/utils/utils.filters.js"></script>
+        <script src="/components/utils/utils.directives.js"></script>
+        <script src="/components/utils/utils.filters.js"></script>
 
+        <!-- Page Style -->
         <link href="/css/tome.min.css" rel="stylesheet">
 
         <!------------------------------------------------------------------------------------------------------------->
@@ -88,7 +105,7 @@
         <!-- Main View -->
         <div id="main-view" class="container-fluid" data-ng-view></div>
 
-        <div class="container" ng-include="'/partials/footer.html'"></div>
+        <div class="container" ng-include="'/components/footer/footer.html'"></div>
 
         <!-- Angular UI Bootstrap -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap-tpls.min.js"></script>

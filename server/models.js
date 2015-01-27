@@ -1,102 +1,71 @@
 //----------------------------------------------------------------------------------------------------------------------
-// Database models for Tome.
+// Models for Tome
 //
 // @module models.js
 //----------------------------------------------------------------------------------------------------------------------
 
-var thinky = require('thinky');
+var path = require('path');
+var jbase = require('jbase');
 
 var config = require('./config');
 
 //----------------------------------------------------------------------------------------------------------------------
 
-thinky = thinky({ db: 'tome_' + config.databaseSuffix, host: config.databaseHost, port: config.databasePort });
-
-var r = thinky.r;
-var db = { r: r, Errors: thinky.Errors };
+var db = { errors: jbase.errors };
+var rootPath = path.resolve('./db');
 
 //----------------------------------------------------------------------------------------------------------------------
-// Users
+// Wiki models
 //----------------------------------------------------------------------------------------------------------------------
 
-db.User = thinky.createModel('User', {
-    display: String,
+db.Page = jbase.defineModel('pages', {
+    url: { type: String, required: true },
+    revisionID: String,
+    created: { type: String, default: new Date().toString() },
+    updated: { type: String, default: new Date().toString() }
+}, { rootPath: rootPath });
+
+db.Revision = jbase.defineModel('revisions', {
+    pageID: { type: String, required: true },
+    url: { type: String, required: true },
+    userID: { type: String, required: true },
+    created: { type: String, default: new Date().toString() },
+    message: { type: String, default: (config.defaultCommit || "minor edit") },
+
+    // Content
+    title: { type: String, default: "" },
+    tags: { type: Array, default: [] },
+    body: { type: String, default: "" },
+
+    // Special revision types
+    moved: { type: Boolean, default: false },
+    deleted: { type: Boolean, default: false }
+}, { rootPath: rootPath });
+
+db.Comment = jbase.defineModel('comments', {
+    pageID: { type: String, required: true },
+    userID: { type: String, required: true },
+    title: { type: String, default: "" },
+    body: { type: String, default: "" },
+    created: { type: String, default: new Date().toString() },
+    updated: { type: String, default: new Date().toString() },
+    resolved: { type: Boolean, default: false }
+}, { rootPath: rootPath });
+
+//----------------------------------------------------------------------------------------------------------------------
+// Site models
+//----------------------------------------------------------------------------------------------------------------------
+
+db.User = jbase.defineModel('users', {
+    gPlusID: String,
+    nickname: String,
+    tagline: String,
     email: String,
-    created: { _type: Date, default: r.now() }
-}, { pk: 'email' });
-
-//----------------------------------------------------------------------------------------------------------------------
-// Pages
-//----------------------------------------------------------------------------------------------------------------------
-
-db.Page = thinky.createModel('Page', {
-    created: { _type: Date, default: r.now() }
-});
-
-//----------------------------------------------------------------------------------------------------------------------
-// Commits
-//----------------------------------------------------------------------------------------------------------------------
-
-db.Commit = thinky.createModel('Commit', {
-    user_id: String,
-    message: { _type: String, default: (config.defaultCommit || "minor edit") },
-    committed: { _type: Date, default: r.now() }
-});
-
-// Relationships
-db.Commit.belongsTo(db.User, "user", "user_id", "email");
-
-//----------------------------------------------------------------------------------------------------------------------
-// Revisions
-//----------------------------------------------------------------------------------------------------------------------
-
-db.Revision = thinky.createModel('Revision', {
-    page_id: String,
-    slug_id: String,
-    title: String,
-    tags: [String],
-    body: String,
-    commit_id: String,
-    deleted: { _type: Boolean, default: false }
-});
-
-// Relationships
-db.Revision.belongsTo(db.Commit, "commit", "commit_id", "id");
-db.Commit.hasMany(db.Revision, "revisions", "id", "commit_id");
-db.Revision.belongsTo(db.Page, "page", "page_id", "id");
-
-//----------------------------------------------------------------------------------------------------------------------
-// Slugs
-//----------------------------------------------------------------------------------------------------------------------
-
-db.Slug = thinky.createModel('Slug', {
-    url: String,
-    page: String,
-    currentRevision_id: String,
-    modified: { _type: Date, default: r.now() }
-}, { pk: 'url' });
-
-// Relationships
-db.Slug.belongsTo(db.Revision, "currentRevision", "currentRevision_id", "id");
-db.Revision.belongsTo(db.Slug, "slug", "slug_id", "url");
-
-//----------------------------------------------------------------------------------------------------------------------
-// Comments
-//----------------------------------------------------------------------------------------------------------------------
-
-db.Comment = thinky.createModel('Comment', {
-    page_id: String,
-    user_id: String,
-    title: String,
-    body: String,
-    created: { _type: Date, default: r.now() },
-    updated: { _type: Date, default: r.now() },
-    resolved: { _type: Boolean, default: false }
-});
-
-// Relationships
-db.Comment.belongsTo(db.Page, "page", "page_id", "id");
-db.Comment.belongsTo(db.User, "user", "user_id", "email");
+    displayName: String,
+    avatar: String,
+    created: { type: String, default: new Date().toString() },
+    bio: String
+}, { rootPath: rootPath });
 
 //----------------------------------------------------------------------------------------------------------------------
 

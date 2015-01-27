@@ -17,29 +17,71 @@ var logger = logging.getLogger('server');
 
 var path = require('path');
 
-var connect = require('connect');
-var redirect = require('connect-redirection');
+var express = require('express');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var passport = require('passport');
-
-var router = require('./server/routes');
-var auth = require('./server/authentication');
 
 var package = require('./package');
 var config = require('./server/config');
 
+// Auth
+var serialization = require('./server/auth/serialization');
+var gPlusAuth = require('./server/auth/google-plus');
+
+// Routers
+var routeUtils = require('./server/routes/utils');
+var pagesRouter = require('./server/routes/pages');
+var tagsRouter = require('./server/routes/tags');
+var searchRouter = require('./server/routes/search');
+var recentRouter = require('./server/routes/recent');
+var commentsRouter = require('./server/routes/comments');
+var usersRouter = require('./server/routes/users');
+var configRouter = require('./server/routes/config');
+
 //----------------------------------------------------------------------------------------------------------------------
 
-var app = connect()
-    .use(connect.bodyParser())
-    .use(connect.query())
-    .use(connect.static(__dirname + '/client'))
-    .use(connect.cookieParser(config.secret))
-    .use(connect.session({
-        secret: config.secret || 'nosecret',
-        key: config.sid || 'sid',
-        store: new connect.session.MemoryStore()
-    }))
-    .use(redirect());
+// Build the express app
+var app = express();
+
+// Basic request logging
+app.use(routeUtils.requestLogger(logger));
+
+// Basic error logging
+app.use(routeUtils.errorLogger(logger));
+
+// Passport support
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(session({
+    secret: config.secret || 'nosecret',
+    key: config.key || 'sid',
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Set up out authentication support
+gPlusAuth.initialize(app);
+
+// Setup static serving
+app.use(express.static(path.resolve(__dirname + '/client')));
+
+// Set up our application routes
+app.use('/wiki', pagesRouter);
+app.use('/tags', tagsRouter);
+app.use('/search', searchRouter);
+app.use('/recent', recentRouter);
+app.use('/comments', commentsRouter);
+app.use('/users', usersRouter);
+app.use('/config', configRouter);
+
+// Serve index.html
+app.get('/', routeUtils.serveIndex);
+app.get('/diff/*', routeUtils.serveIndex);
+app.get('/profile/*', routeUtils.serveIndex);
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -47,14 +89,18 @@ module.exports = {
     app: app,
     listen: function()
     {
-        var server = app
-            .use(passport.initialize())
-            .use(passport.session())
-            .use(router)
-            .listen(config.port || 4000);
+        // The fallback route, always serves index.html
+        //app.use(routeUtils.serveIndex);
 
-        logger.info('Tomb v%s started on %s, port %s.', package.version, server.address().address, server.address().port);
-    }
+        // Start the server
+        var server = app.listen(config.port || 3000, function()
+        {
+            var host = server.address().address;
+            var port = server.address().port;
+
+            logger.info('Tome v%s listening at http://%s:%s', package.version, host, port);
+        });
+    } // end listen
 }; // end exports
 
 //----------------------------------------------------------------------------------------------------------------------

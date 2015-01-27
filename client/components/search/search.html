@@ -1,0 +1,23 @@
+<div ng-if="searching" class="container">
+    <h3 class="text-center">The search results are currently loading.</h3>
+    <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    <span class="sr-only">Progress Unknown</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-if="!searching" class="container">
+    <h2>Search Results for "<code>{{ query }}</code>":</h2>
+    <ul class="search-results">
+        <li ng-repeat="result in results">
+            <a href="/wiki/{{ result.doc.url }}"><span class="result-title">{{ result.doc.title }}</span></a> (<small><code>{{ result.doc.url }}</code></small>)<br/>
+            <span class="label label-default" ng-repeat="tag in result.doc.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
+        </li>
+    </ul>
+    <h3 class="text-center" ng-if="results.length == 0">No results found.</h3>
+</div>

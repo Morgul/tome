@@ -1,0 +1,42 @@
+<!-- If we find a wiki page at this url, we render it -->
+<div ng-if="page.resolved" class="wiki-content container">
+    <header>
+        <span class="pull-right hidden-xs tags">
+            <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
+        </span>
+        <h1 class="page-title"><i class="fa fa-file-text-o"></i> {{ page.title || wikiPath }}</h1>
+        <div ng-if="revision">
+            <span class="text-muted">@Revision {{ revision }}</span> (<a href="/wiki/{{ wikiPath }}">current</a>)
+        </div>
+        <div class="visible-xs">
+            <hr>
+            <span class="label label-default" ng-repeat="tag in page.tags track by $index" style="margin-right: 5px">#{{ tag }}</span>
+        </div>
+        <hr>
+    </header>
+    <markdown src="page.body"></markdown>
+</div>
+
+<!-- Otherwise, we display a friendly does not exist page -->
+<div ng-if="page.error.status == 404">
+    <h3 class="text-center">
+        The page <code>/{{ wikiPath }}</code> does not exist.
+    </h3>
+    <p class="text-center">
+        Would you like to <a href="/wiki/{{ wikiPath }}?edit">create it</a>?
+    </p>
+</div>
+
+<!-- While we're waiting for the page to load, we should display something nice -->
+<div ng-if="!page.resolved" class="container">
+    <h3 class="text-center">The page is currently loading.</h3>
+    <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    <span class="sr-only">Progress Unknown</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
