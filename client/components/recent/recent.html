@@ -28,6 +28,8 @@
                     <p class="list-group-item-text">
                         <small>
                             <span class="text-mono">{{ revision.url }}</span>
+                            <span ng-if="revision.deleted" class="badge">Deleted</span>
+                            <span ng-if="revision.moved" class="badge">Moved</span>
                             <span class="pull-right">
                                 <span class="text-muted">{{  revision.created | date:'short' }}</span>
                                 (<button class="btn btn-link profile-btn" ng-click="profile($event, revision.userID)">
