@@ -29,7 +29,7 @@ function WikiLinkController($scope, $route, wikiPage)
 
     if(!$scope.external)
     {
-        wikiPage.exists($scope.href)
+        wikiPage.exists($scope.url)
             .then(function(exists)
             {
                 $scope.nonexistant = !exists;
