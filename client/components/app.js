@@ -26,7 +26,6 @@ angular.module('tome', [
     {
         $locationProvider.html5Mode(true);
         $routeProvider
-            .when('/registration', {templateUrl: '/components/registration/registration.html',   controller: 'RegistrationPageController'})
             .when('/search', {templateUrl: '/components/search/search.html', controller: 'SearchPageController'})
             .when('/recent', {templateUrl: '/components/recent/recent.html', controller: 'RecentPageController'})
             .when('/diff/:revisions', {templateUrl: '/components/diff/diff.html', controller: 'DiffController'})

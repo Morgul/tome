@@ -31,6 +31,7 @@ db.Revision = jbase.defineModel('revisions', {
     userID: { type: String, required: true },
     created: { type: String, default: new Date().toString() },
     message: { type: String, default: (config.defaultCommit || "minor edit") },
+    prevRevID: String,
 
     // Content
     title: { type: String, default: "" },

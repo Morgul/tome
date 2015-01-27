@@ -13,7 +13,6 @@ module.exports = {
     port: 4000,
     frontPage: '/welcome',
     name: 'Example Wiki',
-    logo: '',
     description: 'This is an example wiki',
     databaseSuffix: 'example',
     defaultCommit: "minor edit",

@@ -86,7 +86,7 @@ describe('Comments API', function()
 
         it('groups comments by topic', function(done)
         {
-            Comment.getByPage('page1')
+            Comment.getByPage('page1', null, true)
                 .then(function(comments)
                 {
                     assert.equal(comments["Test"].length, 2);

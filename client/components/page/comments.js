@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageCommentsController($scope, $q, $route, $location, $http, $document, $timeout, authSvc)
+function PageCommentsController($scope, $q, $route, $location, $http, $document, $timeout, authSvc, titleSvc)
 {
     $scope.newCommentCollapse = true;
     $scope.comment = {};
@@ -28,8 +28,11 @@ function PageCommentsController($scope, $q, $route, $location, $http, $document,
         }
     ];
 
-    //TODO: Figure out a better way to handle this.
-    $scope.$root.title = $scope.page.revision.title + ' Comments';
+    // Set the page title
+    titleSvc.set(function(page)
+    {
+        return '"' + (page.title || page.url) + '" Comments';
+    });
 
     // Load comments
     $scope.page.loadComments(true);
@@ -146,6 +149,7 @@ angular.module('tome.controllers').controller('PageCommentsController', [
     '$document',
     '$timeout',
     'AuthService',
+    'TitleService',
     PageCommentsController
 ]);
 

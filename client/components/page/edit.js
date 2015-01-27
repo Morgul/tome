@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function EditPageController($scope, $location)
+function EditPageController($scope, $location, titleSvc)
 {
     $scope.preview = false;
     $scope.editorOptions = {
@@ -13,10 +13,17 @@ function EditPageController($scope, $location)
     };
 
     // Clear commit message
-    $scope.page.message = "";
+    $scope.page.promise
+        .then(function()
+        {
+            $scope.page.message = undefined;
 
-    //TODO: Find a better way to handle this.
-    $scope.$root.title = 'Editing ' + ($scope.page.title || $scope.wikiPath);
+            // Set the page title
+            titleSvc.set(function(page)
+            {
+                return 'Editing ' + (page.title || page.url);
+            });
+        });
 
     //------------------------------------------------------------------------------------------------------------------
     // Events
@@ -60,7 +67,7 @@ function EditPageController($scope, $location)
 angular.module('tome.controllers').controller('EditPageController', [
     '$scope',
     '$location',
-    '$timeout',
+    'TitleService',
     EditPageController
 ]);
 

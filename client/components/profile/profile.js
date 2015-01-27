@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function ProfilePageController($scope, $http, $routeParams, $location, authSvc, userSvc)
+function ProfilePageController($scope, $http, $routeParams, $location, authSvc, userSvc, titleSvc)
 {
     $scope.email = $routeParams.email;
     $scope.limit = 25;
@@ -47,6 +47,14 @@ function ProfilePageController($scope, $http, $routeParams, $location, authSvc, 
 
     // Get the user
     $scope.user = userSvc.get($scope.email);
+    $scope.user.$promise
+        .then(function(){
+            // Set the page title
+            titleSvc.set(function()
+            {
+                return $scope.user.nickname + "'s Profile";
+            });
+        });
     $scope.revisions = userSvc.getRevisions($scope.email, $scope.limit);
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -90,6 +98,7 @@ angular.module('tome.controllers').controller('ProfilePageController', [
     '$location',
     'AuthService',
     'UserService',
+    'TitleService',
     ProfilePageController
 ]);
 

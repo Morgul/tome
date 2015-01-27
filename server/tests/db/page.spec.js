@@ -50,6 +50,7 @@ describe("Page API", function()
                     body: "Welcome to the Foo Page 2!",
                     userID: 'user1',
                     message: "minor edit 2",
+                    prevRevID: 'rev1',
                     created: new Date().toString(),
                     moved: false,
                     deleted: false
@@ -65,6 +66,7 @@ describe("Page API", function()
                     body: "Welcome to the Foo Page 3!",
                     userID: 'user1',
                     message: "minor edit 3",
+                    prevRevID: 'rev2',
                     created: new Date().toString(),
                     moved: false,
                     deleted: false
@@ -247,6 +249,21 @@ describe("Page API", function()
                 {
                     assert.equal(page.revision.title, "New Foo");
                     assert.equal(page.revision.body, "Totes-legit.");
+                    done();
+                });
+        });
+
+        it('correctly populates the previous revision', function(done)
+        {
+            Page.store('/foo',
+                { message: "update", title: "New Foo", body: "Totes-legit." }, { email: 'user2' })
+                .then(function()
+                {
+                    return Page.get('/foo');
+                })
+                .then(function(page)
+                {
+                    assert.equal(page.revision.prevRevID, "rev3");
                     done();
                 });
         });

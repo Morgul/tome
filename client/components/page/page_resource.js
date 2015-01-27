@@ -100,7 +100,8 @@ function PageResourceFactory($resource, $http, _)
         get updated(){ return (this.$resource.revision || {}).created; },
         get moved(){ return (this.$resource.revision || {}).moved; },
         get deleted(){ return (this.$resource.revision || {}).deleted; },
-        get resolved(){ return this.$resource.$resolved; }
+        get resolved(){ return this.$resource.$resolved; },
+        get promise(){ return this.$resource.$promise; }
     };
 
     PageResource.prototype.$loadResource = function(options)

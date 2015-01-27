@@ -4,17 +4,25 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function TagsPageController($scope, $routeParams, $http, pageSvc)
+function TagsPageController($scope, $routeParams, $http, pageSvc, titleSvc)
 {
     $scope.tags = {};
     $scope.singleTag = $routeParams.tag;
 
-    $scope.$root.title = "Tags";
+    // Set the page title
+    titleSvc.set(function()
+    {
+        return "All Tags";
+    });
 
     if($scope.singleTag)
     {
         $scope.tags[$routeParams.tag] = pageSvc.getByTag($routeParams.tag);
-        $scope.$root.title = "Pages tagged with #" + $scope.singleTag;
+        // Set the page title
+        titleSvc.set(function()
+        {
+            return 'Pages tagged with "#' + $scope.singleTag + '"';
+        });
     }
     else
     {
@@ -36,6 +44,7 @@ angular.module('tome.controllers').controller('TagsPageController', [
     '$routeParams',
     '$http',
     'PageService',
+    'TitleService',
     TagsPageController
 ]);
 

@@ -21,7 +21,7 @@
             </div>
             <div class="list-group history-list">
                 <a href="/wiki/{{ revision.url }}?revision={{ revision.id }}" class="list-group-item clearfix" ng-repeat="revision in revisions">
-                    <button ng-if="!$last" class="btn btn-xs btn-default pull-right diff-btn" ng-click="diff($event, revisions[$index + 1].id, revision.id)">
+                    <button ng-if="revision.prevRevID" class="btn btn-xs btn-default pull-right diff-btn" ng-click="diff($event, revision.prevRevID, revision.id)">
                         <i class="fa fa-file-code-o"></i> Diff
                     </button>
                     <h4 class="list-group-item-heading"><b>{{ revision.message }}</b></h4>

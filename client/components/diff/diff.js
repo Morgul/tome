@@ -4,7 +4,7 @@
 // @module diff.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function DiffController($scope, $http, $routeParams, $location, pageSvc)
+function DiffController($scope, $http, $routeParams, $location, titleSvc)
 {
     var revs = $routeParams.revisions.split('...');
 
@@ -20,6 +20,12 @@ function DiffController($scope, $http, $routeParams, $location, pageSvc)
             $scope.rev2 = data;
         });
 
+    // Set the page title
+    titleSvc.set(function()
+    {
+        return 'Diff: "' + revs[0] + '" and "' + revs[1] + '"';
+    });
+
     // -----------------------------------------------------------------------------------------------------------------
     // Functions
     // -----------------------------------------------------------------------------------------------------------------
@@ -29,27 +35,15 @@ function DiffController($scope, $http, $routeParams, $location, pageSvc)
         $location.path('/diff/' + $scope.rev2.id + '...' + $scope.rev1.id);
     }; // end swap
 
-
-    /*
-    wikiPage.getRevision($scope.rev1).$promise.then(function(revision)
+    $scope.tagsEqual = function()
     {
-        $scope.rev1 = revision;
-        if($scope.rev2.body)
+        if($scope.rev1, $scope.rev2)
         {
-            $scope.diff = JsDiff.diffLines($scope.rev1.body, $scope.rev2.body);
+            return _.isEqual($scope.rev1.tags, $scope.rev2.tags);
         } // end if
-    });
 
-    wikiPage.getRevision($scope.rev2).$promise.then(function(revision)
-    {
-        $scope.rev2 = revision;
-        if($scope.rev1.body)
-        {
-            $scope.diff = JsDiff.diffLines($scope.rev1.body, $scope.rev2.body);
-        } // end if
-    });
-
-    */
+        return false;
+    }; // end tagsEqual
 } // end DiffController
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -59,7 +53,7 @@ angular.module('tome.controllers').controller('DiffController', [
     '$http',
     '$routeParams',
     '$location',
-    'PageService',
+    'TitleService',
     DiffController
 ]);
 

@@ -156,7 +156,8 @@ module.exports =  {
                     message: data.message,
                     title: data.title,
                     tags: data.tags || [],
-                    body: data.body
+                    body: data.body,
+                    prevRevID: page.revisionID
                 });
 
                 return rev.save()

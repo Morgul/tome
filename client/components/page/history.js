@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageHistoryController($scope, $location, userSvc)
+function PageHistoryController($scope, $location, userSvc, titleSvc)
 {
     $scope.limit = 25;
     $scope.limits = [
@@ -37,6 +37,12 @@ function PageHistoryController($scope, $location, userSvc)
     $scope.page.loadHistory();
     $scope.page.loadComments(false);
 
+    // Set the page title
+    titleSvc.set(function(page)
+    {
+        return 'Activity for "' + (page.title || page.url) + '"';
+    });
+
     //------------------------------------------------------------------------------------------------------------------
     // Watches
     //------------------------------------------------------------------------------------------------------------------
@@ -59,7 +65,6 @@ function PageHistoryController($scope, $location, userSvc)
         } // end if
     }; // end getUser
 
-    // TODO: Turn this into a link
     $scope.profile = function(event, email)
     {
         event.stopPropagation();
@@ -67,7 +72,6 @@ function PageHistoryController($scope, $location, userSvc)
         $location.path('/profile/' + email);
     }; // end profile
 
-    // TODO: Turn this into a link
     $scope.diff = function(event, rev1, rev2)
     {
         event.stopPropagation();
@@ -82,6 +86,7 @@ angular.module('tome.controllers').controller('PageHistoryController', [
     '$scope',
     '$location',
     'UserService',
+    'TitleService',
     PageHistoryController
 ]);
 

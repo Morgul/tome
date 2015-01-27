@@ -4,7 +4,7 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function WikiPageController($scope, $route, $routeParams, pageSvc)
+function WikiPageController($scope, $route, $routeParams, pageSvc, titleSvc)
 {
     $scope.wikiPath = pageSvc.wikiPath || "welcome";
     $scope.revision = $route.current.params.revision;
@@ -29,8 +29,11 @@ function WikiPageController($scope, $route, $routeParams, pageSvc)
         $scope.subPage = '/components/page/display.html';
     } // end if
 
-    //TODO: Find a better way to handle this
-    $scope.$root.title = ($scope.page || {}).title;
+    // Set the page title
+    titleSvc.set(function(page)
+    {
+        return (page.title || page.url);
+    });
 } // end WikiPageController
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -40,6 +43,7 @@ angular.module('tome.controllers').controller('WikiPageController', [
     '$route',
     '$routeParams',
     'PageService',
+    'TitleService',
     WikiPageController
 ]);
 

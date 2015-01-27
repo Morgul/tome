@@ -4,7 +4,7 @@
 // @module page_service.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function PageServiceFactory($q, $route, $cacheFactory, $http, PageResource)
+function PageServiceFactory($q, $routeParams, $location, $cacheFactory, $http, PageResource)
 {
     function PageService()
     {
@@ -12,10 +12,24 @@ function PageServiceFactory($q, $route, $cacheFactory, $http, PageResource)
 
         Object.defineProperties(this, {
             wikiPath: {
-                get: function(){ return $route.current.params.wikiPath; }
+                get: function()
+                {
+                    // Are we on a url that begins with `/wiki`?
+                    if($location.path().match(/^\/wiki/))
+                    {
+                        return $routeParams.wikiPath;
+                    } // end if
+                }
             },
             current: {
-                get: function(){ return this.get(null, null, true); }
+                get: function()
+                {
+                    // Are we on a url that begins with `/wiki`?
+                    if($location.path().match(/^\/wiki/))
+                    {
+                        return this.get(null, null, true);
+                    } // end if
+                }
             }
         });
     } // end PageService
@@ -82,7 +96,8 @@ function PageServiceFactory($q, $route, $cacheFactory, $http, PageResource)
 
 angular.module('tome.services').service('PageService', [
     '$q',
-    '$route',
+    '$routeParams',
+    '$location',
     '$cacheFactory',
     '$http',
     'PageResource',

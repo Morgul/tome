@@ -4,12 +4,16 @@
 // @module page.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-function SearchPageController($scope, $routeParams, $http)
+function SearchPageController($scope, $routeParams, $http, titleSvc)
 {
     $scope.query = $routeParams.text;
     $scope.searching = true;
 
-    $scope.$root.title = 'Search for "' + $scope.query + '"';
+    // Set the page title
+    titleSvc.set(function()
+    {
+        return 'Search for "' + $scope.query + '"';
+    });
 
     $http.get('/search', { params: { body: $scope.query } })
         .success(function(data)
@@ -25,6 +29,7 @@ angular.module('tome.controllers').controller('SearchPageController', [
     '$scope',
     '$routeParams',
     '$http',
+    'TitleService',
     SearchPageController
 ]);
 
