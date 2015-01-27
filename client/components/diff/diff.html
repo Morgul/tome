@@ -1,7 +1,13 @@
 <div class="container">
     <h1>Revision Diff:</h1>
     <h4>
-        <code title="{{ rev1.message }}">{{ rev1.id }}</code> <i class="fa fa-long-arrow-right"></i> <code title="{{ rev1.message }}">{{ rev2.id }}</code>
+        <a href="/wiki/{{ rev1.url }}?revision={{ rev1.id }}" title="{{ rev1.message }}">
+            <code>{{ rev1.id }}</code>
+        </a>
+        <i class="fa fa-long-arrow-right"></i>
+        <a href="/wiki/{{ rev2.url }}?revision={{ rev2.id }}" title="{{ rev2.message }}">
+            <code>{{ rev2.id }}</code>
+        </a>
         <button class="btn btn-default btn-xs" title="Swap Revisions" ng-click="swap()"><i class="fa fa-exchange"></i></button>
     </h4>
     <hr>
@@ -28,7 +34,8 @@
             <label class="col-sm-2 control-label">Body:</label>
             <div class="col-sm-10">
                 <p class="form-control-static">
-                    <pre class="diff" line-diff left-obj="rev1.body" right-obj="rev2.body"></pre>
+                    <!-- We work around a minor limitation in the diff library; it can't handle diffing against an empty string. While this isn't right, it's better than nothing.-->
+                    <pre class="diff" line-diff left-obj="(rev1.body || ' ')" right-obj="(rev2.body || ' ')"></pre>
                 </p>
             </div>
         </div>
