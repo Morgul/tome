@@ -6,16 +6,17 @@
 
 function EditPageController($scope, $location)
 {
+    $scope.preview = false;
     $scope.editorOptions = {
         lineWrapping : true,
         mode: 'gfm'
     };
 
     // Clear commit message
-    $scope.page.message = undefined;
+    $scope.page.message = "";
 
     //TODO: Find a better way to handle this.
-    $scope.$root.title = 'Editing ' + $scope.page.title;
+    $scope.$root.title = 'Editing ' + ($scope.page.title || $scope.wikiPath);
 
     //------------------------------------------------------------------------------------------------------------------
     // Events
