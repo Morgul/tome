@@ -173,11 +173,21 @@ router.put('/*', function(req, resp)
         }
         else
         {
-            console.log('not reverting...');
-            Page.store(slug, req.body, req.user)
+            Page.get(slug)
                 .then(function(page)
                 {
-                    resp.json(renderPage(page));
+                    if(page.revisionID != req.body.prevRev)
+                    {
+                        resp.status(409).json(page.revision);
+                    }
+                    else
+                    {
+                        Page.store(slug, req.body, req.user)
+                            .then(function(page)
+                            {
+                                resp.json(renderPage(page));
+                            });
+                    } // end if
                 });
         } // end if
     }

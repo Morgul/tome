@@ -58,10 +58,6 @@ function PageResourceFactory($resource, $http, _)
                 }, {});
             }
         },
-        revert: {
-            url:'/wiki/:slug?revert',
-            method: 'PUT'
-        },
         save: {
             method: 'PUT',
             transformRequest: function(data)
@@ -70,7 +66,8 @@ function PageResourceFactory($resource, $http, _)
                     title: data.revision.title,
                     tags: data.revision.tags,
                     body: data.revision.body,
-                    message: data.revision.message
+                    message: data.revision.message,
+                    prevRev: data.revision.id
                 };
 
                 return angular.toJson(page);
@@ -171,7 +168,13 @@ function PageResourceFactory($resource, $http, _)
 
     PageResource.prototype.save = function()
     {
-        return this.$resource.$save({ slug: this.url });
+        return this.$resource.$save({ slug: this.url }, function(){}, function(response)
+        {
+            if(response.status == 409)
+            {
+                console.log('conflict!');
+            } // end if
+        });
     }; // end save
 
     PageResource.prototype.delete = function()

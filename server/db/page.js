@@ -257,8 +257,6 @@ module.exports =  {
                     })
                     .then(function()
                     {
-                        // We want to return the same thing as a `get()`.
-                        page.revision = rev;
                         return page;
                     });
             });
