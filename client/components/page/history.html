@@ -5,7 +5,7 @@
         <select class="pull-right form-control" id="limitList" ng-model="limit" ng-options="limit.value as limit.text for limit in limits"></select>
         <label class="pull-right" for="limitList">Show</label>
     </div>
-    <h2><i class="fa fa-history"></i> Activity for "{{ page.title }}"</h2>
+    <h2><i class="fa fa-history"></i> Activity for "{{ page.title || page.url }}"</h2>
     <hr>
     <div class="row">
         <div class="col-sm-6">
@@ -21,13 +21,21 @@
             </div>
             <div class="list-group history-list">
                 <a href="/wiki/{{ revision.url }}?revision={{ revision.id }}" class="list-group-item clearfix" ng-repeat="revision in page.history">
-                    <button ng-if="!$last" class="btn btn-xs btn-default pull-right diff-btn" ng-click="diff($event, page.history[$index - 1].id, revision.id)">
-                        <i class="fa fa-file-code-o"></i> Diff
-                    </button>
+                    <span ng-if="isCurrent(revision)" class="badge" style="margin-left: 10px;">Current</span>
+                    <div class="btn-toolbar pull-right">
+                        <button ng-if="!$last" class="btn btn-xs btn-default diff-btn" ng-click="diff($event, page.history[$index + 1].id, revision.id)">
+                            <i class="fa fa-file-code-o"></i> Diff
+                        </button>
+                        <button ng-if="!isCurrent(revision)" class="btn btn-xs btn-default diff-btn" ng-click="revert($event, revision.id)">
+                            <i class="fa fa-undo"></i> Revert
+                        </button>
+                    </div>
                     <h4 class="list-group-item-heading"><b>{{ revision.message }}</b></h4>
                     <p class="list-group-item-text">
                         <small>
                             <span class="text-mono text-muted">/{{ revision.url }}</span>
+                            <span ng-if="revision.deleted" class="badge">Deleted</span>
+                            <span ng-if="revision.moved" class="badge">Moved</span>
                             <span class="pull-right">
                                 <span class="text-muted">{{ revision.created | date:'short' }}</span>
                                 (<button class="btn btn-link profile-btn" ng-click="profile($event, revision.userID)">

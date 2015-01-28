@@ -27,6 +27,30 @@ describe("Page API", function()
             })
             .then(function()
             {
+                return pages.store('page2', {
+                    url: '/foo2',
+                    revisionID: 'rev2-1',
+                    created: new Date().toString(),
+                    updated: new Date().toString()
+                })
+            })
+            .then(function()
+            {
+                return revisions.store('rev2-1', {
+                    pageID: 'pag21',
+                    url: '/foo2',
+                    title: "Foo2 Page",
+                    tags: [],
+                    body: "Welcome to the Foo Page!",
+                    userID: 'user5',
+                    message: "minor edit 1",
+                    created: new Date().toString(),
+                    moved: false,
+                    deleted: false
+                });
+            })
+            .then(function()
+            {
                 return revisions.store('rev1', {
                     pageID: 'page1',
                     url: '/foo',
@@ -224,6 +248,57 @@ describe("Page API", function()
         });
     });
 
+    describe("#revert()", function()
+    {
+        it("correctly reverts to a previous revision", function(done)
+        {
+            Page.revert('/foo', 'rev2')
+                .then(function()
+                {
+                    return Page.get('/foo');
+                })
+                .then(function(page)
+                {
+                    assert.equal(page.revision.id, 'rev2');
+                    done();
+                });
+        });
+
+        it("fails if the revision isn't found", function(done)
+        {
+            Page.revert('/foo', 'rev-dne')
+                .then(function()
+                {
+                    return Page.get('/foo');
+                })
+                .then(function()
+                {
+                    assert(false, "Didn't throw error.");
+                })
+                .catch(jbase.errors.DocumentNotFound, function()
+                {
+                    done();
+                });
+        });
+
+        it("fails if the revision is for a different page", function(done)
+        {
+            Page.revert('/foo', 'rev2-1')
+                .then(function()
+                {
+                    return Page.get('/foo');
+                })
+                .then(function()
+                {
+                    assert(false, "Didn't throw error.");
+                })
+                .catch(function()
+                {
+                    done();
+                });
+        });
+    });
+
     describe("#store()", function()
     {
         it("creates a new page when one doesn't exist", function(done)
@@ -316,8 +391,9 @@ describe("Page API", function()
                     assert.equal(page.revision.deleted, true);
                     return Page.get('/foo');
                 })
-                .catch(jbase.errors.DocumentNotFound, function()
+                .then(function(page)
                 {
+                    assert(page.revision.deleted);
                     done();
                 });
         });

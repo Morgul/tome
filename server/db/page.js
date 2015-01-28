@@ -46,15 +46,8 @@ module.exports =  {
                 return db.Revision.get(page.revisionID)
                     .then(function(revision)
                     {
-                        if(revision.deleted)
-                        {
-                            throw new db.errors.DocumentNotFound();
-                        }
-                        else
-                        {
-                            page.revision = revision;
-                            return page;
-                        } // end if
+                        page.revision = revision;
+                        return page;
                     });
             });
     },
@@ -140,6 +133,33 @@ module.exports =  {
             })
     },
 
+    revert: function(url, revisionID)
+    {
+        return getByURL(url)
+            .then(function(page)
+            {
+                return db.Revision.get(revisionID)
+                    .then(function(revision)
+                    {
+                        if(revision.pageID == page.id)
+                        {
+                            page.revisionID = revisionID;
+                            return page.save()
+                                .then(function()
+                                {
+                                    // We want to return the same thing as a `get()`.
+                                    page.revision = revision;
+                                    return page;
+                                });
+                        }
+                        else
+                        {
+                            throw new Error("Revision is not for this page!");
+                        } // end if
+                    });
+            });
+    },
+
     store: function(url, data, user)
     {
         return getByURL(url)
@@ -192,9 +212,9 @@ module.exports =  {
     exists: function(url)
     {
         return module.exports.get(url)
-            .then(function()
+            .then(function(page)
             {
-                return true;
+                return !page.revision.deleted;
             })
             .catch(db.errors.DocumentNotFound, function()
             {
@@ -210,6 +230,7 @@ module.exports =  {
                 var rev = new db.Revision({
                     pageID: page.id,
                     url: url,
+                    prevRevID: page.revisionID,
                     userID: user.email,
                     message: message || "deleted page",
                     deleted: true

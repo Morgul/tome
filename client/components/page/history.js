@@ -57,6 +57,11 @@ function PageHistoryController($scope, $location, userSvc, titleSvc)
     // Functions
     //------------------------------------------------------------------------------------------------------------------
 
+    $scope.isCurrent = function(revision)
+    {
+        return revision.id == $scope.page.revision.id;
+    }; // end isCurrent
+
     $scope.getUser = function(email)
     {
         if(email)
@@ -69,13 +74,23 @@ function PageHistoryController($scope, $location, userSvc, titleSvc)
     {
         event.stopPropagation();
         event.preventDefault();
+
         $location.path('/profile/' + email);
     }; // end profile
+
+    $scope.revert = function(event, revision)
+    {
+        event.stopPropagation();
+        event.preventDefault();
+
+        $scope.page.revert(revision);
+    }; // end revert
 
     $scope.diff = function(event, rev1, rev2)
     {
         event.stopPropagation();
         event.preventDefault();
+
         $location.path('/diff/' + rev1 + '...' + rev2);
     }; // end diff
 } // end PageHistoryController

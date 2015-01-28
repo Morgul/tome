@@ -147,11 +147,39 @@ router.put('/*', function(req, resp)
 
     if(req.isAuthenticated())
     {
-        Page.store(slug, req.body, req.user)
-            .then(function(page)
-            {
-                resp.json(renderPage(page));
-            });
+        if(req.query.revert)
+        {
+            Page.revert(slug, req.body.revision)
+                .then(function(page)
+                {
+                    resp.json(renderPage(page));
+                })
+                .catch(models.errors.DocumentNotFound, function(error)
+                {
+                    resp.status(404).json({
+                        human: "Revision not found.",
+                        message: error.message,
+                        stack: error.stack
+                    });
+                })
+                .catch(function(error)
+                {
+                    resp.status(500).json({
+                        human: "Internal error.",
+                        message: error.message,
+                        stack: error.stack
+                    });
+                });
+        }
+        else
+        {
+            console.log('not reverting...');
+            Page.store(slug, req.body, req.user)
+                .then(function(page)
+                {
+                    resp.json(renderPage(page));
+                });
+        } // end if
     }
     else
     {

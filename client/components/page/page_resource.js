@@ -58,6 +58,10 @@ function PageResourceFactory($resource, $http, _)
                 }, {});
             }
         },
+        revert: {
+            url:'/wiki/:slug?revert',
+            method: 'PUT'
+        },
         save: {
             method: 'PUT',
             transformRequest: function(data)
@@ -153,6 +157,17 @@ function PageResourceFactory($resource, $http, _)
 
         return this.history.$promise;
     }; // end loadComments
+
+    PageResource.prototype.revert = function(revision)
+    {
+        var self = this;
+        return $http.put('/wiki/' + this.url + '?revert=true', { revision: revision })
+            .success(function(data)
+            {
+                self.$resource.revision = data.revision;
+                self.$resource.revisionID = revision;
+            });
+    }; // end revert
 
     PageResource.prototype.save = function()
     {
