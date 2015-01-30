@@ -1,0 +1,34 @@
+//----------------------------------------------------------------------------------------------------------------------
+// Edit Styles
+//----------------------------------------------------------------------------------------------------------------------
+
+#mergeBody {
+    &.form-control {
+        height: auto !important;
+        padding: 0;
+
+        .CodeMirror-merge {
+            // We're forced to do this because height: auto breaks the merge view.
+            height: 600px;
+            border: none;
+
+            .CodeMirror {
+                height: 600px;
+
+                .CodeMirror-merge-r-deleted
+                {
+                    background-color: #eeafbf;
+                    text-decoration: line-through;
+                }
+
+                .CodeMirror-merge-r-inserted
+                {
+                    background-color: #afeebf;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------

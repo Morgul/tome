@@ -168,13 +168,7 @@ function PageResourceFactory($resource, $http, _)
 
     PageResource.prototype.save = function()
     {
-        return this.$resource.$save({ slug: this.url }, function(){}, function(response)
-        {
-            if(response.status == 409)
-            {
-                console.log('conflict!');
-            } // end if
-        });
+        return this.$resource.$save({ slug: this.url });
     }; // end save
 
     PageResource.prototype.delete = function()

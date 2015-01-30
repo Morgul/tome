@@ -2,6 +2,15 @@
     <br/>
     <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
 
+    <!-- If we are merging, show a nice big error message -->
+    <div class="alert alert-danger text-center" role="alert" collapse="!serverRev">
+        <h4><b><i class="fa fa-exclamation-triangle"></i> Warning! The page has changed since you started editing.</b></h4>
+        <p>
+            Please merge those changes into your edit to be able to proceed. Saving from this point <i>will commit
+            your changes</i>.
+        </p>
+    </div>
+
     <!-- If we aren't authenticated, show a nice error message -->
     <div ng-hide="isAuthenticated()" class="text-center">
         <h3>You must be signed in to edit.</h3>
@@ -21,18 +30,37 @@
         <h2>Editing <code>{{ wikiPath }}</code></h2>
         <hr>
         <div ng-hide="preview">
-            <div class="form-group">
-                <label for="pageTitle">Page Title</label>
-                <input type="text" class="form-control" id="pageTitle" placeholder="Page Title" ng-model="page.title">
+            <div class="row">
+                <div class="form-group" ng-class="{ 'col-sm-12': !serverRev, 'col-sm-6': !!serverRev, 'has-warning': serverRev && page.title != serverRev.title }">
+                    <label for="pageTitle">Page Title<span ng-if="serverRev"> (Yours)</span></label>
+                    <input type="text" class="form-control" id="pageTitle" placeholder="Page Title" ng-model="page.title">
+                </div>
+                <div ng-if="serverRev" class="form-group col-sm-6">
+                    <label for="serverTitle">Page Title (Theirs)</label>
+                    <input type="text" class="form-control" id="serverTitle" placeholder="Server Page Title" ng-model="serverRev.title" readonly>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-class="{ 'has-warning': serverRev && !hasEqualTags() }">
                 <label for="pageTags">Tags</label>
-                <ng-tags id="pageTags" unique-tags="true" replace-spaces="true" model="page.tags"></ng-tags>
+                <ng-tags id="pageTags" unique-tags="true" replace-spaces="true" model="page.tags" tag-class="mergeClass"></ng-tags>
+                <p class="help-block text-right" collapse="!serverRev"> When merging, tags are colored as follows:
+                    <span class="label label-default">in-common</span>
+                    <span class="label label-success">yours</span>
+                    <span class="label label-danger">theirs</span>
+                </p>
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-class="{ 'has-warning': serverRev && serverRev.body != page.body }">
                 <label for="pageBody">Body</label>
-                <div ng-hide="isMobile()" id="pageBody" ng-class="'form-control'" ng-model="page.body" ui-codemirror="editorOptions"></div>
                 <textarea ng-show="isMobile()" id="pageBody" class="form-control" ng-model="page.body" style="min-height: 300px"></textarea>
+                <div ng-hide="isMobile() || (serverRev && serverRev.body != page.body)" id="pageBody" ng-class="'form-control'" ng-model="page.body" ui-codemirror="editorOptions"></div>
+                <ui-codemirror-merge ng-hide="isMobile() || !serverRev || serverRev.body == page.body"
+                         id="mergeBody"
+                         class="form-control"
+                         ng-model="page.body"
+                         right="serverRev.body"
+                         options="editorOptions"
+                         reload-ui="mergeRefresh">
+                </ui-codemirror-merge>
             </div>
             <div class="form-group">
                 <label for="commitMessage">Commit Message</label>
