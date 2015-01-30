@@ -44,8 +44,15 @@ angular.module('tome', [
         // Use https endpoint
         gravatarServiceProvider.secure = true;
     }])
-    .run(['$rootScope', '$route', 'AuthService', function($rootScope, $route, authSvc)
+    .run(['$rootScope', '$route', 'AuthService', 'ConfigService', function($rootScope, $route, authSvc, configSvc)
     {
+        configSvc.config.$promise
+            .then(function()
+            {
+                $rootScope.config = configSvc.config;
+                console.log('bootSwatch:', configSvc.config);
+            });
+
         $rootScope.isAuthenticated = function()
         {
             return authSvc.authorized;
