@@ -174,6 +174,7 @@ router.put('/*', function(req, resp)
         else
         {
             Page.get(slug)
+                .catch(models.errors.DocumentNotFound, function() { return {}; })
                 .then(function(page)
                 {
                     if(page.revisionID != req.body.prevRev)
