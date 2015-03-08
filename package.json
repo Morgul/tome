@@ -21,7 +21,7 @@
     "express": "^4.11.0",
     "express-session": "^1.10.1",
     "header-parse": "^0.1.0",
-    "jbase": "^1.2.1",
+    "trivialdb": "^1.3.0",
     "lodash": "^2.4.1",
     "lunr": "^0.5.4",
     "omega-logger": "^0.5.5",
