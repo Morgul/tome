@@ -134,7 +134,7 @@ function PageResourceFactory($resource, $http, _)
                 console.error("Failed to load page.", self.error.data);
             } // end if
         });
-    }; // end _loadResources
+    }; // end $loadResources
 
     PageResource.prototype.refresh = function()
     {
