@@ -5,7 +5,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 var assert = require("assert");
-var jbase = require('jbase');
+var trivialdb = require('trivialdb');
 
 var User;
 
@@ -15,8 +15,8 @@ describe('User API', function()
 {
     beforeEach(function(done)
     {
-        var users = jbase.db('users', { writeToDisk: false, loadFromDisk: false });
-        var revisions = jbase.db('revisions', { writeToDisk: false, loadFromDisk: false });
+        var users = trivialdb.db('users', { writeToDisk: false, loadFromDisk: false });
+        var revisions = trivialdb.db('revisions', { writeToDisk: false, loadFromDisk: false });
 
         users.store('user1', {
                 gPlusID: '1001',

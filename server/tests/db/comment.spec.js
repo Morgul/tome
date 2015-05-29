@@ -6,7 +6,7 @@
 
 var assert = require("assert");
 var _ = require('lodash');
-var jbase = require('jbase');
+var trivialdb = require('trivialdb');
 
 var Comment;
 
@@ -17,7 +17,7 @@ describe('Comments API', function()
 
     beforeEach(function(done)
     {
-        var comments = jbase.db('comments', { writeToDisk: false, loadFromDisk: false });
+        var comments = trivialdb.db('comments', { writeToDisk: false, loadFromDisk: false });
 
         comments.store('comment1', {
                 pageID: 'page1',
@@ -139,7 +139,7 @@ describe('Comments API', function()
                 {
                     assert(false, "Comment was found.");
                 })
-                .catch(jbase.errors.DocumentNotFound, function()
+                .catch(trivialdb.errors.DocumentNotFound, function()
                 {
                     done();
                 });

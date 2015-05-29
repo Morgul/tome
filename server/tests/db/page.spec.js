@@ -5,7 +5,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 var assert = require("assert");
-var jbase = require('jbase');
+var trivialdb = require('trivialdb');
 
 var Page;
 
@@ -13,9 +13,9 @@ var Page;
 
 describe("Page API", function()
 {
-    var pages = jbase.db('pages', { writeToDisk: false, loadFromDisk: false });
-    var revisions = jbase.db('revisions', { writeToDisk: false, loadFromDisk: false });
-    var commits = jbase.db('commits', { writeToDisk: false, loadFromDisk: false });
+    var pages = trivialdb.db('pages', { writeToDisk: false, loadFromDisk: false });
+    var revisions = trivialdb.db('revisions', { writeToDisk: false, loadFromDisk: false });
+    var commits = trivialdb.db('commits', { writeToDisk: false, loadFromDisk: false });
 
     beforeEach(function(done)
     {
@@ -125,7 +125,7 @@ describe("Page API", function()
                     assert(false, "Should have thrown.");
                     done();
                 })
-                .catch(jbase.errors.DocumentNotFound, function()
+                .catch(trivialdb.errors.DocumentNotFound, function()
                 {
                     done();
                 });
@@ -203,7 +203,7 @@ describe("Page API", function()
                     assert(false, "Should have thrown.");
                     done();
                 })
-                .catch(jbase.errors.DocumentNotFound, function()
+                .catch(trivialdb.errors.DocumentNotFound, function()
                 {
                     done();
                 });
@@ -241,7 +241,7 @@ describe("Page API", function()
                     assert(false, "Should have thrown.");
                     done();
                 })
-                .catch(jbase.errors.DocumentNotFound, function()
+                .catch(trivialdb.errors.DocumentNotFound, function()
                 {
                     done();
                 });
@@ -275,7 +275,7 @@ describe("Page API", function()
                 {
                     assert(false, "Didn't throw error.");
                 })
-                .catch(jbase.errors.DocumentNotFound, function()
+                .catch(trivialdb.errors.DocumentNotFound, function()
                 {
                     done();
                 });
@@ -416,7 +416,7 @@ describe("Page API", function()
                     assert(false, "Should have thrown.");
                     done();
                 })
-                .catch(jbase.errors.DocumentNotFound, function()
+                .catch(trivialdb.errors.DocumentNotFound, function()
                 {
                     done();
                 });

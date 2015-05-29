@@ -5,27 +5,27 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 var path = require('path');
-var jbase = require('jbase');
+var trivialdb = require('trivialdb');
 
 var config = require('./config');
 
 //----------------------------------------------------------------------------------------------------------------------
 
-var db = { errors: jbase.errors };
+var db = { errors: trivialdb.errors };
 var rootPath = path.resolve('./db');
 
 //----------------------------------------------------------------------------------------------------------------------
 // Wiki models
 //----------------------------------------------------------------------------------------------------------------------
 
-db.Page = jbase.defineModel('pages', {
+db.Page = trivialdb.defineModel('pages', {
     url: { type: String, required: true },
     revisionID: String,
     created: { type: String, default: new Date().toString() },
     updated: { type: String, default: new Date().toString() }
 }, { rootPath: rootPath });
 
-db.Revision = jbase.defineModel('revisions', {
+db.Revision = trivialdb.defineModel('revisions', {
     pageID: { type: String, required: true },
     url: { type: String, required: true },
     userID: { type: String, required: true },
@@ -43,7 +43,7 @@ db.Revision = jbase.defineModel('revisions', {
     deleted: { type: Boolean, default: false }
 }, { rootPath: rootPath });
 
-db.Comment = jbase.defineModel('comments', {
+db.Comment = trivialdb.defineModel('comments', {
     pageID: { type: String, required: true },
     userID: { type: String, required: true },
     title: { type: String, default: "" },
@@ -57,7 +57,7 @@ db.Comment = jbase.defineModel('comments', {
 // Site models
 //----------------------------------------------------------------------------------------------------------------------
 
-db.User = jbase.defineModel('users', {
+db.User = trivialdb.defineModel('users', {
     gPlusID: String,
     nickname: String,
     tagline: String,
