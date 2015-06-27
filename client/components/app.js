@@ -79,7 +79,7 @@ angular.module('tome', [
         renderer.table = function(header, body)
         {
             return '<div class="table-responsive"><table class="table table-striped table-hover table-bordered"><thead>' + header + '</thead><tbody>' + body + '</tbody></table></div>';
-        };
+        }; // end table parsing
 
         renderer.link = function(href, title, text)
         {
@@ -89,6 +89,18 @@ angular.module('tome', [
 
             return link;
         }; // end link parsing
+
+        renderer.heading = function(text, level)
+        {
+            var escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+
+            return '<h' + level + '><a name="'
+                + escapedText
+                + '" class="anchor" href="#'
+                + escapedText
+                + '"><span class="header-link"></span></a>'
+                + text + '</h' + level + '>';
+        }; // end header parsing
 
         // Configure marked parser
         marked.setOptions({
@@ -104,9 +116,27 @@ angular.module('tome', [
                 return hljs.highlightAuto(code).value;
             }
         });
+    }])
 
-        //--------------------------------------------------------------------------------------------------------------
-    }]);
+    //------------------------------------------------------------------------------------------------------------------
+
+    // When the route is changed scroll to the proper element.
+    .run(function($rootScope, $location, $anchorScroll, $timeout)
+    {
+        // Always scroll an additional 50px
+        $anchorScroll.yOffset = 50;
+
+        $rootScope.$on('$routeChangeSuccess', function(newRoute, oldRoute)
+        {
+            $timeout(function()
+            {
+                if($location.hash())
+                {
+                    $anchorScroll();
+                } // end if
+            }, 200);
+        });
+    });
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Application Modules

@@ -13,6 +13,7 @@ web application. It's core features are:
 * Persona-backed user system
 * Blog style Comments on pages
 * Logo/Name/CSS customization
+* (_New_) Anchor Tag support
 
 ## Current Status
 
