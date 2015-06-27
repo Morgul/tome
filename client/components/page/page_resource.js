@@ -67,7 +67,8 @@ function PageResourceFactory($resource, $http, _)
                     tags: data.revision.tags,
                     body: data.revision.body,
                     message: data.revision.message,
-                    prevRev: data.revision.id
+                    prevRev: data.revision.id,
+                    private: data.private
                 };
 
                 return angular.toJson(page);
@@ -87,6 +88,8 @@ function PageResourceFactory($resource, $http, _)
     PageResource.prototype = {
         get id(){ return (this.$resource || {}).id; },
         set id(val){ (this.$resource || {}).id = val; },
+        get private(){ return (this.$resource || {}).private; },
+        set private(val){ (this.$resource || {}).private = val; },
         get title(){ return (this.$resource.revision || {}).title; },
         set title(val){ (this.$resource.revision || {}).title = val; },
         get tags(){ return (this.$resource.revision || {}).tags; },

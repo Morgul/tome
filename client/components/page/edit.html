@@ -63,6 +63,17 @@
                 </ui-codemirror-merge>
             </div>
             <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="page.private">
+                        Private
+                    </label>
+                </div>
+                <span class="help-block">
+                    Private pages can only be viewed by logged in users.
+                </span>
+            </div>
+            <div class="form-group">
                 <label for="commitMessage">Commit Message</label>
                 <input type="text" class="form-control" id="commitMessage" placeholder="Minor edit." ng-model="page.message">
             </div>

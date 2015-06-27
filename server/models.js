@@ -21,6 +21,8 @@ var rootPath = path.resolve('./db');
 db.Page = trivialdb.defineModel('pages', {
     url: { type: String, required: true },
     revisionID: String,
+    private: { type: Boolean, default: false },
+    authorized: { type: Array, default: [] },
     created: { type: String, default: new Date().toString() },
     updated: { type: String, default: new Date().toString() }
 }, { rootPath: rootPath });

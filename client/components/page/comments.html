@@ -1,5 +1,7 @@
 <div class="container" ng-controller="PageCommentsController">
     <br/>
+    <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
+
     <!-- While we're waiting for the page to load, we should display something nice -->
     <div ng-if="!page.comments.$resolved" class="container">
         <h3 class="text-center">The comments are currently loading.</h3>
@@ -14,9 +16,27 @@
         </div>
     </div>
 
-    <div ng-if="page.comments.$resolved" class="container comments">
-        <br/>
-        <a href="/wiki/{{ wikiPath}}"><i class="fa fa-arrow-circle-o-left"></i> Back to page</a>
+    <!-- If the page is secured, we display a friendly does not exist page -->
+    <div ng-if="(page.error.status == 403)">
+        <h3 class="text-center">
+            The page <code>/{{ wikiPath }}</code> is currently marked as <b>private</b>.
+        </h3>
+        <p class="text-center">
+            Private pages are only viewable by logged in users. Please make sure you are logged in.
+        </p>
+    </div>
+
+    <!-- Otherwise, we display a friendly does not exist page -->
+    <div ng-if="(page.error.status == 404) || page.revision.deleted">
+        <h3 class="text-center">
+            The page <code>/{{ wikiPath }}</code> does not exist.
+        </h3>
+        <p class="text-center">
+            Would you like to <a href="/wiki/{{ wikiPath }}?edit">create it</a>?
+        </p>
+    </div>
+
+    <div ng-if="page.comments.$resolved && !page.error" class="container comments">
         <div class="form-group item-limit">
             <select class="pull-right form-control" id="orderList" ng-model="order" ng-options="order.value as order.text for order in orders"></select>
             <label class="pull-right" for="orderList">Sort</label>

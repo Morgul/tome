@@ -198,6 +198,7 @@ module.exports =  {
                     {
                         page.revisionID = rev.id;
                         page.updated = new Date().toString();
+                        page.private = data.private;
 
                         return page.save();
                     });
