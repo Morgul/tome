@@ -76,6 +76,9 @@ router.get('/*', function(req, resp)
         Page.get(slug)
             .then(function(page)
             {
+                var notAuthorized = (page.private && !req.isAuthenticated())
+                    || (page.authorized.length > 0 && !_.contains(page.authorized, req.user.id));
+
                 if(req.query.history)
                 {
                     return Page.history(slug, req.query.limit)
@@ -91,6 +94,10 @@ router.get('/*', function(req, resp)
                         {
                             resp.json(comments);
                         });
+                }
+                else if(notAuthorized)
+                {
+                    resp.status(403).end();
                 }
                 else if(req.query.revision)
                 {

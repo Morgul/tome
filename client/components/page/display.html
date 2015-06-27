@@ -17,6 +17,16 @@
     <markdown src="page.body"></markdown>
 </div>
 
+<!-- If the page is secured, we display a friendly does not exist page -->
+<div ng-if="(page.error.status == 403)">
+    <h3 class="text-center">
+        The page <code>/{{ wikiPath }}</code> is currently marked as <b>private</b>.
+    </h3>
+    <p class="text-center">
+        Private pages are only viewable by logged in users. Please make sure you are logged in.
+    </p>
+</div>
+
 <!-- Otherwise, we display a friendly does not exist page -->
 <div ng-if="(page.error.status == 404) || page.revision.deleted">
     <h3 class="text-center">
