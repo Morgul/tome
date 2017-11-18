@@ -165,7 +165,7 @@ module.exports =  {
         return getByURL(url)
             .catch(db.errors.DocumentNotFound, function()
             {
-                return new db.Page({ url: url }).save();
+                return new db.Page({ url: url, created: new Date.toString() }).save();
             })
             .then(function(page)
             {
@@ -177,6 +177,7 @@ module.exports =  {
                     title: data.title,
                     tags: data.tags || [],
                     body: data.body,
+					created: new Date.toString(),
                     prevRevID: page.revisionID
                 });
 
@@ -198,7 +199,7 @@ module.exports =  {
                     {
                         page.revisionID = rev.id;
                         page.updated = new Date().toString();
-                        page.private = data.private;
+                        page.private = !!data.private;
 
                         return page.save();
                     });
