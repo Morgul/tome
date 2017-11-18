@@ -71,6 +71,7 @@ module.exports = {
             .then(function(comment)
             {
                 _.assign(comment, data);
+				comment.updated = new Date().toString();
                 return comment.save();
             });
     },
