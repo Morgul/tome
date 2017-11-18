@@ -165,7 +165,7 @@ module.exports =  {
         return getByURL(url)
             .catch(db.errors.DocumentNotFound, function()
             {
-                return new db.Page({ url: url, created: new Date.toString() }).save();
+                return new db.Page({ url: url, created: new Date().toString() }).save();
             })
             .then(function(page)
             {
@@ -177,7 +177,7 @@ module.exports =  {
                     title: data.title,
                     tags: data.tags || [],
                     body: data.body,
-					created: new Date.toString(),
+					created: new Date().toString(),
                     prevRevID: page.revisionID
                 });
 

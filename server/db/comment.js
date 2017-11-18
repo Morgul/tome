@@ -66,7 +66,7 @@ module.exports = {
         return db.Comment.get(commentID)
             .catch(db.errors.DocumentNotFound, function()
             {
-                return new db.Comment({ created: new Date.toString() });
+                return new db.Comment({ created: new Date().toString() });
             })
             .then(function(comment)
             {
