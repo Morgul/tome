@@ -1,3 +1,13 @@
+# DEPRECATED
+
+This version of the project is considered depricated (and no longer being developed). Development has moved to here:
+
+https://gitlab.com/skewed-aspect/tome
+
+(That version has not had it's first release yet, so it's still valid to use this version, just please understand that it will not be updated/maintained.)
+
+---
+
 # Tome Wiki
 
 Tome is an attempt to create a wiki that is slim, trivial to deploy, looks clean, and is written as a modern
