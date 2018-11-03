@@ -9,7 +9,8 @@ function EditPageController($scope, $location, _, titleSvc)
     $scope.preview = false;
     $scope.editorOptions = {
         lineWrapping : true,
-        mode: 'gfm'
+        mode: 'gfm',
+        indentUnit: 4
     };
 
     if($scope.page.promise)
