@@ -13,6 +13,10 @@ function EditPageController($scope, $location, _, titleSvc)
         indentUnit: 4
     };
 
+    // Set default keymap
+    CodeMirror.keyMap.default["Shift-Tab"] = "indentLess";
+    CodeMirror.keyMap.default["Tab"] = "indentMore";
+    
     if($scope.page.promise)
     {
         // Clear commit message
