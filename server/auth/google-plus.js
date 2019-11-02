@@ -1,29 +1,20 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Google+ Authentication Support
-//
-// @module google-plus.js
 //----------------------------------------------------------------------------------------------------------------------
 
-var url = require('url');
-
 var passport = require('passport');
-var GooglePlusStrategy = require('passport-google-plus');
+var GoogleStrategy = require('passport-google-web');
 
-var config = require('../config');
 var models = require('../models');
 
 var logger = require('omega-logger').loggerFor(module);
 
 //----------------------------------------------------------------------------------------------------------------------
 
-passport.use(new GooglePlusStrategy({
-        clientId: config.googleClientID,
-        clientSecret: config.googleSecret
-    },
-    function(tokens, profile, done)
+passport.use(new GoogleStrategy((tokens, profile, done) =>
     {
         models.User.filter({ gPlusID: profile.id })
-            .then(function(users)
+            .then((users) =>
             {
                 if(users[0])
                 {
@@ -34,14 +25,13 @@ passport.use(new GooglePlusStrategy({
                     return new models.User({ gPlusID: profile.id });
                 } // end if
             })
-            .then(function(user)
+            .then((user) =>
             {
-                var avatarURLObj = url.parse(profile.image.url);
                 user.nickname = profile.nickname;
                 user.tagline = profile.tagline;
                 user.email = profile.email;
                 user.displayName = profile.displayName;
-                user.avatar = avatarURLObj.protocol + '//' + avatarURLObj.host + avatarURLObj.pathname;
+                user.avatar = profile.picture;
 
                 return user.save()
                     .then(function()
@@ -49,7 +39,7 @@ passport.use(new GooglePlusStrategy({
                         done(null, user, tokens)
                     });
             })
-            .catch(function(error)
+            .catch((error) =>
             {
                 logger.error('Encountered error during authentication:\n%s', error.stack);
                 done(error);
@@ -61,14 +51,14 @@ passport.use(new GooglePlusStrategy({
 module.exports = {
     initialize: function(app)
     {
-        app.post('/auth/google/callback', passport.authenticate('google'), function(req, res)
+        app.post('/auth/google', passport.authenticate('google-signin'), (req, res) =>
         {
             // Return user back to client
             res.send(req.user);
         });
 
         // Logout endpoint
-        app.post('/auth/logout', function(req, res)
+        app.post('/auth/logout', (req, res) =>
         {
             req.logout();
             res.end();

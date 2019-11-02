@@ -8,48 +8,13 @@ function AuthServiceFactory($rootScope, $http, Promise)
 {
     function AuthService()
     {
-        var self = this;
-        var resolved = false;
         this.initDeferred = Promise.defer();
+        this._user = undefined;
 
-        $rootScope.$on('event:google-plus-signin-success', function (event, authResult)
-        {
-            // Send login to server
-            $http.post('/auth/google/callback', { code: authResult.code })
-                .success(function(data)
-                {
-                    self.user = data;
-                    if(!resolved)
-                    {
-                        self.initDeferred.resolve();
-                        resolved = true;
-                    } // end if
-                });
-        });
-
-        $rootScope.$on('event:google-plus-signin-failure', function (event, authResult)
-        {
-            if(authResult.error == 'user_signed_out')
-            {
-                self.user = undefined;
-            } // end if
-
-            switch(authResult.error)
-            {
-                case 'user_signed_out':
-                    self.user = undefined;
-                    break;
-
-                default:
-                    console.error('login failed:', authResult);
-                    if(!resolved)
-                    {
-                        self.initDeferred.reject();
-                        resolved = true;
-                    } // end if
-                    break;
-            } // end switch
-        });
+        // We have to expose this to window for Google to pick it up.
+        window.onGoogleInit = this._onGoogleInit.bind(this);
+        window.onGoogleSignIn = this._onGoogleSignIn.bind(this);
+        window.onGoogleFailure = this._onGoogleFailure.bind(this);
     } // end AuthService
 
     AuthService.prototype = {
@@ -69,10 +34,55 @@ function AuthServiceFactory($rootScope, $http, Promise)
         get initialized(){ return this.initDeferred.promise; }
     }; // end signOut
 
+    AuthService.prototype._onGoogleInit = function()
+    {
+        window.gapi.load('auth2', () =>
+        {
+            window.gapi.auth2.init();
+            this.auth2 = gapi.auth2.getAuthInstance();
+
+            // We listen for the current user to change
+            this.auth2.currentUser.listen((googleUser) =>
+            {
+                if(googleUser.isSignedIn())
+                {
+                    this._onGoogleSignIn(googleUser);
+                }
+                else
+                {
+                    this._user = undefined;
+                } // end if
+            });
+        });
+    }; // end _onGoogleInit
+
+    AuthService.prototype._onGoogleSignIn = function(googleUser)
+    {
+        return this.$completeSignIn(googleUser.getAuthResponse().id_token);
+    }; // end _onGoogleSignIn
+
+    AuthService.prototype._onGoogleFailure = function(error)
+    {
+        console.warn('Google Sign In failure:', error);
+    }; // end _onGoogleFailure
+
+    AuthService.prototype.$completeSignIn = function(idToken)
+    {
+        return $http.post('/auth/google', { idToken })
+            .success((data) =>
+            {
+                this._user = data;
+            })
+            .error((error) =>
+            {
+                console.error('Failed to complete sign in:', error);
+            });
+    }; // end $completeSignIn
+
     AuthService.prototype.signOut = function()
     {
         $http.post('/auth/logout')
-            .success(function()
+            .success(() =>
             {
                 // Sign the user out
                 window.gapi.auth.signOut();

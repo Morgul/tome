@@ -25,9 +25,7 @@
                         <img ng-if="user" class="profile-image img-rounded" gravatar-src="user.email" gravatar-size="80" title="{{ user.display || user.email }}">
                     </a>
 
-                    <google-plus-signin ng-if="!user && loaded" clientid="{{ clientID }}">
-                        <button type="button" class="btn btn-danger navbar-btn"><i class="fa fa-google-plus"></i> Sign in</button>
-                    </google-plus-signin>
+                    <button ng-if="!user" type="button" class="btn btn-danger navbar-btn g-signin2"><i class="fa fa-google-plus"></i> Sign in</button>
                     <button ng-if="user" type="button" class="btn btn-danger navbar-btn"><i class="fa fa-sign-out"></i> Sign out</button>
                 </div>
                 <form class="navbar-form navbar-right" role="search">

@@ -57,9 +57,6 @@
         <link href="/vendor/codemirror/merge.css" rel="stylesheet">
         <script src="/vendor/ui-codemirror/ui-codemirror-merge.js"></script>
 
-        <!-- Google Plus -->
-        <script src="/vendor/angular-gplus-button/google-plus-signin.js"></script>
-
         <!-- Angular Diff -->
         <script src="/vendor/angular-diff/diff_match_patch.js"></script>
         <script src="/vendor/angular-diff/angular-diff-match-patch.js"></script>
@@ -94,6 +91,9 @@
         <!-- Page Style -->
         <link href="/css/tome.min.css" rel="stylesheet">
 
+        <meta name="google-signin-scope" content="profile email">
+        <meta name="google-signin-client_id" content="353888173268-4luhg23ai0i6rskck2pjcs4bdssnhshk.apps.googleusercontent.com">
+
         <!------------------------------------------------------------------------------------------------------------->
         <!-- Compatibility & Shims                                                                                   -->
         <!------------------------------------------------------------------------------------------------------------->
@@ -120,5 +120,8 @@
 
         <!-- Extra Head template -->
         <div ng-if="config.extraTemplate" ng-include="config.extraTemplate"></div>
+
+        <!-- Google -->
+        <script src="https://apis.google.com/js/platform.js?onload=onGoogleInit" async defer></script>
     </body>
 </html>

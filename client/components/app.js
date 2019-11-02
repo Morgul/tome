@@ -15,7 +15,6 @@ angular.module('tome', [
 
         'lodash',
         'diff-match-patch',
-        'directive.g+signin',
 
         'tome.services',
         'tome.controllers',
