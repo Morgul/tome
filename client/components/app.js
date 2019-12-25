@@ -95,9 +95,10 @@ angular.module('tome', [
 
             return '<h' + level + '><a name="'
                 + escapedText
-                + '" class="anchor" href="#'
-                + escapedText
-                + '"><span class="header-link"></span></a>'
+                + '" class="anchor" href="'
+		+ location.href.replace(location.hash,"")
+		+ '#' + escapedText
+                + '"><span class="header-link">#</span></a>'
                 + text + '</h' + level + '>';
         }; // end header parsing
 
